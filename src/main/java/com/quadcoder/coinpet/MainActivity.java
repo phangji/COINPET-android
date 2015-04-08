@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.quadcoder.coinpet.network.NetworkModel;
+import com.quadcoder.coinpet.network.response.Cost;
 import com.quadcoder.coinpet.network.response.Res;
 
 import java.io.IOException;
@@ -75,11 +76,13 @@ public class MainActivity extends ActionBarActivity {
         textView = (TextView)findViewById(R.id.text);
         
         //Bluetooth 환경 설정
-//        setBtEnvironment();
-//
+        setBtEnvironment();
+
 //        if(!PropertyManager.getInstance().isSet && btEnabled) { //등록 절차
-//            initBtDevice();
+//            discoverBtDevice();
 //        }
+
+        connectParedDevice();
 
         final char[] registerPn = new char[20];
 
@@ -112,45 +115,29 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                int money = 1200;
-
-//                NetworkModel.getInstance().sendCoin(MainActivity.this, String.valueOf(money), new NetworkModel.OnNetworkResultListener<Res>() {
-//                    @Override
-//                    public void onResult(Res res) {
-//                        if(res.result.equals("success")) {
-//                            Toast.makeText(MainActivity.this, "Server Success", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFail(int code) {
-//                        Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
-//
-//                    }
-//                });
-
-                NetworkModel.getInstance().signup(MainActivity.this, "test", 0, 9, new NetworkModel.OnNetworkResultListener<Res>() {
+                NetworkModel.getInstance().sendCoin(MainActivity.this, 12340, new NetworkModel.OnNetworkResultListener<Cost>() {
                     @Override
-                    public void onResult(Res res) {
+                    public void onResult(Cost res) {
                         if(res.error == null) {
-                            Toast.makeText(MainActivity.this, res.insertId + "" , Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Server Success", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(MainActivity.this, res.error, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFail(int code) {
                         Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+
                     }
                 });
+
+
             }
         });
     }
 
-    public void initBtDevice(){
+    public void discoverBtDevice(){
         mBtAdapter.startDiscovery();
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -168,6 +155,7 @@ public class MainActivity extends ActionBarActivity {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             //블루투스를 안켜면..?? 통신에 관한 부분은 모두 DISABLED
+            //이거 받아오는 시점 계산 따로 해줘야함.
         }else {
             btEnabled = true;
         }
@@ -238,6 +226,24 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         }
+
+        createChatThread(isConnected);
+
+    }
+
+    void createChatThread(boolean isConnected) {
+        // 찾은 이후
+        if(isConnected) {
+            mChatList = new ArrayList<ChatThread>();
+            mHandler.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    WrapBluetoothDevice device = new WrapBluetoothDevice(mDevice);
+                    new ConnectThread(device.getDevice()).start();
+                }
+            }, 2000);
+        }
     }
 
 
@@ -261,18 +267,7 @@ public class MainActivity extends ActionBarActivity {
                     }
             }
 
-            // 찾은 이후
-            if(isConnected) {
-                mChatList = new ArrayList<ChatThread>();
-                mHandler.postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        WrapBluetoothDevice device = new WrapBluetoothDevice(mDevice);
-                        new ConnectThread(device.getDevice()).start();
-                    }
-                }, 2000);
-            }
+            createChatThread(isConnected);
 
         }
     };
@@ -340,7 +335,7 @@ public class MainActivity extends ActionBarActivity {
 //                    data[idx] = (char)num;
 //                    idx++;
 
-                    Log.d("data", " " + data[0] + " " + data[1] + " " + data[2] + " " + data[3]);
+                    Log.d("data", " " + data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5]);
 
 
                     if(data != null && data[1] == 0x02) {
@@ -352,12 +347,12 @@ public class MainActivity extends ActionBarActivity {
 
                                 @Override
                                 public void run() { //핸들러가 없거나 이게 없거나 --> 이거 확인해봐야함.
-
+                                    Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT);
                                     mHandler.post(new Runnable() {
 
                                         @Override
                                         public void run() {
-                                            Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT);
+
                                             textView.setText("success");
                                         }
                                     });
@@ -368,9 +363,49 @@ public class MainActivity extends ActionBarActivity {
 //                            Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT);
                         }
                     }
+
                     if(data != null && data[1] == 0x08) {   // 동전입력 프로토콜
-                        int money = data[3] * 256 * 256 + data[4] * 256 + data[5];
-                        Toast.makeText(MainActivity.this, "" + money + " 원", Toast.LENGTH_SHORT).show();
+                        int[] num = new int[3];
+                        for(int i=3; i<=5; i++) {
+                            num[i-3] = data[i];
+                            if(num[i-3] < 0) {
+                                num[i-3] += 256;
+                            }
+                        }
+                        Log.d("num", num[0] + " " + num[1] + " " + num[2] + " ");
+                        final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "" + money + " 원", Toast.LENGTH_SHORT).show();
+
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        NetworkModel.getInstance().sendCoin(MainActivity.this, money, new NetworkModel.OnNetworkResultListener<Cost>() {
+                                            @Override
+                                            public void onResult(Cost res) {
+                                                if(res.error == null) {
+                                                    Toast.makeText(MainActivity.this, "Server Success", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFail(int code) {
+                                                Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+
+                                            }
+                                        });
+                                    }
+                                });
+
+                            }
+                        });
+
+
+
                     }
 
 

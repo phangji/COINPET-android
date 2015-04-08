@@ -8,6 +8,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 import com.quadcoder.coinpet.MyApplication;
+import com.quadcoder.coinpet.network.response.Cost;
 import com.quadcoder.coinpet.network.response.Res;
 
 import org.apache.http.Header;
@@ -33,7 +34,9 @@ public class NetworkModel {
 
     AsyncHttpClient client;
 
-    public static final String SERVER_URL = "http://61.43.139.155:3300";
+    public static final String SERVER_INTERNAL_URL = "http://172.16.100.181:3300";
+    public static final String SERVER_EXTERNAL_URL = "http://61.43.139.155:3300";
+    public static final String SERVER_URL = SERVER_INTERNAL_URL;
 
     public interface OnNetworkResultListener<T> {
         public void onResult(T res);
@@ -45,18 +48,18 @@ public class NetworkModel {
         client.cancelRequests(context, false);
     }
 
-    public void sendCoin(Context context, String money,
-                     final OnNetworkResultListener<Res> listener) {
-        String url = SERVER_URL + "/sendcoin";  //api
+    public void sendCoin(Context context, int money,
+                     final OnNetworkResultListener<Cost> listener) {
+        String url = SERVER_URL + "/root/coin";  //api
         RequestParams params = new RequestParams();
-        params.put("coin", money);
-        client.post(context, url, null, new AsyncHttpResponseHandler() {
+        params.put("cost", money);
+        client.post(context, url, params, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
                 Gson gson = new Gson();
-                Res result = gson.fromJson(response, Res.class);
+                Cost result = gson.fromJson(response, Cost.class);
                 listener.onResult(result);
             }
 

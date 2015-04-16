@@ -24,6 +24,7 @@ import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.logger.LogWrapper;
 import com.quadcoder.coinpet.network.NetworkModel;
 import com.quadcoder.coinpet.network.response.Cost;
+import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -151,6 +152,56 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    void setMainLayout() {
+        Button mainBtn = (Button)findViewById(R.id.btnMyPet);
+        mainBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MyPetActivity.class));
+            }
+        });
+
+        mainBtn = (Button)findViewById(R.id.btnCashbook);
+        mainBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        mainBtn = (Button)findViewById(R.id.btnQuest);
+        mainBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        mainBtn = (Button)findViewById(R.id.btnReward);
+        mainBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        mainBtn = (Button)findViewById(R.id.btnNoti);
+        mainBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        mainBtn = (Button)findViewById(R.id.btnSetting);
+        mainBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,7 +209,9 @@ public class MainActivity extends ActionBarActivity {
 
         textView = (TextView)findViewById(R.id.text);
 
-        setBtEnvironment();
+        setMainLayout();
+
+//        setBtEnvironment();
 
         Button btn = (Button)findViewById(R.id.button);
         btn.setOnClickListener(new View.OnClickListener() {

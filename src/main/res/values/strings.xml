@@ -15,4 +15,10 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_tutorial">TutorialActivity</string>
+    <string name="please_insert_pn">제품 번호를 입력해주세요.</string>
+    <string name="next">다음</string>
+    <string name="push_button_on_device">제 목소리가 들리면 확인을 눌러주세요!</string>
+    <string name="letsgo">이제 저를 만나러 갈까요?</string>
+    <string name="confirm">확인</string>
+    <string name="title_activity_signup">SignupActivity</string>
 </resources>

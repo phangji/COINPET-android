@@ -4,6 +4,15 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    <string name="title_activity_splash">SplashActivity</string>
-    <string name="title_activity_splash_activity.">SplashActivity</string>
+    <string name="title_activity_splash">COINPET</string>
+    <string name="title_activity_splash_activity.">COINPET</string>
+    <string name="title_activity_my_pet">나의 코인펫</string>
+
+
+    <string name="title_section1">목표</string>
+    <string name="title_section2">저금 기록</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_tutorial">TutorialActivity</string>
 </resources>

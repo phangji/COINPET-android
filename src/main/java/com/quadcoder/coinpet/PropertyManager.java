@@ -39,34 +39,31 @@ public class PropertyManager {
         mEditor.commit();
     }
 
-    private static final String FIELD_DMAC = "dmac";
-    private String dmac = null;
+    private static final String FIELD_MAC = "mac";
+    private String mac = null;
 
-    public String getDmac() {
-        dmac = mPrefs.getString(FIELD_DMAC, "");
-        return dmac;
+    public String getMac() {
+        mac = mPrefs.getString(FIELD_MAC, "");
+        return mac;
     }
 
-    public void setDmac(String dmac) {
-        this.dmac = dmac;
-        mEditor.putString(FIELD_DMAC, this.dmac);
+    public void setMac(String mac) {
+        this.mac = mac;
+        mEditor.putString(FIELD_MAC, this.mac);
         mEditor.commit();
     }
 
-    private static final String FIELD_IS_FIRST = "isFirst";
-    private boolean isFirst = true;
+    private static final String FIELD_TOKEN = "token";
+    private String token = null;
 
-    public boolean isFirst() {
-        isFirst = mPrefs.getBoolean(FIELD_IS_FIRST, true);
-        return isFirst;
+    public String getToken() {
+        token = mPrefs.getString(FIELD_TOKEN, "");
+        return token;
     }
 
-    public void setFirst(boolean isFirst) {
-        this.isFirst = isFirst;
-        mEditor.putBoolean(FIELD_IS_FIRST, isFirst);
+    public void setToken(String token) {
+        mEditor.putString(FIELD_TOKEN, this.token);
         mEditor.commit();
+        this.token = token;
     }
-
-    public String tempMac;
-    public boolean isSet;
 }

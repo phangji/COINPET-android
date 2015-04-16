@@ -1,16 +1,16 @@
 package com.quadcoder.coinpet;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,74 +18,112 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.bluetooth.BluetoothService;
+import com.quadcoder.coinpet.bluetooth.Constants;
+import com.quadcoder.coinpet.logger.Log;
+import com.quadcoder.coinpet.logger.LogWrapper;
 import com.quadcoder.coinpet.network.NetworkModel;
 import com.quadcoder.coinpet.network.response.Cost;
-import com.quadcoder.coinpet.network.response.Res;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.UUID;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    public final static String SERVICE_NAME = "COINPET-1234";
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     static final int REQUEST_ENABLE_BT = 1;
-    BluetoothAdapter mBtAdapter;
     BluetoothDevice mDevice;
-    boolean btEnabled = false;
-    Handler mHandler = new Handler();
-    boolean isConnected = false;
+    /**
+     * Local Bluetooth adapter
+     */
+    private BluetoothAdapter mBtAdapter = null;
 
-    ArrayList<ChatThread> mChatList;
+    /**
+     * Member object for the chat services
+     */
+    private BluetoothService mChatService = null;
 
     TextView textView;
+    private StringBuffer mOutStringBuffer;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initializeLogging();
+    }
+
+    public static final String TAG = "MainActivity";
+
+    /** Set up targets to receive log data */
+    public void initializeLogging() {
+        // Using Log, front-end to the logging chain, emulates android.util.log method signatures.
+        // Wraps Android's native log framework
+        LogWrapper logWrapper = new LogWrapper();
+        Log.setLogNode(logWrapper);
+
+        Log.i(TAG, "Ready");
+    }
+
+    boolean isRegistered = false;
+
+    public void discovery(){
+        mBtAdapter.startDiscovery();
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter);
+        isRegistered = true;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mChatList != null)
-        for (int i = 0; i < mChatList.size(); i++) {
-            ChatThread chat = mChatList.get(i);
-            chat.closeSocket();
+//        if(mChatList != null)
+//        for (int i = 0; i < mChatList.size(); i++) {
+//            ChatThread chat = mChatList.get(i);
+//            chat.closeSocket();
+//        }
+        if (mChatService != null) {
+            mChatService.stop();
         }
-        unregisterReceiver(mReceiver);
+
+        if(isRegistered)
+            unregisterReceiver(mReceiver);
         NetworkModel.getInstance().cancelRequests(MainActivity.this);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == RESULT_OK && requestCode == REQUEST_ENABLE_BT){
-            btEnabled = true;
-        } else if(requestCode == RESULT_CANCELED && requestCode == REQUEST_ENABLE_BT){
-            btEnabled = false;
+    protected void onResume() {
+        super.onResume();
+        // Performing this check in onResume() covers the case in which BT was
+        // not enabled during onStart(), so we were paused to enable it...
+        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        if (mChatService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mChatService.getState() == BluetoothService.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mChatService.start();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { //블루투스 연결 권장 다이얼로그 호출 결과
+        switch (requestCode) {
+            case REQUEST_ENABLE_BT:
+                if (resultCode == Activity.RESULT_OK) {
+                    setupChatService();
+                    mChatService.setState(BluetoothService.STATE_BT_ENABLED);
+                    connectBt();
+
+
+                } else if (requestCode == RESULT_CANCELED) {
+                    Log.d(TAG, "BT not enabled");
+                    mChatService.setState(BluetoothService.STATE_NONE);
+                }
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
-        textView = (TextView)findViewById(R.id.text);
-        
-        //Bluetooth 환경 설정
-        setBtEnvironment();
-
-//        if(!PropertyManager.getInstance().isSet && btEnabled) { //등록 절차
-//            discoverBtDevice();
-//        }
-
-        connectParedDevice();
-
+    String pnMsg = null;
+    void makePnPsg() {
         final char[] registerPn = new char[20];
-
         registerPn[0] = 'S';
         registerPn[1] = 0x01;
         registerPn[2] = 16;
@@ -94,19 +132,45 @@ public class MainActivity extends ActionBarActivity {
         for(int i=3; i<19; i++) {
             registerPn[i] = pn[i-3];
         }
-        final String send = new String(registerPn);
-        Log.d("registerPn", send);
+        pnMsg = new String(registerPn);
+        Log.d("registerPn", pnMsg);
+    }
 
+    void connectBt() {
+        if(mChatService.getState() == BluetoothService.STATE_BT_ENABLED) {
+            mDevice = mChatService.searchPaired();
+
+            if (mDevice != null) {  //페어링된 적이 없다면,
+                discovery();
+
+            }
+            mChatService.connect(mDevice);
+        }
+
+
+
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        textView = (TextView)findViewById(R.id.text);
+
+        setBtEnvironment();
 
         Button btn = (Button)findViewById(R.id.button);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (int i = 0; i < mChatList.size(); i++) {
-                    ChatThread chat = mChatList.get(i);
-                    chat.write(send);
-                }
-                Log.d("mCharList", mChatList.size()+" 개");
+//                for (int i = 0; i < mChatList.size(); i++) {
+//                    ChatThread chat = mChatList.get(i);
+//                    chat.write(send);
+//                }
+//                Log.d("mCharList", mChatList.size()+" 개");
+                makePnPsg();
+                mChatService.write(pnMsg.getBytes());
             }
         });
 
@@ -127,7 +191,7 @@ public class MainActivity extends ActionBarActivity {
 
                     @Override
                     public void onFail(int code) {
-                        Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Server Error " + code, Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -135,115 +199,6 @@ public class MainActivity extends ActionBarActivity {
 
             }
         });
-    }
-
-    public void discoverBtDevice(){
-        mBtAdapter.startDiscovery();
-
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter);
-    }
-
-    public void setBtEnvironment() {
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBtAdapter == null) {
-            Toast.makeText(MainActivity.this, "Bluetooth not support", Toast.LENGTH_SHORT).show();
-            finish();
-        }
-
-        if(!mBtAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            //블루투스를 안켜면..?? 통신에 관한 부분은 모두 DISABLED
-            //이거 받아오는 시점 계산 따로 해줘야함.
-        }else {
-            btEnabled = true;
-        }
-    }
-
-    class ConnectThread extends Thread {
-        BluetoothDevice mDevice;
-
-        public ConnectThread(BluetoothDevice device) {
-            mDevice = device;
-        }
-
-        @Override
-        public void run() {
-            try {
-                BluetoothSocket socket = mDevice.createRfcommSocketToServiceRecord(MY_UUID);
-                socket.connect();
-                ChatThread chat = new ChatThread(socket);
-                mChatList.add(chat);
-                chat.start();
-
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        // 토스트도 여기 았어야함.
-                        Toast.makeText(MainActivity.this, "Connect success", Toast.LENGTH_SHORT).show();
-//                        mHandler.postDelayed(new Runnable() {
-//
-//                            @Override
-//                            public void run() {
-//                                for (int i = 0; i < mChatList.size(); i++) {
-//                                    ChatThread chat = mChatList.get(i);
-//                                    chat.write("l");
-//                                }
-//                            }
-//                        }, 1000);
-                    }
-                });
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        // TODO Auto-generated method stub
-                        Toast.makeText(MainActivity.this, "Connect fail", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-        }
-    }
-
-
-    public void connectParedDevice() {  //맥주소로 하는 것으로 변경해야(나중에)
-
-        // 자동으로 찾아준다.
-        Set<BluetoothDevice> pairedDevice = mBtAdapter.getBondedDevices();
-        if (pairedDevice.size() > 0) {
-            for (BluetoothDevice device : pairedDevice) {
-                if (device.getName().equals(SERVICE_NAME)) {
-                    mDevice = device;
-                    Toast.makeText(MainActivity.this, "Paired  "+ mDevice.getAddress(), Toast.LENGTH_SHORT).show();
-                    isConnected = true;
-                    break;
-                }
-            }
-        }
-
-        createChatThread(isConnected);
-
-    }
-
-    void createChatThread(boolean isConnected) {
-        // 찾은 이후
-        if(isConnected) {
-            mChatList = new ArrayList<ChatThread>();
-            mHandler.postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
-                    WrapBluetoothDevice device = new WrapBluetoothDevice(mDevice);
-                    new ConnectThread(device.getDevice()).start();
-                }
-            }, 2000);
-        }
     }
 
 
@@ -259,19 +214,109 @@ public class MainActivity extends ActionBarActivity {
                     BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
                     //선택한 디바이스를 받아오면
-                    if(device.getName() != null &&device.getName().equals(SERVICE_NAME)){
+                    if(device.getName() != null &&device.getName().equals(mChatService.SERVICE_NAME)){
                         Toast.makeText(MainActivity.this, device.getName() + " discovered", Toast.LENGTH_SHORT).show();
                         mDevice = device;
                         mBtAdapter.cancelDiscovery();
-                        isConnected = true;
+                        mChatService.setState(BluetoothService.STATE_DISCOVERING);
                     }
             }
-
-            createChatThread(isConnected);
-
         }
     };
 
+//    void createChatThread(boolean isConnected) {
+//        // 찾은 이후
+//        if(isConnected) {
+//            mChatList = new ArrayList<ChatThread>();
+//            mHandler.postDelayed(new Runnable() {
+//
+//                @Override
+//                public void run() {
+//                    WrapBluetoothDevice device = new WrapBluetoothDevice(mDevice);
+//                    new ConnectThread(device.getDevice()).start();
+//                }
+//            }, 2000);
+//        }
+//    }
+
+    public void setBtEnvironment() {
+        //Bluetooth 환경 설정
+        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        if (mBtAdapter == null) {
+            Toast.makeText(MainActivity.this, "블루투스를 지원하지 않는 휴대폰입니다.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        if(!mBtAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        } else if(mChatService == null) {
+            setupChatService();
+            mChatService.setState(BluetoothService.STATE_BT_ENABLED);
+            connectBt();
+        }
+        else {
+            mChatService.setState(BluetoothService.STATE_BT_ENABLED);
+            connectBt();
+        }
+    }
+
+    private void setupChatService() {
+        Log.d(TAG, "setupChatService()");
+
+        // Initialize the BluetoothChatService to perform bluetooth connections
+        mChatService = new BluetoothService(MainActivity.this, mHandler);
+
+        // Initialize the buffer for outgoing messages
+        mOutStringBuffer = new StringBuffer("");
+    }
+
+    /**
+     * The Handler that gets information back from the BluetoothChatService
+     */
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothService.STATE_CONNECTED:
+                            Toast.makeText(MainActivity.this, "state connected", Toast.LENGTH_SHORT).show();
+                            break;
+                        case BluetoothService.STATE_CONNECTING:
+                            Toast.makeText(MainActivity.this, "state connecting", Toast.LENGTH_SHORT).show();
+                            break;
+                        case BluetoothService.STATE_LISTEN:
+                        case BluetoothService.STATE_NONE:
+                            Toast.makeText(MainActivity.this, "state none", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    Toast.makeText(MainActivity.this, "Me : " + writeMessage, Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(MainActivity.this, "Device : " + readMessage, Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    String deviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    Toast.makeText(MainActivity.this, "Connected to "
+                                + deviceName, Toast.LENGTH_SHORT).show();
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    Toast.makeText(MainActivity.this, msg.getData().getString(Constants.TOAST),
+                                Toast.LENGTH_SHORT).show();
+
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -294,167 +339,5 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public class ChatThread extends Thread {
-        BluetoothSocket mmSocket;
-        InputStream mmInStream;
-        OutputStream mmOutStream;
-        public ChatThread(BluetoothSocket socket) {
-            mmSocket = socket;
-
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-
-            // Get the input and output streams, using temp objects because
-            // member streams are final
-            try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) { }
-
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-        @Override
-        public void run() {
-                // TODO Auto-generated method stub
-                byte[] buffer = new byte[1024]; // buffer store for the stream
-                int bytes;  // bytes returned from read()
-//            char[] data = new char[10];
-                byte[] data = null;
-            int idx=0;
-            // Keep listening to the InputStream until an exception occurs
-            while(true) {   //하나씩 읽는 것 같음.
-                try {
-                    // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-                    data = wrapped.array(); //byte array
-//                    data[idx] = (char)num;
-//                    idx++;
-
-                    Log.d("data", " " + data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5]);
-
-
-                    if(data != null && data[1] == 0x02) {
-                        Log.d("test1", "0x02 success");
-                        if(data[3] == 's') {
-                            Log.d("test", "success");
-
-                            runOnUiThread(new Runnable() {
-
-                                @Override
-                                public void run() { //핸들러가 없거나 이게 없거나 --> 이거 확인해봐야함.
-                                    Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT);
-                                    mHandler.post(new Runnable() {
-
-                                        @Override
-                                        public void run() {
-
-                                            textView.setText("success");
-                                        }
-                                    });
-                                }
-                            });
-
-                        } else if(data[3] == 'f'){
-//                            Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT);
-                        }
-                    }
-
-                    if(data != null && data[1] == 0x08) {   // 동전입력 프로토콜
-                        int[] num = new int[3];
-                        for(int i=3; i<=5; i++) {
-                            num[i-3] = data[i];
-                            if(num[i-3] < 0) {
-                                num[i-3] += 256;
-                            }
-                        }
-                        Log.d("num", num[0] + " " + num[1] + " " + num[2] + " ");
-                        final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(MainActivity.this, "" + money + " 원", Toast.LENGTH_SHORT).show();
-
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        NetworkModel.getInstance().sendCoin(MainActivity.this, money, new NetworkModel.OnNetworkResultListener<Cost>() {
-                                            @Override
-                                            public void onResult(Cost res) {
-                                                if(res.error == null) {
-                                                    Toast.makeText(MainActivity.this, "Server Success", Toast.LENGTH_SHORT).show();
-                                                } else {
-                                                    Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                                                }
-                                            }
-
-                                            @Override
-                                            public void onFail(int code) {
-                                                Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
-
-                                            }
-                                        });
-                                    }
-                                });
-
-                            }
-                        });
-
-
-
-                    }
-
-
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    try {
-                        mmSocket.close();
-                    } catch (IOException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                    }
-                    break;
-                }
-
-            }
-
-
-
-            mChatList.remove(this);
-
-        }
-
-
-        public void write(String msg) {
-            Log.d("msg", msg);
-            try {
-                mmOutStream.write(msg.getBytes());
-                Log.i("write", "" + msg.getBytes());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                try {
-                    mmSocket.close();
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
-                mChatList.remove(this);
-            }
-        }
-
-        public void closeSocket() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
     }
 }

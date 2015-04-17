@@ -24,4 +24,8 @@
     <string name="name">이름</string>
     <string name="male">남자</string>
     <string name="female">여자</string>
+    <string name="goal">목표</string>
+    <string name="set_a_goal">목표를 입력하세요</string>
+    <string name="next_nn"><![CDATA[다음 >>]]></string>
+    <string name="won">원</string>
 </resources>

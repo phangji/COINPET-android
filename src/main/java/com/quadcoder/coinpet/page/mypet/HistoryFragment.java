@@ -1,6 +1,7 @@
 package com.quadcoder.coinpet.page.mypet;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,7 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.charts.BarLineChartBase;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.Legend;
+import com.github.mikephil.charting.utils.XLabels;
+import com.github.mikephil.charting.utils.YLabels;
 import com.quadcoder.coinpet.R;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +39,8 @@ public class HistoryFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private LineChart mChart;
+
     public static HistoryFragment newInstance(int sectionNumber) {
         HistoryFragment fragment = new HistoryFragment();
         Bundle args = new Bundle();
@@ -39,19 +53,123 @@ public class HistoryFragment extends Fragment {
         // Required empty public constructor
     }
 
+    void setChart() {
+
+
+        mChart.setUnit(" 원");
+        mChart.setDrawUnitsInChart(true);
+
+        // if enabled, the chart will always start at zero on the y-axis
+        mChart.setStartAtZero(false);
+
+        // disable the drawing of values into the chart
+        mChart.setDrawYValues(false);
+
+        mChart.setDrawBorder(true);
+        mChart.setBorderPositions(new BarLineChartBase.BorderPosition[] {
+                BarLineChartBase.BorderPosition.BOTTOM
+        });
+
+        // no description text
+        mChart.setDescription("");
+        mChart.setNoDataTextDescription("You need to provide data for the chart.");
+
+        // enable value highlighting
+        mChart.setHighlightEnabled(true);
+
+        // enable touch gestures
+        mChart.setTouchEnabled(true);
+
+        // enable scaling and dragging
+        mChart.setDragEnabled(true);
+        mChart.setScaleEnabled(true);
+        mChart.setDrawGridBackground(false);
+        mChart.setDrawVerticalGrid(false);
+        mChart.setDrawHorizontalGrid(false);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        mChart.setPinchZoom(true);
+
+        // set an alternative background color
+//        mChart.setBackgroundColor(Color.WHITE);
+
+        // add data
+
+        setData(5, 5000);	//range : 하루에 max 값
+
+        //animation
+        mChart.animateX(2500);
+
+        // get the legend (only possible after setting data)
+        Legend l = mChart.getLegend();
+
+        // modify the legend ...
+        // l.setPosition(LegendPosition.LEFT_OF_CHART);
+        l.setForm(Legend.LegendForm.LINE);
+        l.setTextColor(ColorTemplate.getHoloBlue());
+
+        XLabels xl = mChart.getXLabels();
+        xl.setTextColor(ColorTemplate.getHoloBlue());
+
+        YLabels yl = mChart.getYLabels();
+        yl.setTextColor(ColorTemplate.getHoloBlue());
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getInt(ARG_PARAM1);
         }
+
+    }
+
+    private void setData(int count, float range) {
+
+        ArrayList<String> xVals = new ArrayList<String>();
+        for (int i = 0; i < count; i++) {
+            xVals.add((i) + 1 + " 일째");
+        }
+
+        ArrayList<Entry> yVals = new ArrayList<Entry>();
+        float sum = 0;
+        for (int i = 0; i < count; i++) {
+            float mult = (range + 1);
+            float val = (float) (Math.random() * mult);// + (float) ((mult * 0.1) / 10);
+//            float val = (float) (Math.random() % 5000);
+            sum += val;
+            yVals.add(new Entry(sum + val, i));
+        }
+
+        // create a dataset and give it a type
+        LineDataSet set1 = new LineDataSet(yVals, "저금한 돈 변화");
+        set1.setColor(ColorTemplate.getHoloBlue());
+        set1.setCircleColor(ColorTemplate.getHoloBlue());
+        set1.setLineWidth(2f);
+        set1.setCircleSize(4f);
+        set1.setFillAlpha(65);
+        set1.setFillColor(ColorTemplate.getHoloBlue());
+        set1.setHighLightColor(Color.rgb(244, 117, 117));
+
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(set1); // add the datasets
+
+        // create a data object with the datasets
+        LineData data = new LineData(xVals, dataSets);
+
+        // set data
+        mChart.setData(data);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
+        //차트 설정
+        mChart = (LineChart) rootView.findViewById(R.id.chart);
+        setChart();
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

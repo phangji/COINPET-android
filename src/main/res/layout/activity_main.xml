@@ -1,7 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@drawable/bg">
 
     <TextView android:text="Bluetooth Test" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -12,15 +13,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Lv 4"
             android:id="@+id/tvLevel"
-            android:layout_gravity="center_horizontal" />
+            android:textColor="#fff"
+            android:shadowColor="#000"
+            android:shadowDx="0.0"
+            android:shadowDy="0.0"
+            android:shadowRadius="5.0"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="2dp"
+            android:textSize="16sp"
+            android:phoneNumber="false" />
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -29,21 +38,36 @@
 
             <ProgressBar
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="wrap_content"
+                android:progressDrawable="@drawable/exp_progress_bar"
+                android:background="@drawable/pbar_336x116"
+                android:layout_width="135dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/pbarExp"
                 android:layout_gravity="center_horizontal|top"
                 android:max="1000"
                 android:progress="500"
-                android:indeterminate="false" />
+                android:indeterminate="false"
+                android:layout_marginTop="9dp" />
+
+            <ImageView
+                android:layout_width="135dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                android:src="@drawable/pbar_cover" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="500/1000"
+                android:textColor="#fff"
                 android:id="@+id/tvExpText"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:shadowColor="#000"
+                android:shadowDx="0.0"
+                android:shadowDy="0.0"
+                android:shadowRadius="5.0"
+                android:textSize="12sp" />
 
         </FrameLayout>
 
@@ -71,63 +95,134 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="현재 저금액"
+        android:text="120000"
         android:id="@+id/tvNowMoney"
-        android:layout_gravity="left|top" />
+        android:layout_gravity="center|left|top"
+        android:background="@drawable/heart_37x50"
+        android:textAlignment="center"
+        android:singleLine="true"
+        android:gravity="center"
+        android:textColor="#19ff3f"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="14dp"
+        android:textSize="16sp"
+        android:phoneNumber="false" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|top">
+        android:layout_gravity="right|top"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="14dp">
 
-        <Button
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="알림"
-            android:id="@+id/btnNoti"
-            android:layout_gravity="right|top" />
+            android:layout_marginRight="10dp">
 
-        <Button
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgvNoti"
+                android:layout_gravity="right|top"
+                android:src="@drawable/noti_787x39"
+                android:layout_marginRight="2dp"
+                android:layout_marginBottom="4dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgvPlus"
+                android:src="@drawable/plus1"
+                android:layout_gravity="bottom|right" />
+        </FrameLayout>
+
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/setting_939x39"
             android:text="설정"
-            android:id="@+id/btnSetting" />
+            android:id="@+id/imgvSetting" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="나의 코인펫"
-            android:id="@+id/btnMyPet" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="용돈 기록장"
-            android:id="@+id/btnCashbook" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="퀘스트"
-            android:id="@+id/btnQuest" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="획득 업적"
-            android:id="@+id/btnReward" />
-    </LinearLayout>
-
-    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ivPet"
-        android:layout_gravity="center"
-        android:src="@mipmap/ic_launcher" />
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="8dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/mycoinpet_21x1627"
+            android:text="나의 코인펫"
+            android:id="@+id/imgvMyPet"
+            android:layout_marginRight="10dp" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/cashbook_302x1627"
+            android:text="용돈 기록장"
+            android:id="@+id/imgvCashbook"
+            android:layout_marginRight="8dp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/quest_571x1627"
+            android:text="퀘스트"
+            android:id="@+id/imgvQuest"
+            android:layout_marginRight="12dp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/reward_836x1627"
+            android:text="획득 업적"
+            android:id="@+id/imgvReward" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/balloon_345x608">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgvHeart"
+                android:layout_gravity="center"
+                android:src="@drawable/sheart_491x693" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgvShadow"
+                android:layout_gravity="center_horizontal|bottom"
+                android:src="@drawable/shadow_374x1348" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgvPet"
+                android:layout_gravity="center|top"
+                android:src="@drawable/coinpet_348x975" />
+        </FrameLayout>
+
+    </LinearLayout>
 
 
 </FrameLayout>

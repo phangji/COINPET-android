@@ -12,28 +12,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imgvPet"
-            android:src="@mipmap/ic_launcher"
-            android:layout_gravity="center_horizontal" />
+            android:src="@drawable/tutorial3"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp" />
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/box" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/letsgo"
                 android:id="@+id/tvGuide"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="40dp"
+                android:textSize="16dp" />
 
             <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="92dp"
+                android:layout_height="31dp"
                 android:text="@string/confirm"
                 android:id="@+id/btnNext"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/btn_red"
+                android:layout_marginTop="16dp"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -43,5 +49,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/imgvIndex"
         android:layout_gravity="center_horizontal|bottom"
-        android:src="@drawable/abc_ic_menu_copy_mtrl_am_alpha" />
+        android:src="@drawable/index2"
+        android:layout_marginBottom="20dp" />
 </FrameLayout>

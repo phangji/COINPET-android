@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -156,7 +157,7 @@ public class MainActivity extends ActionBarActivity {
     void setMainLayout() {
 
         // MyPet
-        Button mainBtn = (Button)findViewById(R.id.btnMyPet);
+        ImageView mainBtn = (ImageView)findViewById(R.id.imgvMyPet);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,7 +166,7 @@ public class MainActivity extends ActionBarActivity {
         });
 
         // Cashbook
-        mainBtn = (Button)findViewById(R.id.btnCashbook);
+        mainBtn = (ImageView)findViewById(R.id.imgvCashbook);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,7 +175,7 @@ public class MainActivity extends ActionBarActivity {
         });
 
         // Quest
-        mainBtn = (Button)findViewById(R.id.btnQuest);
+        mainBtn = (ImageView)findViewById(R.id.imgvQuest);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +184,7 @@ public class MainActivity extends ActionBarActivity {
         });
 
         // Reward
-        mainBtn = (Button)findViewById(R.id.btnReward);
+        mainBtn = (ImageView)findViewById(R.id.imgvReward);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -192,7 +193,7 @@ public class MainActivity extends ActionBarActivity {
         });
 
         // Notification
-        mainBtn = (Button)findViewById(R.id.btnNoti);
+        mainBtn = (ImageView)findViewById(R.id.imgvNoti);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -201,7 +202,7 @@ public class MainActivity extends ActionBarActivity {
         });
 
         // Setting
-        mainBtn = (Button)findViewById(R.id.btnSetting);
+        mainBtn = (ImageView)findViewById(R.id.imgvSetting);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.quadcoder.coinpet.R;
 
@@ -20,22 +21,36 @@ public class SignupFirstFragment extends Fragment {
         // Required empty public constructor
     }
 
+    boolean isClicked;
+    ImageView imgvPet;
+    ImageView imgvBox;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_signup_first, container, false);
 
+        imgvPet = (ImageView)rootView.findViewById(R.id.imgvPet);
+        imgvBox = (ImageView)rootView.findViewById(R.id.imgvBox);
+
+
+
         Button btn = (Button)rootView.findViewById(R.id.btnNext);
-        btn.setOnClickListener(new View.OnClickListener() {
+        rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((SignupActivity)getActivity()).onNextClicked();
+
+                if (isClicked) {
+                    ((SignupActivity)getActivity()).onNextClicked();
+                }
+                else {
+                    imgvPet.setImageResource(R.drawable.pet_right);
+                    imgvBox.setImageResource(R.drawable.talk2);
+                    isClicked = true;
+                }
             }
         });
-    
+
         return rootView;
     }
-
-
 }

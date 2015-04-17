@@ -1,15 +1,40 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.quadcoder.coinpet.page.tutorial.TutorialFirst">
+    tools:context="com.quadcoder.coinpet.page.tutorial.TutorialFirst"
+    android:background="@drawable/bg">
 
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvPet"
+            android:src="@drawable/pet_right_hello"
+            android:layout_gravity="right" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvBox"
+            android:src="@drawable/talk1" />
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/next"
+        android:text="@string/next_nn"
         android:id="@+id/btnNext"
-        android:layout_gravity="bottom|right" />
+        android:layout_gravity="bottom|right"
+        android:background="@null"
+        android:textSize="18dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp" />
 
 
 </FrameLayout>

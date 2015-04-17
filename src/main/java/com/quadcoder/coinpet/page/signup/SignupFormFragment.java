@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.quadcoder.coinpet.R;
 
@@ -19,7 +21,9 @@ public class SignupFormFragment extends Fragment {
     public SignupFormFragment() {
         // Required empty public constructor
     }
-
+    ImageButton prev;
+    ImageButton next;
+    EditText etAge;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,6 +36,30 @@ public class SignupFormFragment extends Fragment {
                 getActivity().finish();
             }
         });
+
+
+        etAge = (EditText)rootView.findViewById(R.id.etAge);
+        prev = (ImageButton)rootView.findViewById(R.id.imgbtnPrev);
+        next = (ImageButton)rootView.findViewById(R.id.imgbtnNext);
+
+        prev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int num = Integer.parseInt(etAge.getText().toString());
+                num--;
+                etAge.setText(num + "");
+            }
+        });
+
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int num = Integer.parseInt(etAge.getText().toString());
+                num++;
+                etAge.setText(num + "");
+            }
+        });
+
         return rootView;
     }
 

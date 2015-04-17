@@ -21,4 +21,7 @@
     <string name="letsgo">이제 저를 만나러 갈까요?</string>
     <string name="confirm">확인</string>
     <string name="title_activity_signup">SignupActivity</string>
+    <string name="name">이름</string>
+    <string name="male">남자</string>
+    <string name="female">여자</string>
 </resources>

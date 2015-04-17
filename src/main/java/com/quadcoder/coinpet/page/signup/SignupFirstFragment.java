@@ -1,7 +1,6 @@
-package com.quadcoder.coinpet.page.tutorial;
+package com.quadcoder.coinpet.page.signup;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,15 +9,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.quadcoder.coinpet.R;
-import com.quadcoder.coinpet.page.signup.SignupActivity;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link android.support.v4.app.Fragment} subclass.
  */
-public class TutorialThirdFragment extends Fragment {
+public class SignupFirstFragment extends Fragment {
 
 
-    public TutorialThirdFragment() {
+    public SignupFirstFragment() {
         // Required empty public constructor
     }
 
@@ -26,17 +24,16 @@ public class TutorialThirdFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_tutorial_third, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_signup_first, container, false);
 
         Button btn = (Button)rootView.findViewById(R.id.btnNext);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), SignupActivity.class));
-                getActivity().finish();
+                ((SignupActivity)getActivity()).onNextClicked();
             }
         });
-
+    
         return rootView;
     }
 

@@ -12,12 +12,14 @@ import android.view.ViewGroup;
 
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.logger.Log;
+import com.quadcoder.coinpet.network.NetworkModel;
 
 public class TutorialActivity extends FragmentActivity {
 
     FragmentManager mFM;
     Fragment[] list = { new TutorialFirstFragment(), new TutorialSecondFragment(), new TutorialThirdFragment() };
     static final String TAG = "TutorialActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,12 @@ public class TutorialActivity extends FragmentActivity {
             ft.add(R.id.container, f);
             ft.commit();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NetworkModel.getInstance().cancelRequests(TutorialActivity.this);
     }
 
     void onNextClicked() {

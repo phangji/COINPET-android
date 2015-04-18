@@ -29,14 +29,14 @@ public class PropertyManager {
     private String pn = null;
 
     public String getPn() {
-        pn = mPrefs.getString(FIELD_PN, "");
+//        pn = mPrefs.getString(FIELD_PN, "");
         return pn;
     }
 
     public void setPn(String pn) {
         this.pn = pn;
-        mEditor.putString(FIELD_PN, this.pn);
-        mEditor.commit();
+//        mEditor.putString(FIELD_PN, this.pn);
+//        mEditor.commit();
     }
 
     private static final String FIELD_MAC = "mac";
@@ -53,17 +53,18 @@ public class PropertyManager {
         mEditor.commit();
     }
 
+    // TODO: 플로우 검사가 끝난 후, token을 영구적으로 저장해줘야 함.
     private static final String FIELD_TOKEN = "token";
     private String token = null;
 
     public String getToken() {
-        token = mPrefs.getString(FIELD_TOKEN, "");
-        return token;
+//        token = mPrefs.getString(FIELD_TOKEN, "");
+        return "Bearer " + token;
     }
 
     public void setToken(String token) {
-        mEditor.putString(FIELD_TOKEN, this.token);
-        mEditor.commit();
+//        mEditor.putString(FIELD_TOKEN, this.token);
+//        mEditor.commit();
         this.token = token;
     }
 }

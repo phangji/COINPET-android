@@ -24,7 +24,7 @@ import com.quadcoder.coinpet.bluetooth.Constants;
 import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.logger.LogWrapper;
 import com.quadcoder.coinpet.network.NetworkModel;
-import com.quadcoder.coinpet.network.response.Cost;
+import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
@@ -43,8 +43,9 @@ public class MainActivity extends ActionBarActivity {
      */
     private BluetoothService mChatService = null;
 
-    TextView textView;
     private StringBuffer mOutStringBuffer;
+
+    TextView tvNowMoney;
 
     @Override
     protected void onStart() {
@@ -156,6 +157,8 @@ public class MainActivity extends ActionBarActivity {
 
     void setMainLayout() {
 
+        tvNowMoney = (TextView)findViewById(R.id.tvNowMoney);
+
         // MyPet
         ImageView mainBtn = (ImageView)findViewById(R.id.imgvMyPet);
         mainBtn.setOnClickListener(new View.OnClickListener() {
@@ -197,6 +200,19 @@ public class MainActivity extends ActionBarActivity {
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                final int coin = 500;
+                NetworkModel.getInstance().sendCoin(MainActivity.this, coin, new NetworkModel.OnNetworkResultListener<Res>() {
+                    @Override
+                    public void onResult(Res res) {
+                        int sum = Integer.parseInt(tvNowMoney.getText().toString()) + coin;
+                        tvNowMoney.setText("" + sum);
+                    }
+
+                    @Override
+                    public void onFail(Res res) {
+
+                    }
+                });
 
             }
         });
@@ -217,51 +233,9 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = (TextView)findViewById(R.id.text);
-
         setMainLayout();
 
-//        setBtEnvironment();
-
-        Button btn = (Button)findViewById(R.id.button);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                for (int i = 0; i < mChatList.size(); i++) {
-//                    ChatThread chat = mChatList.get(i);
-//                    chat.write(send);
-//                }
-//                Log.d("mCharList", mChatList.size()+" 개");
-                makePnPsg();
-                mChatService.write(pnMsg.getBytes());
-            }
-        });
-
-        btn = (Button)findViewById(R.id.btnNet);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                NetworkModel.getInstance().sendCoin(MainActivity.this, 12340, new NetworkModel.OnNetworkResultListener<Cost>() {
-                    @Override
-                    public void onResult(Cost res) {
-                        if(res.error == null) {
-                            Toast.makeText(MainActivity.this, "Server Success", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFail(int code) {
-                        Toast.makeText(MainActivity.this, "Server Error " + code, Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-
-
-            }
-        });
+        setBtEnvironment();
     }
 
 
@@ -328,7 +302,7 @@ public class MainActivity extends ActionBarActivity {
         Log.d(TAG, "setupChatService()");
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothService(MainActivity.this, mHandler);
+        mChatService = BluetoothService.getInstance(MainActivity.this, mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
@@ -366,6 +340,32 @@ public class MainActivity extends ActionBarActivity {
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Toast.makeText(MainActivity.this, "Device : " + readMessage, Toast.LENGTH_SHORT).show();
+
+                    if(readBuf != null && readBuf[1] == 0x08) {   // 동전입력 프로토콜
+                        int[] num = new int[3];
+                        for(int i=3; i<=5; i++) {
+                            num[i-3] = readBuf[i];
+                            if(num[i-3] < 0) {
+                                num[i-3] += 256;
+                            }
+                        }
+                        Log.d("TAG", num[0] + " " + num[1] + " " + num[2] + " ");
+                        final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
+                        int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
+                        tvNowMoney.setText("" + sum);
+
+                        NetworkModel.getInstance().sendCoin(MainActivity.this, money, new NetworkModel.OnNetworkResultListener<Res>() {
+                            @Override
+                            public void onResult(Res res) {
+
+                            }
+
+                            @Override
+                            public void onFail(Res res) {
+
+                            }
+                        });
+                    }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     String deviceName = msg.getData().getString(Constants.DEVICE_NAME);

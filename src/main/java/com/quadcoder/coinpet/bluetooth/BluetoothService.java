@@ -49,8 +49,14 @@ public class BluetoothService {
     public static final int STATE_DISCOVERING = 6;
 //    public boolean isConnected = false;
 //    public boolean btEnabled = true;
+    private static BluetoothService instance;
+    public static BluetoothService getInstance(Context context, Handler handler) {
+        if (instance == null)
+            instance = new BluetoothService(context, handler);
+        return instance;
+    }
 
-    public BluetoothService(Context context, Handler handler) {
+    private BluetoothService(Context context, Handler handler) {
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mHandler = handler;

@@ -5,5 +5,6 @@ package com.quadcoder.coinpet.network.response;
  */
 public class Res {
     public String error;
-    public String insertId;
+    public String Authorization;
+    public String field;
 }

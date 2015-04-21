@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.Image;
 import android.os.Handler;
@@ -21,7 +22,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,7 @@ import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.logger.LogWrapper;
 import com.quadcoder.coinpet.network.NetworkModel;
 import com.quadcoder.coinpet.network.response.Res;
+import com.quadcoder.coinpet.page.common.TransparentActivity;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
@@ -52,6 +56,8 @@ public class MainActivity extends ActionBarActivity {
     private StringBuffer mOutStringBuffer;
 
     TextView tvNowMoney;
+    boolean isDoneFirstQuest;
+    static final int REQUEST_CODE_TRANSPARENT_ACTIVITY = 10;
 
     @Override
     protected void onStart() {
@@ -133,6 +139,14 @@ public class MainActivity extends ActionBarActivity {
     ImageView imgvCloud2;
     ImageView imgvMailBg;
     ImageView imgvMail;
+    ProgressBar pbarExp;
+    TextView tvExpText;
+    FrameLayout frameTalk;
+    FrameLayout frameQuest;
+    ImageView imgvLevelup;
+    TextView tvTalk;
+    ImageView imgvHeart;
+    TextView tvLevel;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) { //블루투스 연결 권장 다이얼로그 호출 결과
@@ -143,15 +157,35 @@ public class MainActivity extends ActionBarActivity {
                     mChatService.setState(BluetoothService.STATE_BT_ENABLED);
                     connectBt();
 
-
                 } else if (requestCode == RESULT_CANCELED) {
                     Log.d(TAG, "BT not enabled");
                     mChatService.setState(BluetoothService.STATE_NONE);
                 }
                 break;
+            case REQUEST_CODE_TRANSPARENT_ACTIVITY:
+                if(resultCode == Activity.RESULT_OK) {
+                    isDoneFirstQuest = data.getBooleanExtra(TransparentActivity.RESULT_GOAL_SET, false);
+                    if(isDoneFirstQuest) {
+                        frameQuest.setVisibility(View.INVISIBLE);
+                        frameTalk.setVisibility(View.VISIBLE);
+                        int gage = 70;
+                        pbarExp.setProgress(gage);
+                        tvExpText.setText(gage + "/100");
+
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                frameTalk.setVisibility(View.INVISIBLE);
+                                frameQuest.setVisibility(View.VISIBLE);
+                            }
+                        }, 2000);
+                    }
+                }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+
 
     String pnMsg = null;
     void makePnPsg() {
@@ -179,6 +213,8 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    boolean isLevelup;
+
     void setMainLayout() {
 
         tvNowMoney = (TextView)findViewById(R.id.tvNowMoney);
@@ -187,11 +223,22 @@ public class MainActivity extends ActionBarActivity {
         imgvPet = (ImageView)findViewById(R.id.imgvPet);
         imgvMailBg = (ImageView)findViewById(R.id.imgvMailBg);
         imgvMail = (ImageView)findViewById(R.id.imgvMail);
+        pbarExp = (ProgressBar)findViewById(R.id.pbarExp);
+        tvExpText = (TextView)findViewById(R.id.tvExpText);
+        frameTalk = (FrameLayout)findViewById(R.id.frameTalk);
+        frameQuest = (FrameLayout)findViewById(R.id.frameQuest);
+        tvTalk = (TextView)findViewById(R.id.tvTalk);
+        imgvHeart = (ImageView)findViewById(R.id.imgvHeart);
+        imgvLevelup = (ImageView)findViewById(R.id.imgvLevelup);
+        tvLevel = (TextView)findViewById(R.id.tvLevel);
+        Typeface font = Typeface.createFromAsset(getAssets(), com.quadcoder.coinpet.page.common.Constants.FONT_NORMAL);
+        tvTalk.setTypeface(font);
 
+        //펫 이미지 탭 했을 때
         imgvPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+            if(isLevelup) {
                 imgvPet.setImageResource(R.drawable.pet_happy_anim);
                 ((AnimationDrawable)imgvPet.getDrawable()).start();
                 mHandler.postDelayed(new Runnable() {
@@ -201,6 +248,26 @@ public class MainActivity extends ActionBarActivity {
                         ((AnimationDrawable)imgvPet.getDrawable()).start();
                     }
                 }, 1000);
+            }
+
+            }
+        });
+
+        //퀘스트 아이콘 탭했을 때
+        imgvMail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!isDoneFirstQuest) {
+                    Intent i = new Intent(MainActivity.this, TransparentActivity.class);
+                    startActivityForResult(i, REQUEST_CODE_TRANSPARENT_ACTIVITY);
+                } else {
+                    imgvHeart.setVisibility(View.INVISIBLE);
+                    frameQuest.setVisibility(View.INVISIBLE);
+                    tvTalk.setVisibility(View.VISIBLE);
+                    frameTalk.setVisibility(View.VISIBLE);
+                    tvTalk.setText("첫 동전 넣기");
+                }
+
             }
         });
 
@@ -403,6 +470,38 @@ public class MainActivity extends ActionBarActivity {
                             @Override
                             public void onResult(Res res) {
 
+                                if(!isLevelup) {
+                                    imgvPet.setImageResource(R.drawable.pet_happy_anim);
+                                    ((AnimationDrawable)imgvPet.getDrawable()).start();
+                                    sHander.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            imgvPet.setImageResource(R.drawable.pet_default_anim);
+                                            ((AnimationDrawable)imgvPet.getDrawable()).start();
+                                        }
+                                    }, 1000);
+
+                                    imgvLevelup.setVisibility(View.VISIBLE);
+                                    Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.mail_bg_anim);
+                                    imgvLevelup.startAnimation(shake);
+                                    sHander.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            imgvLevelup.setVisibility(View.INVISIBLE);
+                                            imgvLevelup.setImageDrawable(null);
+                                        }
+                                    }, 3000);
+                                    frameQuest.setVisibility(View.INVISIBLE);
+                                    tvTalk.setVisibility(View.INVISIBLE);
+                                    frameTalk.setVisibility(View.VISIBLE);
+                                    pbarExp.setMax(200);
+                                    pbarExp.setProgress(20);
+                                    tvExpText.setText("20/200");
+                                    tvLevel.setText("Lv 2");
+                                    imgvHeart.setVisibility(View.VISIBLE);
+                                    isLevelup = true;
+                                }
+
                             }
 
                             @Override
@@ -425,6 +524,8 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     };
+
+    Handler sHander = new Handler();
 
 
     @Override

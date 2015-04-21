@@ -28,4 +28,9 @@
     <string name="set_a_goal">목표를 입력하세요</string>
     <string name="next_nn"><![CDATA[다음 >>]]></string>
     <string name="won">원</string>
+    <string name="title_activity_transparent">TransparentActivity</string>
+    <string name="write_a_goal">목표를 적어주세요</string>
+    <string name="write_goal_money">달성 금액을 적어주세요</string>
+    <string name="goal_money">달성 금액</string>
+    <string name="set_period">기간 설정(일)</string>
 </resources>

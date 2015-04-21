@@ -1,18 +1,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.quadcoder.coinpet.page.tutorial.TutorialFirst">
-
+    tools:context="com.quadcoder.coinpet.page.common.TransparentActivity">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#a4535353">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imgvPet"
-            android:src="@drawable/signup_pet"
+            android:src="@drawable/pet_set_goal"
             android:layout_gravity="center_horizontal" />
 
         <LinearLayout
@@ -22,47 +22,64 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/signup_box">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/goal"
+                android:id="@+id/textView3"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:textSize="20dp"
+                android:textColor="#000" />
+
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:id="@+id/etName"
-                android:hint="@string/name"
+                android:hint="@string/write_a_goal"
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:singleLine="true"
                 android:background="@drawable/long_input_bg"
                 android:gravity="center"
-                android:layout_marginTop="30dp" />
+                android:layout_marginTop="14dp"
+                android:clickable="true"
+                android:inputType="text" />
 
-            <RadioGroup
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:id="@+id/group"
+                android:text="@string/goal_money"
+                android:id="@+id/textView5"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:textSize="20dp"
+                android:textColor="#000" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/male"
-                    android:checked="true"
-                    android:button="@drawable/radio_button_selector"
-                    android:id="@+id/radioMale"
-                    android:layout_marginRight="40dp"
-                    android:padding="10dp"
-                    android:textSize="16dp" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:id="@+id/etGoalMoney"
+                android:hint="@string/write_goal_money"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:singleLine="true"
+                android:background="@drawable/long_input_bg"
+                android:gravity="center"
+                android:layout_marginTop="14dp"
+                android:inputType="number" />
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:button="@drawable/radio_button_selector"
-                    android:text="@string/female"
-                    android:id="@+id/radioFemale"
-                    android:padding="10dp"
-                    android:textSize="16dp" />
-            </RadioGroup>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/set_period"
+                android:id="@+id/textView4"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:textSize="20dp"
+                android:textColor="#000" />
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -70,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="14dp">
 
                 <ImageButton
                     android:layout_width="30dp"
@@ -84,7 +101,7 @@
                     android:layout_height="46dp"
                     android:inputType="number"
                     android:ems="10"
-                    android:id="@+id/etAge"
+                    android:id="@+id/etPeriod"
                     android:background="@drawable/short_input_bg"
                     android:autoText="true"
                     android:text="9"
@@ -114,5 +131,4 @@
 
         </LinearLayout>
     </LinearLayout>
-
 </FrameLayout>

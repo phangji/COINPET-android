@@ -33,7 +33,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lv 4"
+            android:text="Lv 1"
             android:id="@+id/tvLevel"
             android:textColor="#fff"
             android:shadowColor="#000"
@@ -58,8 +58,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/pbarExp"
                 android:layout_gravity="center_horizontal|top"
-                android:max="1000"
-                android:progress="500"
+                android:max="100"
+                android:progress="0"
                 android:indeterminate="false"
                 android:layout_marginTop="9dp" />
 
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="500/1000"
+                android:text="0/100"
                 android:textColor="#fff"
                 android:id="@+id/tvExpText"
                 android:layout_gravity="center"
@@ -200,8 +200,15 @@
             <FrameLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@drawable/balloon_345x608"
-                android:visibility="invisible">
+                android:visibility="invisible"
+                android:id="@+id/frameTalk">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imageView5"
+                    android:src="@drawable/balloon_345x608"
+                    android:layout_gravity="center" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -209,11 +216,21 @@
                     android:id="@+id/imgvHeart"
                     android:layout_gravity="center"
                     android:src="@drawable/sheart_491x693" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvTalk"
+                    android:layout_gravity="center"
+                    android:textColor="#000"
+                    android:textSize="18dp" />
             </FrameLayout>
 
             <FrameLayout
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
+                android:layout_height="fill_parent"
+                android:id="@+id/frameQuest"
+                android:visibility="visible">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -227,6 +244,7 @@
                     android:id="@+id/imgvMail"
                     android:src="@drawable/mail"
                     android:layout_gravity="center" />
+
             </FrameLayout>
 
         </FrameLayout>
@@ -248,10 +266,19 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imgvPet"
                 android:layout_gravity="center|top"
-                android:src="@drawable/pet_default_anim" />
+                android:src="@drawable/pet_baby_anim" />
+
+
         </FrameLayout>
 
     </LinearLayout>
 
-
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgvLevelup"
+        android:src="@drawable/syntax_level_up"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="80dp"
+        android:visibility="invisible" />
 </FrameLayout>

@@ -43,6 +43,11 @@
             android:label="@string/title_activity_signup"
             android:theme="@style/Theme.AppCompat.FullscreenTheme" >
         </activity>
+        <activity
+            android:name=".page.common.TransparentActivity"
+            android:theme="@style/AppTheme.TransparentTheme"
+            android:label="@string/title_activity_transparent" >
+        </activity>
     </application>
 
 </manifest>

@@ -124,12 +124,15 @@ public class MainActivity extends ActionBarActivity {
         imgvCloud1.startAnimation(animCloud1);
         Animation animCloud2 = AnimationUtils.loadAnimation(this, R.anim.cloud2_anim);
         imgvCloud2.startAnimation(animCloud2);
-
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+        imgvMail.startAnimation(shake);
     }
 
     ImageView imgvPet;
     ImageView imgvCloud1;
     ImageView imgvCloud2;
+    ImageView imgvMailBg;
+    ImageView imgvMail;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) { //블루투스 연결 권장 다이얼로그 호출 결과
@@ -182,6 +185,8 @@ public class MainActivity extends ActionBarActivity {
         imgvCloud1 = (ImageView)findViewById(R.id.imgvCloud1);
         imgvCloud2 = (ImageView)findViewById(R.id.imgvCloud2);
         imgvPet = (ImageView)findViewById(R.id.imgvPet);
+        imgvMailBg = (ImageView)findViewById(R.id.imgvMailBg);
+        imgvMail = (ImageView)findViewById(R.id.imgvMail);
 
         imgvPet.setOnClickListener(new View.OnClickListener() {
             @Override

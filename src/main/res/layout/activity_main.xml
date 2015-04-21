@@ -195,15 +195,39 @@
 
         <FrameLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@drawable/balloon_345x608">
+            android:layout_height="fill_parent">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/imgvHeart"
-                android:layout_gravity="center"
-                android:src="@drawable/sheart_491x693" />
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/balloon_345x608"
+                android:visibility="invisible">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imgvHeart"
+                    android:layout_gravity="center"
+                    android:src="@drawable/sheart_491x693" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imgvMailBg"
+                    android:src="@drawable/bg_mail" />
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/imgvMail"
+                    android:src="@drawable/mail"
+                    android:layout_gravity="center" />
+            </FrameLayout>
 
         </FrameLayout>
 

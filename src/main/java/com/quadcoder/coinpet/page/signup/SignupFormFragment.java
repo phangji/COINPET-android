@@ -1,6 +1,7 @@
 package com.quadcoder.coinpet.page.signup;
 
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -16,6 +18,7 @@ import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkModel;
 import com.quadcoder.coinpet.network.response.Res;
+import com.quadcoder.coinpet.page.common.Constants;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -37,6 +40,7 @@ public class SignupFormFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_signup_form, container, false);
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), Constants.FONT_NORMAL);
 
         etAge = (EditText)rootView.findViewById(R.id.etAge);
         etName = (EditText)rootView.findViewById(R.id.etName);
@@ -44,7 +48,17 @@ public class SignupFormFragment extends Fragment {
         next = (ImageButton)rootView.findViewById(R.id.imgbtnNext);
         group = (RadioGroup)rootView.findViewById(R.id.group);
 
+        etAge.setTypeface(font);
+        etName.setTypeface(font);
+
+        RadioButton radiobtn = (RadioButton)rootView.findViewById(R.id.radioMale);
+        radiobtn.setTypeface(font);
+        radiobtn = (RadioButton)rootView.findViewById(R.id.radioFemale);
+        radiobtn.setTypeface(font);
+
+
         Button btn = (Button)rootView.findViewById(R.id.btnNext);
+        btn.setTypeface(font);
 
         btn.setOnClickListener(new View.OnClickListener() {
 

@@ -2,6 +2,7 @@ package com.quadcoder.coinpet.page.tutorial;
 
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -9,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.bluetooth.BluetoothService;
 import com.quadcoder.coinpet.logger.Log;
+import com.quadcoder.coinpet.page.common.Constants;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
 
 /**
@@ -31,6 +34,10 @@ public class TutorialThirdFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tutorial_third, container, false);
+
+        TextView txt = (TextView) rootView.findViewById(R.id.tvGuide);
+        Typeface font = Typeface.createFromAsset(getActivity().getAssets(), Constants.FONT_NORMAL);
+        txt.setTypeface(font);
 
         makePnPsg();
         BluetoothService.getInstance(getActivity(), new Handler()).write(pnMsg.getBytes());

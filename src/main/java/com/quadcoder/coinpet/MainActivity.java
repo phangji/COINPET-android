@@ -1,5 +1,6 @@
 package com.quadcoder.coinpet;
 
+import android.animation.StateListAnimator;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,6 +8,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.AnimationDrawable;
+import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
@@ -14,6 +17,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,6 +56,16 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+        if (mChatService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mChatService.getState() == BluetoothService.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mChatService.start();
+            }
+        }
+
+//        startAnimation();
         initializeLogging();
     }
 
@@ -97,14 +113,23 @@ public class MainActivity extends ActionBarActivity {
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-        if (mChatService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothService.STATE_NONE) {
-                // Start the Bluetooth chat services
-                mChatService.start();
-            }
-        }
+
+        startAnimation();
     }
+
+    void startAnimation() {
+        ((AnimationDrawable)imgvPet.getDrawable()).start();
+
+        Animation animCloud1 = AnimationUtils.loadAnimation(this, R.anim.cloud1_anim);
+        imgvCloud1.startAnimation(animCloud1);
+        Animation animCloud2 = AnimationUtils.loadAnimation(this, R.anim.cloud2_anim);
+        imgvCloud2.startAnimation(animCloud2);
+
+    }
+
+    ImageView imgvPet;
+    ImageView imgvCloud1;
+    ImageView imgvCloud2;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) { //블루투스 연결 권장 다이얼로그 호출 결과
@@ -146,18 +171,33 @@ public class MainActivity extends ActionBarActivity {
 
             if (mDevice != null) {  //페어링된 적이 없다면,
                 discovery();
-
             }
             mChatService.connect(mDevice);
         }
-
-
-
     }
 
     void setMainLayout() {
 
         tvNowMoney = (TextView)findViewById(R.id.tvNowMoney);
+        imgvCloud1 = (ImageView)findViewById(R.id.imgvCloud1);
+        imgvCloud2 = (ImageView)findViewById(R.id.imgvCloud2);
+        imgvPet = (ImageView)findViewById(R.id.imgvPet);
+
+        imgvPet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                imgvPet.setImageResource(R.drawable.pet_happy_anim);
+                ((AnimationDrawable)imgvPet.getDrawable()).start();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        imgvPet.setImageResource(R.drawable.pet_default_anim);
+                        ((AnimationDrawable)imgvPet.getDrawable()).start();
+                    }
+                }, 1000);
+            }
+        });
 
         // MyPet
         ImageView mainBtn = (ImageView)findViewById(R.id.imgvMyPet);

@@ -2,7 +2,21 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@drawable/bg">
+    android:background="@drawable/bg_empty">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgvCloud1"
+        android:src="@drawable/cloud1"
+        android:layout_marginTop="3dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgvCloud2"
+        android:src="@drawable/cloud2"
+        android:layout_marginTop="85dp" />
 
     <TextView android:text="Bluetooth Test" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|top"
         android:orientation="vertical"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="26dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -195,7 +209,7 @@
 
         <FrameLayout
             android:layout_width="fill_parent"
-            android:layout_height="200dp"
+            android:layout_height="180dp"
             android:layout_marginTop="10dp">
 
             <ImageView
@@ -210,7 +224,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imgvPet"
                 android:layout_gravity="center|top"
-                android:src="@drawable/coinpet_348x975" />
+                android:src="@drawable/pet_default_anim" />
         </FrameLayout>
 
     </LinearLayout>

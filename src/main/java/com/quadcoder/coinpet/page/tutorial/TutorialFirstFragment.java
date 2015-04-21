@@ -69,12 +69,8 @@ public class TutorialFirstFragment extends Fragment {
                     }
                 });
 
-//
             }
         });
-
         return rootView;
     }
-
-
 }

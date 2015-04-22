@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkModel;
 import com.quadcoder.coinpet.network.response.Res;
@@ -68,26 +69,34 @@ public class TransparentActivity extends ActionBarActivity {
                 c.add(Calendar.DATE, plus);
                 String goal_date = myFormat.format(new Date(c.getTimeInMillis()));
 
-//                Toast.makeText(TransparentActivity.this, goal_date, Toast.LENGTH_SHORT).show();
-//                NetworkModel.getInstance().setGoal(TransparentActivity.this, 0,
-//                        etName.getText().toString(), goal_date, Integer.parseInt(etGoalMoney.getText().toString()), 0, new NetworkModel.OnNetworkResultListener<Res>() {
-//                            @Override
-//                            public void onResult(Res res) {
-//                                Intent resultIntent = new Intent();
-//                                resultIntent.putExtra(RESULT_GOAL_SET,true);
-//                                setResult(Activity.RESULT_OK, resultIntent);
-//                            }
-//
-//                            @Override
-//                            public void onFail(Res res) {
-//
-//                            }
-//                        });
+                PropertyManager.getInstance().mGoal.content = etName.getText().toString();
+                PropertyManager.getInstance().mGoal.goal_cost = Integer.parseInt(etGoalMoney.getText().toString());
+                PropertyManager.getInstance().mGoal.method = 0;
+                PropertyManager.getInstance().mGoal.now_cost = 0;
+                PropertyManager.getInstance().mGoal.plus = plus;
+                PropertyManager.getInstance().mGoal.goal_date = goal_date;
 
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra(RESULT_GOAL_SET,true);
-                setResult(Activity.RESULT_OK, resultIntent);
-                finish();
+//                Toast.makeText(TransparentActivity.this, goal_date, Toast.LENGTH_SHORT).show();
+                NetworkModel.getInstance().setGoal(TransparentActivity.this, 0,
+                        etName.getText().toString(), goal_date, Integer.parseInt(etGoalMoney.getText().toString()), 0, new NetworkModel.OnNetworkResultListener<Res>() {
+                            @Override
+                            public void onResult(Res res) {
+                                Intent resultIntent = new Intent();
+                                resultIntent.putExtra(RESULT_GOAL_SET,true);
+                                setResult(Activity.RESULT_OK, resultIntent);
+                                finish();
+                            }
+
+                            @Override
+                            public void onFail(Res res) {
+
+                            }
+                        });
+
+//                Intent resultIntent = new Intent();
+//                resultIntent.putExtra(RESULT_GOAL_SET,true);
+//                setResult(Activity.RESULT_OK, resultIntent);
+//                finish();
             }
         });
 

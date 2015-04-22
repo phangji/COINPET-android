@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
@@ -18,7 +19,9 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Legend;
 import com.github.mikephil.charting.utils.XLabels;
 import com.github.mikephil.charting.utils.YLabels;
+import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
+import com.quadcoder.coinpet.network.response.Goal;
 
 import java.util.ArrayList;
 
@@ -160,6 +163,8 @@ public class HistoryFragment extends Fragment {
         mChart.setData(data);
     }
 
+    TextView tvTodayMoney;
+    TextView tvAllMoney;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -168,6 +173,13 @@ public class HistoryFragment extends Fragment {
         //차트 설정
         mChart = (LineChart) rootView.findViewById(R.id.chart);
         setChart();
+
+        tvTodayMoney = (TextView)rootView.findViewById(R.id.tvTodayMoney);
+        tvAllMoney = (TextView)rootView.findViewById(R.id.tvAllMoney);
+
+        Goal goal = PropertyManager.getInstance().mGoal;
+        tvTodayMoney.setText("" + goal.now_cost);
+        tvAllMoney.setText("" + goal.now_cost);
 
         return rootView;
     }

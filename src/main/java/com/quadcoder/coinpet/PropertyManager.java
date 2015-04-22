@@ -3,6 +3,8 @@ package com.quadcoder.coinpet;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.quadcoder.coinpet.network.response.Goal;
+
 /**
  * Created by Phangji on 4/1/15.
  */
@@ -67,4 +69,6 @@ public class PropertyManager {
 //        mEditor.commit();
         this.token = token;
     }
+
+    public Goal mGoal = new Goal();
 }

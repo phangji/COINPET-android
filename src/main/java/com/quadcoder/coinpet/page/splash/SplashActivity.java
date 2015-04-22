@@ -12,6 +12,8 @@ import android.widget.ImageView;
 
 import com.quadcoder.coinpet.MainActivity;
 import com.quadcoder.coinpet.R;
+import com.quadcoder.coinpet.page.signup.SignupActivity;
+import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 public class SplashActivity extends Activity {
 
@@ -31,7 +33,7 @@ public class SplashActivity extends Activity {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                startActivity(new Intent(SplashActivity.this, TutorialActivity.class));
                 finish();
             }
         }, DELAY_TIME);

@@ -1,6 +1,7 @@
 package com.quadcoder.coinpet.page.signup;
 
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.MainActivity;
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkModel;
@@ -77,19 +79,8 @@ public class SignupFormFragment extends Fragment {
                     @Override
                     public void onResult(Res res) {
                         PropertyManager.getInstance().setToken(res.Authorization);
-
-                        NetworkModel.getInstance().setGoal(getActivity(), 1, "롯데월드 가서 츄러스! ", "2015-05-21", 20000, 0, new NetworkModel.OnNetworkResultListener<Res>() {
-                            @Override
-                            public void onResult(Res res) {
-                                getActivity().finish();
-                            }
-
-                            @Override
-                            public void onFail(Res res) {
-
-                            }
-                        });
-
+                        startActivity(new Intent(getActivity(), MainActivity.class));
+                        getActivity().finish();
                     }
 
                     @Override

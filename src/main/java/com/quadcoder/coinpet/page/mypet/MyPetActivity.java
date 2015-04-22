@@ -2,6 +2,9 @@ package com.quadcoder.coinpet.page.mypet;
 
 import java.util.Locale;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -17,9 +20,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
+import com.quadcoder.coinpet.network.response.Goal;
+import com.quadcoder.coinpet.page.common.Constants;
+import com.quadcoder.coinpet.page.common.TransparentActivity;
+import com.quadcoder.coinpet.page.signup.SignupActivity;
 
 public class MyPetActivity extends ActionBarActivity implements ActionBar.TabListener, HistoryFragment.OnFragmentInteractionListener{
 
@@ -41,7 +51,10 @@ public class MyPetActivity extends ActionBarActivity implements ActionBar.TabLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_pet);
+//        setContentView(R.layout.activity_my_pet);
+        View main = getLayoutInflater().inflate(R.layout.activity_my_pet, null);
+        overrideFonts(MyPetActivity.this, main);
+        setContentView(main);
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -76,6 +89,21 @@ public class MyPetActivity extends ActionBarActivity implements ActionBar.TabLis
                     actionBar.newTab()
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
                             .setTabListener(this));
+        }
+    }
+
+    private void overrideFonts(final Context context, final View v) {
+        try {
+            if (v instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) v;
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    View child = vg.getChildAt(i);
+                    overrideFonts(context, child);
+                }
+            } else if (v instanceof TextView ) {
+                ((TextView) v).setTypeface(Typeface.createFromAsset(context.getAssets(), Constants.FONT_NORMAL));
+            }
+        } catch (Exception e) {
         }
     }
 
@@ -184,10 +212,46 @@ public class MyPetActivity extends ActionBarActivity implements ActionBar.TabLis
         public PlaceholderFragment() {
         }
 
+        TextView tvGoal;
+        ImageButton imgbtnEdit;
+        TextView tvGoalMoney;
+        TextView tvNowMoney;
+        TextView tvHowMore;
+        ProgressBar pbarMore;
+        TextView tvGoalDate;
+        TextView tvUntilGoal;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_my_pet, container, false);
+            tvGoal = (TextView)rootView.findViewById(R.id.tvGoal);
+            imgbtnEdit = (ImageButton)rootView.findViewById(R.id.imgbtnEdit);
+            tvGoalMoney = (TextView)rootView.findViewById(R.id.tvGoalMoney);
+            tvNowMoney = (TextView)rootView.findViewById(R.id.tvNowMoney);
+            tvHowMore = (TextView)rootView.findViewById(R.id.tvHowMore);
+            pbarMore = (ProgressBar)rootView.findViewById(R.id.pbarMore);
+            tvGoalDate = (TextView)rootView.findViewById(R.id.tvGoalDate);
+            tvUntilGoal = (TextView)rootView.findViewById(R.id.tvUntilGoal);
+
+
+            imgbtnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getActivity(), TransparentActivity.class));
+                }
+            });
+
+            Goal goal = PropertyManager.getInstance().mGoal;
+            tvGoal.setText(goal.content);
+            tvGoalMoney.setText("목표 금액   " + goal.goal_cost + "원");
+            tvNowMoney.setText("현재 금액   " + goal.now_cost + "원");
+            tvHowMore.setText("목표까지 " + (goal.goal_cost - goal.now_cost) + "원 남았어요");
+            pbarMore.setMax(goal.goal_cost);
+            pbarMore.setProgress(goal.now_cost);
+            tvGoalDate.setText("D-" + goal.plus);
+            tvUntilGoal.setText(goal.goal_date);
+
             return rootView;
         }
     }

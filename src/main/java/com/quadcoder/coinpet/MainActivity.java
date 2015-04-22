@@ -70,8 +70,6 @@ public class MainActivity extends ActionBarActivity {
                 mChatService.start();
             }
         }
-
-//        startAnimation();
         initializeLogging();
     }
 
@@ -206,7 +204,7 @@ public class MainActivity extends ActionBarActivity {
         if(mChatService.getState() == BluetoothService.STATE_BT_ENABLED) {
             mDevice = mChatService.searchPaired();
 
-            if (mDevice != null) {  //페어링된 적이 없다면,
+            if (mDevice == null) {  //페어링된 적이 없다면,
                 discovery();
             }
             mChatService.connect(mDevice);
@@ -414,7 +412,7 @@ public class MainActivity extends ActionBarActivity {
         Log.d(TAG, "setupChatService()");
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = BluetoothService.getInstance(MainActivity.this, mHandler);
+        mChatService = new BluetoothService(MainActivity.this, mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
@@ -445,13 +443,13 @@ public class MainActivity extends ActionBarActivity {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    Toast.makeText(MainActivity.this, "Me : " + writeMessage, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Me : " + writeMessage, Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(MainActivity.this, "Device : " + readMessage, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Device : " + readMessage, Toast.LENGTH_SHORT).show();
 
                     if(readBuf != null && readBuf[1] == 0x08) {   // 동전입력 프로토콜
                         int[] num = new int[3];
@@ -465,6 +463,7 @@ public class MainActivity extends ActionBarActivity {
                         final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
                         int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
                         tvNowMoney.setText("" + sum);
+                        PropertyManager.getInstance().mGoal.now_cost = sum;
 
                         NetworkModel.getInstance().sendCoin(MainActivity.this, money, new NetworkModel.OnNetworkResultListener<Res>() {
                             @Override
@@ -513,12 +512,10 @@ public class MainActivity extends ActionBarActivity {
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     String deviceName = msg.getData().getString(Constants.DEVICE_NAME);
-                    Toast.makeText(MainActivity.this, "Connected to "
-                                + deviceName, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, "Connected to " + deviceName, Toast.LENGTH_SHORT).show();
                     break;
                 case Constants.MESSAGE_TOAST:
-                    Toast.makeText(MainActivity.this, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(MainActivity.this, msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
 
                     break;
             }

@@ -58,9 +58,6 @@ public class TutorialFirstFragment extends Fragment {
                         if (res.error == null) {
                             String token = res.Authorization;
                             Toast.makeText(getActivity(), "already registered. token : " + token, Toast.LENGTH_SHORT).show();
-                            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
-                                    Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(etPn.getWindowToken(), 0);
                         }
                     }
 
@@ -69,6 +66,9 @@ public class TutorialFirstFragment extends Fragment {
                         if(res != null)
                         if (res.error.equals("no user")) {
                             ((TutorialActivity)getActivity()).onNextClicked();
+                            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(
+                                    Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(etPn.getWindowToken(), 0);
                         } else if (res.error.equals("invalid")) {
                             Toast.makeText(getActivity(), "invalid pn", Toast.LENGTH_SHORT).show();
                         }

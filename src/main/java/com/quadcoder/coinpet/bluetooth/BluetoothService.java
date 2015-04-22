@@ -28,8 +28,6 @@ import java.util.UUID;
 public class BluetoothService {
     private static final String TAG = "BluetoothService";
 
-    ArrayList<ChatThread> mChatList;
-
     public String SERVICE_NAME = "COINPET-1234";
     static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -49,14 +47,15 @@ public class BluetoothService {
     public static final int STATE_DISCOVERING = 6;
 //    public boolean isConnected = false;
 //    public boolean btEnabled = true;
-    private static BluetoothService instance;
-    public static BluetoothService getInstance(Context context, Handler handler) {
-        if (instance == null)
-            instance = new BluetoothService(context, handler);
-        return instance;
-    }
+//    private static BluetoothService instance;
+//    public static BluetoothService getInstance(Context context, Handler handler) {
+////        if (instance == null)
+////            instance = new BluetoothService(context, handler);
+//        return new BluetoothService(context, handler);
+//    }
 
-    private BluetoothService(Context context, Handler handler) {
+    public BluetoothService(Context context, Handler handler) {
+        Log.d(TAG, "BluetoothService created ");
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
         mHandler = handler;
@@ -287,59 +286,6 @@ public class BluetoothService {
                     // Send the obtained bytes to the UI Activity
                     mHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
-
-//                    if(data != null && data[1] == 0x02) {
-//                        Log.d("test1", "0x02 success");
-//                        if(data[3] == 's') {
-//                            Log.d("test", "success");
-//
-//
-//                        } else if(data[3] == 'f'){
-////                            Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT);
-//                        }
-//                    }
-//
-//                    if(data != null && data[1] == 0x08) {   // 동전입력 프로토콜
-//                        int[] num = new int[3];
-//                        for(int i=3; i<=5; i++) {
-//                            num[i-3] = data[i];
-//                            if(num[i-3] < 0) {
-//                                num[i-3] += 256;
-//                            }
-//                        }
-//                        Log.d("TAG", num[0] + " " + num[1] + " " + num[2] + " ");
-//                        final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
-////                    runOnUiThread(new Runnable() {
-////                        @Override
-////                        public void run() {
-////                            Toast.makeText(MyApplication.getContext(), "" + money + " 원", Toast.LENGTH_SHORT).show();
-////
-////                            mHandler.post(new Runnable() {
-////                                @Override
-////                                public void run() {
-////                                    NetworkModel.getInstance().sendCoin(MainActivity.this, money, new NetworkModel.OnNetworkResultListener<Cost>() {
-////                                        @Override
-////                                        public void onResult(Cost res) {
-////                                            if(res.error == null) {
-////                                                Toast.makeText(MainActivity.this, "Server Success", Toast.LENGTH_SHORT).show();
-////                                            } else {
-////                                                Toast.makeText(MainActivity.this, "Server Error", Toast.LENGTH_SHORT).show();
-////                                            }
-////                                        }
-////
-////                                        @Override
-////                                        public void onFail(int code) {
-////                                            Toast.makeText(MainActivity.this, "Network Error", Toast.LENGTH_SHORT).show();
-////
-////                                        }
-////                                    });
-////                                }
-////                            });
-////
-////                        }
-////                    });
-//                    }
-
                 } catch (IOException e) {
                     e.printStackTrace();
                     try {

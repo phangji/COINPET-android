@@ -12,21 +12,20 @@ import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.network.response.Res;
 
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 
 /**
  * Created by Phangji on 4/5/15.
  */
-public class NetworkModel {
-    private static NetworkModel instance;
+public class NetworkManager {
+    private static NetworkManager instance;
 
-    public static NetworkModel getInstance() {
+    public static NetworkManager getInstance() {
         if(instance == null)
-            instance = new NetworkModel();
+            instance = new NetworkManager();
         return instance;
     }
 
-    private NetworkModel() {
+    private NetworkManager() {
         client = new AsyncHttpClient();
         client.setCookieStore(new PersistentCookieStore(MyApplication
                 .getContext()));

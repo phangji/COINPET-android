@@ -8,24 +8,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
-import com.quadcoder.coinpet.network.NetworkModel;
+import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class TransparentActivity extends ActionBarActivity {
 
@@ -77,8 +73,8 @@ public class TransparentActivity extends ActionBarActivity {
                 PropertyManager.getInstance().mGoal.goal_date = goal_date;
 
 //                Toast.makeText(TransparentActivity.this, goal_date, Toast.LENGTH_SHORT).show();
-                NetworkModel.getInstance().setGoal(TransparentActivity.this, 0,
-                        etName.getText().toString(), goal_date, Integer.parseInt(etGoalMoney.getText().toString()), 0, new NetworkModel.OnNetworkResultListener<Res>() {
+                NetworkManager.getInstance().setGoal(TransparentActivity.this, 0,
+                        etName.getText().toString(), goal_date, Integer.parseInt(etGoalMoney.getText().toString()), 0, new NetworkManager.OnNetworkResultListener<Res>() {
                             @Override
                             public void onResult(Res res) {
                                 Intent resultIntent = new Intent();

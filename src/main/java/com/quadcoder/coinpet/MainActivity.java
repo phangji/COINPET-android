@@ -1,6 +1,5 @@
 package com.quadcoder.coinpet;
 
-import android.animation.StateListAnimator;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
-import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
@@ -20,19 +18,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.bluetooth.BluetoothService;
 import com.quadcoder.coinpet.bluetooth.Constants;
 import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.logger.LogWrapper;
-import com.quadcoder.coinpet.network.NetworkModel;
+import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.TransparentActivity;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
@@ -108,7 +105,7 @@ public class MainActivity extends ActionBarActivity {
 
         if(isRegistered)
             unregisterReceiver(mReceiver);
-        NetworkModel.getInstance().cancelRequests(MainActivity.this);
+        NetworkManager.getInstance().cancelRequests(MainActivity.this);
     }
 
     @Override
@@ -232,22 +229,25 @@ public class MainActivity extends ActionBarActivity {
         Typeface font = Typeface.createFromAsset(getAssets(), com.quadcoder.coinpet.page.common.Constants.FONT_NORMAL);
         tvTalk.setTypeface(font);
 
+        final AudioEffect audio = new AudioEffect(AudioEffect.CARTOON_BOING);
+
         //펫 이미지 탭 했을 때
         imgvPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if(isLevelup) {
-                imgvPet.setImageResource(R.drawable.pet_happy_anim);
-                ((AnimationDrawable)imgvPet.getDrawable()).start();
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        imgvPet.setImageResource(R.drawable.pet_default_anim);
-                        ((AnimationDrawable)imgvPet.getDrawable()).start();
-                    }
-                }, 1000);
-            }
+                if(isLevelup) {
+                    imgvPet.setImageResource(R.drawable.pet_happy_anim);
+                    ((AnimationDrawable)imgvPet.getDrawable()).start();
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            imgvPet.setImageResource(R.drawable.pet_default_anim);
+                            ((AnimationDrawable) imgvPet.getDrawable()).start();
+                        }
+                    }, 1000);
 
+                }
+                audio.play();
             }
         });
 
@@ -311,7 +311,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 final int coin = 500;
-                NetworkModel.getInstance().sendCoin(MainActivity.this, coin, new NetworkModel.OnNetworkResultListener<Res>() {
+                NetworkManager.getInstance().sendCoin(MainActivity.this, coin, new NetworkManager.OnNetworkResultListener<Res>() {
                     @Override
                     public void onResult(Res res) {
                         int sum = Integer.parseInt(tvNowMoney.getText().toString()) + coin;
@@ -465,7 +465,7 @@ public class MainActivity extends ActionBarActivity {
                         tvNowMoney.setText("" + sum);
                         PropertyManager.getInstance().mGoal.now_cost = sum;
 
-                        NetworkModel.getInstance().sendCoin(MainActivity.this, money, new NetworkModel.OnNetworkResultListener<Res>() {
+                        NetworkManager.getInstance().sendCoin(MainActivity.this, money, new NetworkManager.OnNetworkResultListener<Res>() {
                             @Override
                             public void onResult(Res res) {
 

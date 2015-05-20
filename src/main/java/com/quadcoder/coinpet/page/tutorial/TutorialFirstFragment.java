@@ -11,13 +11,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
-import com.quadcoder.coinpet.logger.Log;
-import com.quadcoder.coinpet.network.NetworkModel;
+import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.Constants;
 
@@ -52,7 +50,7 @@ public class TutorialFirstFragment extends Fragment {
                 PropertyManager.getInstance().setPn(pn);
 
                 // 서버와 pn 통신
-                NetworkModel.getInstance().confirmPn(getActivity(), pn, new NetworkModel.OnNetworkResultListener<Res>() {
+                NetworkManager.getInstance().confirmPn(getActivity(), pn, new NetworkManager.OnNetworkResultListener<Res>() {
                     @Override
                     public void onResult(Res res) {
                         if (res.error == null) {

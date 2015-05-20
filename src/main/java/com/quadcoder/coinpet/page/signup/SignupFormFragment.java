@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.quadcoder.coinpet.MainActivity;
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
-import com.quadcoder.coinpet.network.NetworkModel;
+import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.Constants;
 
@@ -75,7 +75,7 @@ public class SignupFormFragment extends Fragment {
 
                 int age = Integer.parseInt(etAge.getText().toString());
 
-                NetworkModel.getInstance().signup(getActivity(), pn, name, gender, age, new NetworkModel.OnNetworkResultListener<Res>() {
+                NetworkManager.getInstance().signup(getActivity(), pn, name, gender, age, new NetworkManager.OnNetworkResultListener<Res>() {
                     @Override
                     public void onResult(Res res) {
                         PropertyManager.getInstance().setToken(res.Authorization);

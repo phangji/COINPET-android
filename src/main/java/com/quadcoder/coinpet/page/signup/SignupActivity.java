@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.logger.Log;
-import com.quadcoder.coinpet.network.NetworkModel;
+import com.quadcoder.coinpet.network.NetworkManager;
 
 public class SignupActivity extends FragmentActivity {
 
@@ -34,7 +34,7 @@ public class SignupActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NetworkModel.getInstance().cancelRequests(SignupActivity.this);
+        NetworkManager.getInstance().cancelRequests(SignupActivity.this);
     }
 
     void onNextClicked() {

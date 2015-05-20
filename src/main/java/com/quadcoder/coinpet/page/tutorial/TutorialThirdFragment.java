@@ -18,12 +18,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.quadcoder.coinpet.MainActivity;
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.bluetooth.BluetoothService;
 import com.quadcoder.coinpet.logger.Log;
-import com.quadcoder.coinpet.network.NetworkModel;
 import com.quadcoder.coinpet.page.common.Constants;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
 

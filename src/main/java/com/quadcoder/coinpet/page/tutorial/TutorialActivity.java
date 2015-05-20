@@ -1,18 +1,14 @@
 package com.quadcoder.coinpet.page.tutorial;
 
-import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.logger.Log;
-import com.quadcoder.coinpet.network.NetworkModel;
+import com.quadcoder.coinpet.network.NetworkManager;
 
 public class TutorialActivity extends FragmentActivity {
 
@@ -39,7 +35,7 @@ public class TutorialActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NetworkModel.getInstance().cancelRequests(TutorialActivity.this);
+        NetworkManager.getInstance().cancelRequests(TutorialActivity.this);
     }
 
     void onNextClicked() {

@@ -1,8 +1,6 @@
 package com.quadcoder.coinpet.database;
 
-import android.provider.BaseColumns;
-
-public class DBConstant {
+public class DBConstants {
 
 	public static class SystemQuestTable {
 		public static final String TABLE_NAME = "system_quest";

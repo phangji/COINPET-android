@@ -18,36 +18,36 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 
-		String sql = "CREATE TABLE " + DBConstant.SystemQuestTable.TABLE_NAME + "("
-				+ DBConstant.SystemQuestTable.PK + " integer, "
-				+ DBConstant.SystemQuestTable.CONTENT + " text, "
-				+ DBConstant.SystemQuestTable.POINT + " integer, "
-				+ DBConstant.SystemQuestTable.ORDER + " integer, "
-				+ DBConstant.SystemQuestTable.STATUS + " integer); ";
+		String sql = "CREATE TABLE " + DBConstants.SystemQuestTable.TABLE_NAME + "("
+				+ DBConstants.SystemQuestTable.PK + " integer, "
+				+ DBConstants.SystemQuestTable.CONTENT + " text, "
+				+ DBConstants.SystemQuestTable.POINT + " integer, "
+				+ DBConstants.SystemQuestTable.ORDER + " integer, "
+				+ DBConstants.SystemQuestTable.STATUS + " integer); ";
 		db.execSQL(sql);
 
-		sql = "CREATE TABLE " + DBConstant.ParentQuestTable.TABLE_NAME + "("
-				+ DBConstant.ParentQuestTable.PK + " integer, "
-				+ DBConstant.ParentQuestTable.CONTENT + " text, "
-				+ DBConstant.ParentQuestTable.POINT + " integer, "
-				+ DBConstant.ParentQuestTable.START_TIME + " text, "
-				+ DBConstant.ParentQuestTable.STATUS + " integer); ";
+		sql = "CREATE TABLE " + DBConstants.ParentQuestTable.TABLE_NAME + "("
+				+ DBConstants.ParentQuestTable.PK + " integer, "
+				+ DBConstants.ParentQuestTable.CONTENT + " text, "
+				+ DBConstants.ParentQuestTable.POINT + " integer, "
+				+ DBConstants.ParentQuestTable.START_TIME + " text, "
+				+ DBConstants.ParentQuestTable.STATUS + " integer); ";
 		db.execSQL(sql);
 
-		sql = "CREATE TABLE " + DBConstant.QuizTable.TABLE_NAME + "("
-				+ DBConstant.QuizTable.PK + " integer, "
-				+ DBConstant.QuizTable.CONTENT + " text, "
-				+ DBConstant.QuizTable.POINT + " integer, "
-				+ DBConstant.QuizTable.STATUS + " integer); ";
+		sql = "CREATE TABLE " + DBConstants.QuizTable.TABLE_NAME + "("
+				+ DBConstants.QuizTable.PK + " integer, "
+				+ DBConstants.QuizTable.CONTENT + " text, "
+				+ DBConstants.QuizTable.POINT + " integer, "
+				+ DBConstants.QuizTable.STATUS + " integer); ";
 		db.execSQL(sql);
 
-		sql = "CREATE TABLE " + DBConstant.FriendsTable.TABLE_NAME + "("
-				+ DBConstant.FriendsTable.PK + " integer, "
-				+ DBConstant.FriendsTable.NAME + " text, "
-				+ DBConstant.FriendsTable.DESCRIPTION + " integer, "
-				+ DBConstant.FriendsTable.CONDITION + " text, "
-				+ DBConstant.FriendsTable.RESOURCE_ID + " integer, "
-				+ DBConstant.FriendsTable.IS_SAVED + " integer); ";
+		sql = "CREATE TABLE " + DBConstants.FriendsTable.TABLE_NAME + "("
+				+ DBConstants.FriendsTable.PK + " integer, "
+				+ DBConstants.FriendsTable.NAME + " text, "
+				+ DBConstants.FriendsTable.DESCRIPTION + " integer, "
+				+ DBConstants.FriendsTable.CONDITION + " text, "
+				+ DBConstants.FriendsTable.RESOURCE_ID + " integer, "
+				+ DBConstants.FriendsTable.IS_SAVED + " integer); ";
 		db.execSQL(sql);
 	}
 

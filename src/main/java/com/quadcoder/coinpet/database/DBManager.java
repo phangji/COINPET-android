@@ -7,10 +7,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.quadcoder.coinpet.MyApplication;
-import com.quadcoder.coinpet.database.DBConstant.SystemQuestTable;
-import com.quadcoder.coinpet.database.DBConstant.ParentQuestTable;
-import com.quadcoder.coinpet.database.DBConstant.QuizTable;
-import com.quadcoder.coinpet.database.DBConstant.FriendsTable;
+import com.quadcoder.coinpet.database.DBConstants.SystemQuestTable;
+import com.quadcoder.coinpet.database.DBConstants.ParentQuestTable;
+import com.quadcoder.coinpet.database.DBConstants.QuizTable;
+import com.quadcoder.coinpet.database.DBConstants.FriendsTable;
 import com.quadcoder.coinpet.model.Friend;
 import com.quadcoder.coinpet.model.QuestStatus;
 import com.quadcoder.coinpet.model.ParentQuest;

@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
-import com.quadcoder.coinpet.bluetooth.BluetoothService;
+import com.quadcoder.coinpet.bluetooth.BluetoothManager;
 import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.page.common.Constants;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
@@ -51,7 +51,7 @@ public class TutorialThirdFragment extends Fragment {
 
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothService.STATE_NONE) {
+            if (mChatService.getState() == BluetoothManager.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
@@ -92,14 +92,14 @@ public class TutorialThirdFragment extends Fragment {
         Log.d("registerPn", pnMsg);
     }
 
-    BluetoothService mChatService;
+    BluetoothManager mChatService;
     Handler mHandler = new Handler();
     StringBuffer mOutStringBuffer;
     private void setupChatService() {
         Log.d(TAG, "setupChatService()");
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothService(getActivity(), mHandler);
+        mChatService = new BluetoothManager(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
@@ -124,11 +124,11 @@ public class TutorialThirdFragment extends Fragment {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else if(mChatService == null) {
             setupChatService();
-            mChatService.setState(BluetoothService.STATE_BT_ENABLED);
+            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
             connectBt();
         }
         else {
-            mChatService.setState(BluetoothService.STATE_BT_ENABLED);
+            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
             connectBt();
         }
     }
@@ -143,7 +143,7 @@ public class TutorialThirdFragment extends Fragment {
     }
     BluetoothDevice mDevice;
     void connectBt() {
-        if(mChatService.getState() == BluetoothService.STATE_BT_ENABLED) {
+        if(mChatService.getState() == BluetoothManager.STATE_BT_ENABLED) {
             mDevice = mChatService.searchPaired();
 
             if (mDevice == null) {  //페어링된 적이 없다면,
@@ -168,7 +168,7 @@ public class TutorialThirdFragment extends Fragment {
                     Toast.makeText(getActivity(), device.getName() + " discovered", Toast.LENGTH_SHORT).show();
                     mDevice = device;
                     mBtAdapter.cancelDiscovery();
-                    mChatService.setState(BluetoothService.STATE_DISCOVERING);
+                    mChatService.setState(BluetoothManager.STATE_DISCOVERING);
                 }
             }
         }

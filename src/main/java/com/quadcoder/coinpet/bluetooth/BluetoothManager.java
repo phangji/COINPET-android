@@ -4,29 +4,24 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.Toast;
 
-import com.quadcoder.coinpet.WrapBluetoothDevice;
 import com.quadcoder.coinpet.logger.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
 /**
  * Created by Phangji on 3/27/15.
  */
-public class BluetoothService {
-    private static final String TAG = "BluetoothService";
+public class BluetoothManager {
+    private static final String TAG = "BluetoothManager";
 
     public String SERVICE_NAME = "COINPET-1234";
     static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -54,7 +49,7 @@ public class BluetoothService {
 //        return new BluetoothService(context, handler);
 //    }
 
-    public BluetoothService(Context context, Handler handler) {
+    public BluetoothManager(Context context, Handler handler) {
         Log.d(TAG, "BluetoothService created ");
         mAdapter = BluetoothAdapter.getDefaultAdapter();
         mState = STATE_NONE;
@@ -230,7 +225,7 @@ public class BluetoothService {
             }
 
             // Reset the ConnectThread because we're done
-            synchronized (BluetoothService.this) {
+            synchronized (BluetoothManager.this) {
                 mConnectThread = null;
             }
 

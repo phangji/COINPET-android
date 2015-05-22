@@ -25,7 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.quadcoder.coinpet.audio.AudioEffect;
-import com.quadcoder.coinpet.bluetooth.BluetoothService;
+import com.quadcoder.coinpet.bluetooth.BluetoothManager;
 import com.quadcoder.coinpet.bluetooth.Constants;
 import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.logger.LogWrapper;
@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
     /**
      * Member object for the chat services
      */
-    private BluetoothService mChatService = null;
+    private BluetoothManager mChatService = null;
 
     private StringBuffer mOutStringBuffer;
 
@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothService.STATE_NONE) {
+            if (mChatService.getState() == BluetoothManager.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
@@ -149,12 +149,12 @@ public class MainActivity extends ActionBarActivity {
             case REQUEST_ENABLE_BT:
                 if (resultCode == Activity.RESULT_OK) {
                     setupChatService();
-                    mChatService.setState(BluetoothService.STATE_BT_ENABLED);
+                    mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
                     connectBt();
 
                 } else if (requestCode == RESULT_CANCELED) {
                     Log.d(TAG, "BT not enabled");
-                    mChatService.setState(BluetoothService.STATE_NONE);
+                    mChatService.setState(BluetoothManager.STATE_NONE);
                 }
                 break;
             case REQUEST_CODE_TRANSPARENT_ACTIVITY:
@@ -198,7 +198,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     void connectBt() {
-        if(mChatService.getState() == BluetoothService.STATE_BT_ENABLED) {
+        if(mChatService.getState() == BluetoothManager.STATE_BT_ENABLED) {
             mDevice = mChatService.searchPaired();
 
             if (mDevice == null) {  //페어링된 적이 없다면,
@@ -365,7 +365,7 @@ public class MainActivity extends ActionBarActivity {
                         Toast.makeText(MainActivity.this, device.getName() + " discovered", Toast.LENGTH_SHORT).show();
                         mDevice = device;
                         mBtAdapter.cancelDiscovery();
-                        mChatService.setState(BluetoothService.STATE_DISCOVERING);
+                        mChatService.setState(BluetoothManager.STATE_DISCOVERING);
                     }
             }
         }
@@ -399,11 +399,11 @@ public class MainActivity extends ActionBarActivity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else if(mChatService == null) {
             setupChatService();
-            mChatService.setState(BluetoothService.STATE_BT_ENABLED);
+            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
             connectBt();
         }
         else {
-            mChatService.setState(BluetoothService.STATE_BT_ENABLED);
+            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
             connectBt();
         }
     }
@@ -412,7 +412,7 @@ public class MainActivity extends ActionBarActivity {
         Log.d(TAG, "setupChatService()");
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothService(MainActivity.this, mHandler);
+        mChatService = new BluetoothManager(MainActivity.this, mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
@@ -427,14 +427,14 @@ public class MainActivity extends ActionBarActivity {
             switch (msg.what) {
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothService.STATE_CONNECTED:
+                        case BluetoothManager.STATE_CONNECTED:
                             Toast.makeText(MainActivity.this, "state connected", Toast.LENGTH_SHORT).show();
                             break;
-                        case BluetoothService.STATE_CONNECTING:
+                        case BluetoothManager.STATE_CONNECTING:
                             Toast.makeText(MainActivity.this, "state connecting", Toast.LENGTH_SHORT).show();
                             break;
-                        case BluetoothService.STATE_LISTEN:
-                        case BluetoothService.STATE_NONE:
+                        case BluetoothManager.STATE_LISTEN:
+                        case BluetoothManager.STATE_NONE:
                             Toast.makeText(MainActivity.this, "state none", Toast.LENGTH_SHORT).show();
                             break;
                     }

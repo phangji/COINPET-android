@@ -18,16 +18,18 @@ import com.quadcoder.coinpet.model.Quiz;
 import com.quadcoder.coinpet.model.SystemQuest;
 
 public class DBManager {
-	private static DBManager instance = new DBManager();
+    private static class DBManagerHolder {
+        private static final DBManager instance = new DBManager();
+    }
 
 	public static DBManager getInstance() {
-		return instance;
+		return DBManagerHolder.instance;
 	}
 
-	MyDBOpenHelper openHelper;
+	MyDBOpenHelper mHelper;
 
 	private DBManager() {
-		openHelper = new MyDBOpenHelper(MyApplication.getContext());
+		mHelper = new MyDBOpenHelper(MyApplication.getContext());
 	}
 
     /**
@@ -36,7 +38,7 @@ public class DBManager {
 
     public ArrayList<SystemQuest> getSystemQuestList() {
         ArrayList<SystemQuest> list = new ArrayList<SystemQuest>();
-        SQLiteDatabase db = openHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATUS};
         String orderBy = SystemQuestTable.ORDER + " ASC";
         String selection = SystemQuestTable.STATUS + " = ?  OR " + SystemQuestTable.STATUS + " = ? ";
@@ -58,7 +60,7 @@ public class DBManager {
 
     public ArrayList<ParentQuest> getParentQuestList() {
         ArrayList<ParentQuest> list = new ArrayList<ParentQuest>();
-        SQLiteDatabase db = openHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {ParentQuestTable.PK, ParentQuestTable.CONTENT, ParentQuestTable.POINT, ParentQuestTable.STATUS, ParentQuestTable.START_TIME};
         String selection = "DATE('" + ParentQuestTable.START_TIME + "', 'utc') < DATE('now', 'utc') AND " + ParentQuestTable.STATUS + " = ?  OR " + ParentQuestTable.STATUS + " = ? ";
         String[] selectionArgs = { "" + QuestStatus.TODO,  "" + QuestStatus.DOING};
@@ -79,7 +81,7 @@ public class DBManager {
     }
 
     public Quiz getQuizRandom() {
-        SQLiteDatabase db = openHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT};
         String selection = QuizTable.STATUS + " = ?  OR " + QuizTable.STATUS + " = ? limit 1";
         String[] selectionArgs = { "" + Quiz.STATUS_YET,  "" + Quiz.STATUS_WRONG};
@@ -100,7 +102,7 @@ public class DBManager {
 
     public ArrayList<Friend> getFriendList() {
         ArrayList<Friend> list = new ArrayList<Friend>();
-        SQLiteDatabase db = openHelper.getReadableDatabase();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {FriendsTable.PK, FriendsTable.NAME, FriendsTable.DESCRIPTION, FriendsTable.CONDITION, FriendsTable.IS_SAVED, FriendsTable.RESOURCE_ID};
         String orderBy = FriendsTable.PK + " ASC";
         Cursor c = db.query(FriendsTable.TABLE_NAME, columns, null, null, null, null, orderBy);
@@ -125,7 +127,7 @@ public class DBManager {
      */
 
     public void insertSystemQuest(SystemQuest record) {
-        SQLiteDatabase db = openHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SystemQuestTable.PK, record.pk);
         values.put(SystemQuestTable.CONTENT, record.content);
@@ -137,7 +139,7 @@ public class DBManager {
     }
 
     public void insertParentQuest(ParentQuest record) {
-        SQLiteDatabase db = openHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ParentQuestTable.PK, record.pk);
         values.put(ParentQuestTable.CONTENT, record.content);
@@ -149,7 +151,7 @@ public class DBManager {
     }
 
     public void insertQuiz(Quiz record) {
-        SQLiteDatabase db = openHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(QuizTable.PK, record.pk);
         values.put(QuizTable.CONTENT, record.content);
@@ -160,7 +162,7 @@ public class DBManager {
     }
 
     public void insertFreind(Friend record) {
-        SQLiteDatabase db = openHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FriendsTable.PK, record.pk);
         values.put(FriendsTable.NAME, record.name);
@@ -178,7 +180,7 @@ public class DBManager {
      */
 
     public void updateSystemQuest(SystemQuest record){
-        SQLiteDatabase db = openHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SystemQuestTable.STATUS, record.status);
         String whereClause = SystemQuestTable.PK + " = ? ";
@@ -188,7 +190,7 @@ public class DBManager {
     }
 
     public void updateParentQuest(ParentQuest record){
-        SQLiteDatabase db = openHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ParentQuestTable.STATUS, record.status);
         String whereClause = ParentQuestTable.PK + " = ? ";
@@ -198,7 +200,7 @@ public class DBManager {
     }
 
     public void updateQuiz(Quiz record){
-        SQLiteDatabase db = openHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(QuizTable.STATUS, record.status);
         String whereClause = QuizTable.PK + " = ? ";
@@ -208,7 +210,7 @@ public class DBManager {
     }
 
     public void updateFriend(Friend record){
-        SQLiteDatabase db = openHelper.getWritableDatabase();
+        SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FriendsTable.IS_SAVED, record.isSaved);
         String whereClause = FriendsTable.PK + " = ? ";

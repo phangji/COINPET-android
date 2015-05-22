@@ -1,6 +1,6 @@
 package com.quadcoder.coinpet.bluetooth;
 
-public interface BtConstants {
+public interface BTConstants {
 
     // Message types sent from the BluetoothManager Handler
     int MESSAGE_STATE_CHANGE = 1;

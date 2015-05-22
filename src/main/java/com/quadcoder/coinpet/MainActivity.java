@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.bluetooth.BluetoothManager;
-import com.quadcoder.coinpet.bluetooth.BtConstants;
+import com.quadcoder.coinpet.bluetooth.BTConstants;
 import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.logger.LogWrapper;
 import com.quadcoder.coinpet.network.NetworkManager;
@@ -425,7 +425,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case BtConstants.MESSAGE_STATE_CHANGE:
+                case BTConstants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothManager.STATE_CONNECTED:
                             Toast.makeText(MainActivity.this, "state connected", Toast.LENGTH_SHORT).show();
@@ -439,13 +439,13 @@ public class MainActivity extends ActionBarActivity {
                             break;
                     }
                     break;
-                case BtConstants.MESSAGE_WRITE:
+                case BTConstants.MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
 //                    Toast.makeText(MainActivity.this, "Me : " + writeMessage, Toast.LENGTH_SHORT).show();
                     break;
-                case BtConstants.MESSAGE_READ:
+                case BTConstants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
@@ -510,11 +510,11 @@ public class MainActivity extends ActionBarActivity {
                         });
                     }
                     break;
-                case BtConstants.MESSAGE_DEVICE_NAME:
-                    String deviceName = msg.getData().getString(BtConstants.DEVICE_NAME);
+                case BTConstants.MESSAGE_DEVICE_NAME:
+                    String deviceName = msg.getData().getString(BTConstants.DEVICE_NAME);
 //                    Toast.makeText(MainActivity.this, "Connected to " + deviceName, Toast.LENGTH_SHORT).show();
                     break;
-                case BtConstants.MESSAGE_TOAST:
+                case BTConstants.MESSAGE_TOAST:
 //                    Toast.makeText(MainActivity.this, msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
 
                     break;

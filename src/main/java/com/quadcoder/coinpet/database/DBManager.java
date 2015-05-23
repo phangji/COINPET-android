@@ -42,7 +42,7 @@ public class DBManager {
         String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATUS};
         String orderBy = SystemQuestTable.ORDER + " ASC";
         String selection = SystemQuestTable.STATUS + " = ?  OR " + SystemQuestTable.STATUS + " = ? ";
-        String[] selectionArgs = { "" + QuestStatus.TODO,  "" + QuestStatus.DOING};
+        String[] selectionArgs = { "" + QuestStatus.CREATE,  "" + QuestStatus.DOING};
         Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
 
         while (c.moveToNext()) {
@@ -63,7 +63,7 @@ public class DBManager {
         SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {ParentQuestTable.PK, ParentQuestTable.CONTENT, ParentQuestTable.POINT, ParentQuestTable.STATUS, ParentQuestTable.START_TIME};
         String selection = "DATE('" + ParentQuestTable.START_TIME + "', 'utc') < DATE('now', 'utc') AND " + ParentQuestTable.STATUS + " = ?  OR " + ParentQuestTable.STATUS + " = ? ";
-        String[] selectionArgs = { "" + QuestStatus.TODO,  "" + QuestStatus.DOING};
+        String[] selectionArgs = { "" + QuestStatus.CREATE,  "" + QuestStatus.DOING};
         Cursor c = db.query(ParentQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
 
         while (c.moveToNext()) {
@@ -216,6 +216,26 @@ public class DBManager {
         String whereClause = FriendsTable.PK + " = ? ";
         String[] whereArgs = { "" + record.pk };
         db.update(FriendsTable.TABLE_NAME, values, whereClause, whereArgs);
+        db.close();
+    }
+
+    /**
+     * DELETE
+     */
+
+    public void deleteSystemQuest(SystemQuest record){
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        String whereClause = SystemQuestTable.PK + " = ? ";
+        String[] whereArgs = { "" + record.pk };
+        db.delete(SystemQuestTable.TABLE_NAME, whereClause, whereArgs);
+        db.close();
+    }
+
+    public void deleteParentQuest(ParentQuest record){
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        String whereClause = ParentQuestTable.PK + " = ? ";
+        String[] whereArgs = { "" + record.pk };
+        db.delete(ParentQuestTable.TABLE_NAME, whereClause, whereArgs);
         db.close();
     }
 }

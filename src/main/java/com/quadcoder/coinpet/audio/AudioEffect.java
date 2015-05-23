@@ -3,6 +3,7 @@ package com.quadcoder.coinpet.audio;
 import android.media.MediaPlayer;
 
 import com.quadcoder.coinpet.MyApplication;
+import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
 
 /**
@@ -30,6 +31,7 @@ public class AudioEffect {
     public void play() {
         mState = PlayState.INITIIALIZED;
 
+        if(PropertyManager.getInstance().isSound())
         if(mState == PlayState.END || mState == PlayState.INITIIALIZED) {
             mPlayer.start();
             mState = PlayState.STARTED;

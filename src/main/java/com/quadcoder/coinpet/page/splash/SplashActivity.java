@@ -3,17 +3,15 @@ package com.quadcoder.coinpet.page.splash;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.AudioManager;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.quadcoder.coinpet.MainActivity;
+import com.quadcoder.coinpet.MyApplication;
+import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
-import com.quadcoder.coinpet.page.signup.SignupActivity;
-import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 public class SplashActivity extends Activity {
 

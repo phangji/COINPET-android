@@ -23,7 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class TransparentActivity extends ActionBarActivity {
+public class GoalSettingActivity extends Activity {
 
     EditText etName;
     EditText etGoalMoney;
@@ -36,7 +36,7 @@ public class TransparentActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_transparent);
+        setContentView(R.layout.activity_goal_setting);
 
         Typeface font = Typeface.createFromAsset(getAssets(), Constants.FONT_NORMAL);
         ((TextView)findViewById(R.id.textView3)).setTypeface(font);
@@ -73,7 +73,7 @@ public class TransparentActivity extends ActionBarActivity {
                 PropertyManager.getInstance().mGoal.goal_date = goal_date;
 
 //                Toast.makeText(TransparentActivity.this, goal_date, Toast.LENGTH_SHORT).show();
-                NetworkManager.getInstance().setGoal(TransparentActivity.this, 0,
+                NetworkManager.getInstance().setGoal(GoalSettingActivity.this, 0,
                         etName.getText().toString(), goal_date, Integer.parseInt(etGoalMoney.getText().toString()), 0, new NetworkManager.OnNetworkResultListener<Res>() {
                             @Override
                             public void onResult(Res res) {
@@ -115,28 +115,5 @@ public class TransparentActivity extends ActionBarActivity {
                 etPeriod.setText(num + "");
             }
         });
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_transparent, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

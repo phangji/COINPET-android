@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,8 +27,7 @@ import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.response.Goal;
 import com.quadcoder.coinpet.page.common.Constants;
-import com.quadcoder.coinpet.page.common.TransparentActivity;
-import com.quadcoder.coinpet.page.signup.SignupActivity;
+import com.quadcoder.coinpet.page.common.GoalSettingActivity;
 
 public class MyPetActivity extends ActionBarActivity implements ActionBar.TabListener, HistoryFragment.OnFragmentInteractionListener{
 
@@ -238,7 +236,7 @@ public class MyPetActivity extends ActionBarActivity implements ActionBar.TabLis
             imgbtnEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(getActivity(), TransparentActivity.class));
+                    startActivity(new Intent(getActivity(), GoalSettingActivity.class));
                 }
             });
 

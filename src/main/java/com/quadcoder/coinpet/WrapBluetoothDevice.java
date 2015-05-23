@@ -14,7 +14,7 @@ public class WrapBluetoothDevice {
 	
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
+		// CREATE Auto-generated method stub
 		return mDevice.getName() + "\n" + mDevice.getAddress();
 	}
 }

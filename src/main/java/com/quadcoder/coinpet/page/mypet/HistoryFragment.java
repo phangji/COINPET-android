@@ -34,7 +34,7 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class HistoryFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+    // CREATE: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = MyPetActivity.ARG_SECTION_NUMBER;
 
@@ -184,7 +184,7 @@ public class HistoryFragment extends Fragment {
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+    // CREATE: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -219,7 +219,7 @@ public class HistoryFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+        // CREATE: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
 

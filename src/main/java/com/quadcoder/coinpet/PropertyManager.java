@@ -9,13 +9,12 @@ import com.quadcoder.coinpet.network.response.Goal;
  * Created by Phangji on 4/1/15.
  */
 public class PropertyManager {
-    private static PropertyManager instance;
 
+    private static class PropertyManagerHolder {
+        private static final PropertyManager instance = new PropertyManager();
+    }
     public static PropertyManager getInstance(){
-        if(instance == null) {
-            instance = new PropertyManager();
-        }
-        return instance;
+        return PropertyManagerHolder.instance;
     }
 
     private static final String PREF_NAME = "coinpet_prefs";
@@ -55,7 +54,7 @@ public class PropertyManager {
         mEditor.commit();
     }
 
-    // TODO: 플로우 검사가 끝난 후, token을 영구적으로 저장해줘야 함.
+    // CREATE: 플로우 검사가 끝난 후, token을 영구적으로 저장해줘야 함.
     private static final String FIELD_TOKEN = "token";
     private String token = null;
 
@@ -71,4 +70,31 @@ public class PropertyManager {
     }
 
     public Goal mGoal = new Goal();
+
+    public static final String FIELD_SOUND = "sound";
+    private boolean sound;
+
+    public boolean isSound() {
+        sound = mPrefs.getBoolean(FIELD_SOUND, true);
+        return sound;
+    }
+
+    public void setSound(boolean sound) {
+        this.sound = sound;
+        mEditor.putBoolean(FIELD_SOUND, sound);
+        mEditor.commit();
+    }
+
+    /**
+     *  영구저장 X
+     */
+
+    private static boolean btRequested = true;
+    public boolean isBtReqested() {
+        return btRequested;
+    }
+
+    public void setBtRequested(boolean btRequested) {
+        this.btRequested = btRequested;
+    }
 }

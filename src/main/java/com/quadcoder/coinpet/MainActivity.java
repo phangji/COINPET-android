@@ -11,7 +11,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,12 +30,16 @@ import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.logger.LogWrapper;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
-import com.quadcoder.coinpet.page.common.TransparentActivity;
+import com.quadcoder.coinpet.page.common.GoalSettingActivity;
+import com.quadcoder.coinpet.page.freinds.FriendsActivity;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
+import com.quadcoder.coinpet.page.quest.QuestActivity;
+import com.quadcoder.coinpet.page.quiz.QuizActivity;
+import com.quadcoder.coinpet.page.setting.SettingActivity;
 import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
     static final int REQUEST_ENABLE_BT = 1;
     BluetoothDevice mDevice;
@@ -54,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
 
     TextView tvNowMoney;
     boolean isDoneFirstQuest;
-    static final int REQUEST_CODE_TRANSPARENT_ACTIVITY = 10;
+    static final int REQUEST_CODE_GOAL_SETTING_ACTIVITY = 10;
 
     @Override
     protected void onStart() {
@@ -67,6 +70,8 @@ public class MainActivity extends ActionBarActivity {
                 mChatService.start();
             }
         }
+        startAnimation();
+
         initializeLogging();
     }
 
@@ -115,7 +120,7 @@ public class MainActivity extends ActionBarActivity {
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
 
-        startAnimation();
+
     }
 
     void startAnimation() {
@@ -151,15 +156,21 @@ public class MainActivity extends ActionBarActivity {
                     setupChatService();
                     mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
                     connectBt();
+                    PropertyManager.getInstance().setBtRequested(true);
+                    Log.d("phangji bt", "bt enabled result ok");
 
                 } else if (requestCode == RESULT_CANCELED) {
-                    Log.d(TAG, "BT not enabled");
-                    mChatService.setState(BluetoothManager.STATE_NONE);
+                    PropertyManager.getInstance().setBtRequested(false);
+                    Log.d("phangji bt", "bt enabled canceled");
+                } else {    //블루투스를 켜시겠습니까? 아니요. OR 취소
+//                    mChatService.setState(BluetoothManager.STATE_NONE);
+                    PropertyManager.getInstance().setBtRequested(false);
+                    Log.d("phangji bt", "BT not enabled");
                 }
                 break;
-            case REQUEST_CODE_TRANSPARENT_ACTIVITY:
+            case REQUEST_CODE_GOAL_SETTING_ACTIVITY:
                 if(resultCode == Activity.RESULT_OK) {
-                    isDoneFirstQuest = data.getBooleanExtra(TransparentActivity.RESULT_GOAL_SET, false);
+                    isDoneFirstQuest = data.getBooleanExtra(GoalSettingActivity.RESULT_GOAL_SET, false);
                     if(isDoneFirstQuest) {
                         frameQuest.setVisibility(View.INVISIBLE);
                         frameTalk.setVisibility(View.VISIBLE);
@@ -176,6 +187,7 @@ public class MainActivity extends ActionBarActivity {
                         }, 2000);
                     }
                 }
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -256,8 +268,8 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 if(!isDoneFirstQuest) {
-                    Intent i = new Intent(MainActivity.this, TransparentActivity.class);
-                    startActivityForResult(i, REQUEST_CODE_TRANSPARENT_ACTIVITY);
+                    Intent i = new Intent(MainActivity.this, GoalSettingActivity.class);
+                    startActivity(i);
                 } else {
                     imgvHeart.setVisibility(View.INVISIBLE);
                     frameQuest.setVisibility(View.INVISIBLE);
@@ -278,12 +290,12 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        // Cashbook
+        // Quiz
         mainBtn = (ImageView)findViewById(R.id.imgvCashbook);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(MainActivity.this, QuizActivity.class));
             }
         });
 
@@ -292,38 +304,26 @@ public class MainActivity extends ActionBarActivity {
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(MainActivity.this, QuestActivity.class));
             }
         });
 
-        // Reward
+        // Freinds
         mainBtn = (ImageView)findViewById(R.id.imgvReward);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                startActivity(new Intent(MainActivity.this, FriendsActivity.class));
             }
         });
 
-        // Notification
-        mainBtn = (ImageView)findViewById(R.id.imgvNoti);
+        // Sync
+        mainBtn = (ImageView)findViewById(R.id.imgvSync);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final int coin = 500;
-                NetworkManager.getInstance().sendCoin(MainActivity.this, coin, new NetworkManager.OnNetworkResultListener<Res>() {
-                    @Override
-                    public void onResult(Res res) {
-                        int sum = Integer.parseInt(tvNowMoney.getText().toString()) + coin;
-                        tvNowMoney.setText("" + sum);
-                    }
-
-                    @Override
-                    public void onFail(Res res) {
-
-                    }
-                });
-
+                //임시로 Tutorial 실행
+                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
             }
         });
 
@@ -332,8 +332,7 @@ public class MainActivity extends ActionBarActivity {
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //임시로 Tutorial 실행
-                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
+                startActivity(new Intent(MainActivity.this, SettingActivity.class));
             }
         });
     }
@@ -345,7 +344,9 @@ public class MainActivity extends ActionBarActivity {
 
         setMainLayout();
 
-        setBtEnvironment();
+        Log.d("phangji bt", "onCreat isBtRequested" + PropertyManager.getInstance().isBtReqested());
+        if(PropertyManager.getInstance().isBtReqested())
+            setBtEnvironment();
     }
 
 
@@ -386,6 +387,10 @@ public class MainActivity extends ActionBarActivity {
 //        }
 //    }
 
+    /**
+     *  Bluetooth 환경 설정
+     */
+
     public void setBtEnvironment() {
         //Bluetooth 환경 설정
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -393,8 +398,7 @@ public class MainActivity extends ActionBarActivity {
         if (mBtAdapter == null) {
             Toast.makeText(MainActivity.this, "블루투스를 지원하지 않는 휴대폰입니다.", Toast.LENGTH_SHORT).show();
             finish();
-        }
-        if(!mBtAdapter.isEnabled()) {
+        } else if(!mBtAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else if(mChatService == null) {

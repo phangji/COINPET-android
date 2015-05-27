@@ -105,6 +105,11 @@ public class NetworkManager {
         });
     }
 
+
+    /**
+     * Goal
+     * */
+
     public void setGoal(Context context, int method, String content, String goal_date, int goal_cost, int now_cost,
                           final OnNetworkResultListener<Res> listener) {
         String url = SERVER_URL + "/goal";
@@ -135,6 +140,39 @@ public class NetworkManager {
             }
         });
     }
+
+    // TODO: Test
+    public void updateGoal(Context context, int state, int now_cost, final OnNetworkResultListener<Res> listener) {
+        String url = SERVER_URL + "/goal";
+        RequestParams params = new RequestParams();
+        params.put("state", state);
+        params.put("now_cost", now_cost);
+
+        client.addHeader("authorization", PropertyManager.getInstance().getToken());
+
+        client.put(context, url, params, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Res result = gson.fromJson(response, Res.class);
+                listener.onResult(result);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Res result = gson.fromJson(response, Res.class);
+                listener.onFail(result);
+            }
+        });
+    }
+
+    /**
+     * Saving
+     * */
 
     public void sendCoin(Context context, int now_cost,
                         final OnNetworkResultListener<Res> listener) {
@@ -187,5 +225,74 @@ public class NetworkManager {
             }
         });
     }
+
+    /**
+     * Quest
+     * */
+
+    // TODO: Test
+    public void updateQuest(Context context, int fk_std_que, int state, final OnNetworkResultListener<Res> listener) {
+        String url = SERVER_URL + "/quest";
+        RequestParams params = new RequestParams();
+        params.put("fk_std_que", fk_std_que);
+        params.put("state", state);
+
+        client.addHeader("authorization", PropertyManager.getInstance().getToken());
+
+        client.put(context, url, params, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Res result = gson.fromJson(response, Res.class);
+                listener.onResult(result);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Res result = gson.fromJson(response, Res.class);
+                listener.onFail(result);
+            }
+        });
+    }
+
+
+
+    /**
+     * Quiz
+     * */
+
+    // TODO: Test
+    public void postQuiz(Context context, int fk_std_quiz, int state, final OnNetworkResultListener<Res> listener) {
+        String url = SERVER_URL + "/quest";
+        RequestParams params = new RequestParams();
+        params.put("fk_std_quiz", fk_std_quiz);
+        params.put("state", state);
+
+        client.addHeader("authorization", PropertyManager.getInstance().getToken());
+
+        client.put(context, url, params, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Res result = gson.fromJson(response, Res.class);
+                listener.onResult(result);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Res result = gson.fromJson(response, Res.class);
+                listener.onFail(result);
+            }
+        });
+    }
+
 
 }

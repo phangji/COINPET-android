@@ -23,7 +23,7 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 				+ DBConstants.SystemQuestTable.CONTENT + " text, "
 				+ DBConstants.SystemQuestTable.POINT + " integer, "
 				+ DBConstants.SystemQuestTable.ORDER + " integer, "
-				+ DBConstants.SystemQuestTable.STATUS + " integer); ";
+				+ DBConstants.SystemQuestTable.STATE + " integer); ";
 		db.execSQL(sql);
 
 		sql = "CREATE TABLE " + DBConstants.ParentQuestTable.TABLE_NAME + "("
@@ -31,14 +31,14 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 				+ DBConstants.ParentQuestTable.CONTENT + " text, "
 				+ DBConstants.ParentQuestTable.POINT + " integer, "
 				+ DBConstants.ParentQuestTable.START_TIME + " text, "
-				+ DBConstants.ParentQuestTable.STATUS + " integer); ";
+				+ DBConstants.ParentQuestTable.STATE + " integer); ";
 		db.execSQL(sql);
 
 		sql = "CREATE TABLE " + DBConstants.QuizTable.TABLE_NAME + "("
 				+ DBConstants.QuizTable.PK + " integer, "
 				+ DBConstants.QuizTable.CONTENT + " text, "
 				+ DBConstants.QuizTable.POINT + " integer, "
-				+ DBConstants.QuizTable.STATUS + " integer); ";
+				+ DBConstants.QuizTable.STATE + " integer); ";
 		db.execSQL(sql);
 
 		sql = "CREATE TABLE " + DBConstants.FriendsTable.TABLE_NAME + "("

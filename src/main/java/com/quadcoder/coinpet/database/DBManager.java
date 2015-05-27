@@ -12,7 +12,7 @@ import com.quadcoder.coinpet.database.DBConstants.ParentQuestTable;
 import com.quadcoder.coinpet.database.DBConstants.QuizTable;
 import com.quadcoder.coinpet.database.DBConstants.FriendsTable;
 import com.quadcoder.coinpet.model.Friend;
-import com.quadcoder.coinpet.model.QuestStatus;
+import com.quadcoder.coinpet.model.QuestState;
 import com.quadcoder.coinpet.model.ParentQuest;
 import com.quadcoder.coinpet.model.Quiz;
 import com.quadcoder.coinpet.model.SystemQuest;
@@ -39,10 +39,10 @@ public class DBManager {
     public ArrayList<SystemQuest> getSystemQuestList() {
         ArrayList<SystemQuest> list = new ArrayList<SystemQuest>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATUS};
+        String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE};
         String orderBy = SystemQuestTable.ORDER + " ASC";
-        String selection = SystemQuestTable.STATUS + " = ?  OR " + SystemQuestTable.STATUS + " = ? ";
-        String[] selectionArgs = { "" + QuestStatus.CREATE,  "" + QuestStatus.DOING};
+        String selection = SystemQuestTable.STATE + " = ?  OR " + SystemQuestTable.STATE + " = ? ";
+        String[] selectionArgs = { "" + QuestState.CREATE,  "" + QuestState.DOING};
         Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
 
         while (c.moveToNext()) {
@@ -50,7 +50,7 @@ public class DBManager {
             record.pk = c.getInt(c.getColumnIndex(SystemQuestTable.PK));
             record.content = c.getString(c.getColumnIndex(SystemQuestTable.CONTENT));
             record.point = c.getInt(c.getColumnIndex(SystemQuestTable.POINT));
-            record.status = c.getInt(c.getColumnIndex(SystemQuestTable.STATUS));
+            record.state = c.getInt(c.getColumnIndex(SystemQuestTable.STATE));
             list.add(record);
         }
         c.close();
@@ -61,9 +61,9 @@ public class DBManager {
     public ArrayList<ParentQuest> getParentQuestList() {
         ArrayList<ParentQuest> list = new ArrayList<ParentQuest>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        String[] columns = {ParentQuestTable.PK, ParentQuestTable.CONTENT, ParentQuestTable.POINT, ParentQuestTable.STATUS, ParentQuestTable.START_TIME};
-        String selection = "DATE('" + ParentQuestTable.START_TIME + "', 'utc') < DATE('now', 'utc') AND " + ParentQuestTable.STATUS + " = ?  OR " + ParentQuestTable.STATUS + " = ? ";
-        String[] selectionArgs = { "" + QuestStatus.CREATE,  "" + QuestStatus.DOING};
+        String[] columns = {ParentQuestTable.PK, ParentQuestTable.CONTENT, ParentQuestTable.POINT, ParentQuestTable.STATE, ParentQuestTable.START_TIME};
+        String selection = "DATE('" + ParentQuestTable.START_TIME + "', 'utc') < DATE('now', 'utc') AND " + ParentQuestTable.STATE + " = ?  OR " + ParentQuestTable.STATE + " = ? ";
+        String[] selectionArgs = { "" + QuestState.CREATE,  "" + QuestState.DOING};
         Cursor c = db.query(ParentQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
 
         while (c.moveToNext()) {
@@ -71,7 +71,7 @@ public class DBManager {
             record.pk = c.getInt(c.getColumnIndex(ParentQuestTable.PK));
             record.content = c.getString(c.getColumnIndex(ParentQuestTable.CONTENT));
             record.point = c.getInt(c.getColumnIndex(ParentQuestTable.POINT));
-            record.status = c.getInt(c.getColumnIndex(ParentQuestTable.STATUS));
+            record.state = c.getInt(c.getColumnIndex(ParentQuestTable.STATE));
             record.startTime = c.getString(c.getColumnIndex(ParentQuestTable.START_TIME));
             list.add(record);
         }
@@ -83,8 +83,8 @@ public class DBManager {
     public Quiz getQuizRandom() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT};
-        String selection = QuizTable.STATUS + " = ?  OR " + QuizTable.STATUS + " = ? limit 1";
-        String[] selectionArgs = { "" + Quiz.STATUS_YET,  "" + Quiz.STATUS_WRONG};
+        String selection = QuizTable.STATE + " = ?  OR " + QuizTable.STATE + " = ? limit 1";
+        String[] selectionArgs = { "" + Quiz.STATE_YET,  "" + Quiz.STATE_WRONG};
         String orderBy = "random()";
         Cursor c = db.query(QuizTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
 
@@ -93,7 +93,7 @@ public class DBManager {
             record.pk = c.getInt(c.getColumnIndex(QuizTable.PK));
             record.content = c.getString(c.getColumnIndex(QuizTable.CONTENT));
             record.point = c.getInt(c.getColumnIndex(QuizTable.POINT));
-            record.status = c.getInt(c.getColumnIndex(QuizTable.STATUS));
+            record.state = c.getInt(c.getColumnIndex(QuizTable.STATE));
         }
         c.close();
 
@@ -132,7 +132,7 @@ public class DBManager {
         values.put(SystemQuestTable.PK, record.pk);
         values.put(SystemQuestTable.CONTENT, record.content);
         values.put(SystemQuestTable.POINT, record.point);
-        values.put(SystemQuestTable.STATUS, record.status);
+        values.put(SystemQuestTable.STATE, record.state);
         values.put(SystemQuestTable.ORDER, record.order);
         db.insert(SystemQuestTable.TABLE_NAME, null, values);
         db.close();
@@ -144,7 +144,7 @@ public class DBManager {
         values.put(ParentQuestTable.PK, record.pk);
         values.put(ParentQuestTable.CONTENT, record.content);
         values.put(ParentQuestTable.POINT, record.point);
-        values.put(ParentQuestTable.STATUS, record.status);
+        values.put(ParentQuestTable.STATE, record.state);
         values.put(ParentQuestTable.START_TIME, record.startTime);
         db.insert(ParentQuestTable.TABLE_NAME, null, values);
         db.close();
@@ -156,7 +156,7 @@ public class DBManager {
         values.put(QuizTable.PK, record.pk);
         values.put(QuizTable.CONTENT, record.content);
         values.put(QuizTable.POINT, record.point);
-        values.put(QuizTable.STATUS, record.status);
+        values.put(QuizTable.STATE, record.state);
         db.insert(QuizTable.TABLE_NAME, null, values);
         db.close();
     }
@@ -182,7 +182,7 @@ public class DBManager {
     public void updateSystemQuest(SystemQuest record){
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(SystemQuestTable.STATUS, record.status);
+        values.put(SystemQuestTable.STATE, record.state);
         String whereClause = SystemQuestTable.PK + " = ? ";
         String[] whereArgs = { "" + record.pk };
         db.update(SystemQuestTable.TABLE_NAME, values, whereClause, whereArgs);
@@ -192,7 +192,7 @@ public class DBManager {
     public void updateParentQuest(ParentQuest record){
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(ParentQuestTable.STATUS, record.status);
+        values.put(ParentQuestTable.STATE, record.state);
         String whereClause = ParentQuestTable.PK + " = ? ";
         String[] whereArgs = { "" + record.pk };
         db.update(ParentQuestTable.TABLE_NAME, values, whereClause, whereArgs);
@@ -202,7 +202,7 @@ public class DBManager {
     public void updateQuiz(Quiz record){
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(QuizTable.STATUS, record.status);
+        values.put(QuizTable.STATE, record.state);
         String whereClause = QuizTable.PK + " = ? ";
         String[] whereArgs = { "" + record.pk };
         db.update(QuizTable.TABLE_NAME, values, whereClause, whereArgs);

@@ -7,6 +7,6 @@ public class ParentQuest {
     public int pk;
     public String content;
     public int point;
-    public int status;
+    public int state;
     public String startTime;
 }

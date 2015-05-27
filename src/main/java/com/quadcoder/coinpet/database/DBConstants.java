@@ -8,7 +8,7 @@ public class DBConstants {
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
 		public static final String ORDER = "order";
-		public static final String STATUS = "status";
+		public static final String STATE = "state";
 	}
 
 	public static class ParentQuestTable {
@@ -16,7 +16,7 @@ public class DBConstants {
 		public static final String PK = "pk";
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
-		public static final String STATUS = "status";
+		public static final String STATE = "state";
 		public static final String START_TIME = "startTime";
 	}
 
@@ -25,7 +25,7 @@ public class DBConstants {
 		public static final String PK = "pk";
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
-		public static final String STATUS = "status";
+		public static final String STATE = "state";
 	}
 
 	public static class FriendsTable {

@@ -49,7 +49,6 @@ public class NetworkManager {
     }
 
 
-
     public void signup(Context context, String pn, String name,  String gender, int age,
                          final OnNetworkResultListener<Res> listener) {
         String url = SERVER_URL + "/user/kids";  //api
@@ -84,6 +83,36 @@ public class NetworkManager {
         String url = SERVER_URL + "/user/kids/login";
         RequestParams params = new RequestParams();
         params.put("pn", pn);
+
+        client.post(context, url, params, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Res result = gson.fromJson(response, Res.class);
+                listener.onResult(result);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                String response = responseBody == null ? null : new String(responseBody);
+                Gson gson = new Gson();
+                Res result = response == null ? null : gson.fromJson(response, Res.class);
+                listener.onFail(result);
+            }
+        });
+    }
+
+    public void getUpdatedData(Context context, int pk_std_que, int pk_std_quiz,
+                          final OnNetworkResultListener<Res> listener) {
+        String url = SERVER_URL + "/getInfo";
+
+        RequestParams params = new RequestParams();
+        params.put("pk_std_que", pk_std_que);
+        params.put("pk_std_quiz", pk_std_quiz);
+
+        client.addHeader("authorization", PropertyManager.getInstance().getToken());
 
         client.post(context, url, params, new AsyncHttpResponseHandler() {
 

@@ -36,5 +36,5 @@
     <string name="title_activity_setting">설정</string>
     <string name="title_activity_quest">퀘스트</string>
     <string name="title_activity_friends">코인펫 친구들</string>
-    <string name="title_activity_quiz">QuizActivity</string>
+    <string name="title_activity_quiz">퀴즈</string>
 </resources>

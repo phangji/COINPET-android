@@ -180,6 +180,24 @@ public class PropertyManager {
     }
 
     /**
+     * QCoin
+     */
+
+    private static final String FIELD_QCOIN = "qCoin";
+    private int qCoin = 3;
+
+    public int getqCoin() {
+        qCoin = mPrefs.getInt(FIELD_QCOIN, 3);
+        return qCoin;
+    }
+
+    public void setqCoin(int qCoin) {
+        this.qCoin = qCoin;
+        mEditor.putInt(FIELD_QCOIN, qCoin);
+        mEditor.commit();
+    }
+
+    /**
      *  영구저장 X
      */
 

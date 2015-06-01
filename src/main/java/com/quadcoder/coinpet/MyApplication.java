@@ -2,7 +2,8 @@ package com.quadcoder.coinpet;
 
 import android.app.Application;
 import android.content.Context;
-import android.media.AudioManager;
+import android.os.Handler;
+import android.os.Message;
 
 /**
  * Created by Phangji on 4/1/15.
@@ -10,25 +11,29 @@ import android.media.AudioManager;
 
 public class MyApplication extends Application {
 
-    private static Context sContext;
+    private static Context mContext;
+    private Handler mHandler;
+    Handler.Callback callback = null;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        sContext = this;
-        sAudioManager = (AudioManager)sContext.getSystemService(AUDIO_SERVICE);
+        mContext = this;
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                if(callback != null)
+                    callback.handleMessage(msg);
+            }
+        };
     }
 
     public static Context getContext(){
-        return sContext;
+        return mContext;
     }
 
-    private static AudioManager sAudioManager;
-
-    public static AudioManager getAudioManager() {
-//        if(sAudioManager == null) {
-//            sAudioManager = (AudioManager)getContext().getSystemService(AUDIO_SERVICE);
-//        }
-        return sAudioManager;
+    public Handler getHandler() {
+        return mHandler;
     }
+
 }

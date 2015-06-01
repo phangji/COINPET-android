@@ -99,11 +99,7 @@ public class MainActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if(mChatList != null)
-//        for (int i = 0; i < mChatList.size(); i++) {
-//            ChatThread chat = mChatList.get(i);
-//            chat.closeSocket();
-//        }
+
         if (mChatService != null) {
             mChatService.stop();
         }
@@ -195,7 +191,7 @@ public class MainActivity extends Activity {
 
 
     String pnMsg = null;
-    void makePnPsg() {
+    void makePnMsg() {
         final char[] registerPn = new char[20];
         registerPn[0] = 'S';
         registerPn[1] = 0x01;
@@ -372,21 +368,6 @@ public class MainActivity extends Activity {
         }
     };
 
-//    void createChatThread(boolean isConnected) {
-//        // 찾은 이후
-//        if(isConnected) {
-//            mChatList = new ArrayList<ChatThread>();
-//            mHandler.postDelayed(new Runnable() {
-//
-//                @Override
-//                public void run() {
-//                    WrapBluetoothDevice device = new WrapBluetoothDevice(mDevice);
-//                    new ConnectThread(device.getDevice()).start();
-//                }
-//            }, 2000);
-//        }
-//    }
-
     /**
      *  Bluetooth 환경 설정
      */
@@ -422,8 +403,10 @@ public class MainActivity extends Activity {
         mOutStringBuffer = new StringBuffer("");
     }
 
+
+
     /**
-     * The Handler that gets information back from the BluetoothChatService
+     * The Handler that gets information back from the BluetoothChatManager
      */
     private final Handler mHandler = new Handler() {
         @Override
@@ -447,13 +430,13 @@ public class MainActivity extends Activity {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-//                    Toast.makeText(MainActivity.this, "Me : " + writeMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Me : " + writeMessage, Toast.LENGTH_SHORT).show();
                     break;
                 case BTConstants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-//                    Toast.makeText(MainActivity.this, "Device : " + readMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Device : " + readMessage, Toast.LENGTH_SHORT).show();
 
                     if(readBuf != null && readBuf[1] == 0x08) {   // 동전입력 프로토콜
                         int[] num = new int[3];
@@ -476,7 +459,7 @@ public class MainActivity extends Activity {
                                 if(!isLevelup) {
                                     imgvPet.setImageResource(R.drawable.pet_happy_anim);
                                     ((AnimationDrawable)imgvPet.getDrawable()).start();
-                                    sHander.postDelayed(new Runnable() {
+                                    mHandler.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
                                             imgvPet.setImageResource(R.drawable.pet_default_anim);
@@ -487,7 +470,7 @@ public class MainActivity extends Activity {
                                     imgvLevelup.setVisibility(View.VISIBLE);
                                     Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.mail_bg_anim);
                                     imgvLevelup.startAnimation(shake);
-                                    sHander.postDelayed(new Runnable() {
+                                    mHandler.postDelayed(new Runnable() {   //edited
                                         @Override
                                         public void run() {
                                             imgvLevelup.setVisibility(View.INVISIBLE);
@@ -513,6 +496,11 @@ public class MainActivity extends Activity {
                             }
                         });
                     }
+
+                    if(readMessage != null && readBuf[1] == 0x09) {
+
+                    }
+
                     break;
                 case BTConstants.MESSAGE_DEVICE_NAME:
                     String deviceName = msg.getData().getString(BTConstants.DEVICE_NAME);
@@ -525,29 +513,4 @@ public class MainActivity extends Activity {
             }
         }
     };
-
-    Handler sHander = new Handler();
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

@@ -12,5 +12,4 @@ public interface BTConstants {
     // Key names received from the BluetoothManager Handler
     String DEVICE_NAME = "COINPET";
     String TOAST = "toast";
-
 }

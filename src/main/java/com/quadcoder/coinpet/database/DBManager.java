@@ -82,7 +82,7 @@ public class DBManager {
 
     public Quiz getQuizRandom() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT};
+        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.EXPLANATION};
         String selection = QuizTable.STATE + " = ?  OR " + QuizTable.STATE + " = ? limit 1";
         String[] selectionArgs = { "" + Quiz.STATE_YET,  "" + Quiz.STATE_WRONG};
         String orderBy = "random()";
@@ -94,6 +94,11 @@ public class DBManager {
             record.content = c.getString(c.getColumnIndex(QuizTable.CONTENT));
             record.point = c.getInt(c.getColumnIndex(QuizTable.POINT));
             record.state = c.getInt(c.getColumnIndex(QuizTable.STATE));
+            record.diff = c.getInt(c.getColumnIndex(QuizTable.DIFF));
+            record.hint = c.getString(c.getColumnIndex(QuizTable.HINT));
+            record.time = c.getInt(c.getColumnIndex(QuizTable.TIME));
+            record.solution = c.getInt(c.getColumnIndex(QuizTable.SOLUTION));
+            record.explanation = c.getString(c.getColumnIndex(QuizTable.EXPLANATION));
         }
         c.close();
 
@@ -157,6 +162,11 @@ public class DBManager {
         values.put(QuizTable.CONTENT, record.content);
         values.put(QuizTable.POINT, record.point);
         values.put(QuizTable.STATE, record.state);
+        values.put(QuizTable.DIFF, record.diff);
+        values.put(QuizTable.HINT, record.hint);
+        values.put(QuizTable.TIME, record.time);
+        values.put(QuizTable.SOLUTION, record.solution);
+        values.put(QuizTable.EXPLANATION, record.explanation);
         db.insert(QuizTable.TABLE_NAME, null, values);
         db.close();
     }

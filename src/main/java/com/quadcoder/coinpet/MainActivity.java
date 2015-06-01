@@ -1,6 +1,7 @@
 package com.quadcoder.coinpet;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -31,6 +32,7 @@ import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.logger.LogWrapper;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
+import com.quadcoder.coinpet.page.common.DialogActivity;
 import com.quadcoder.coinpet.page.common.GoalSettingActivity;
 import com.quadcoder.coinpet.page.freinds.FriendsActivity;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
@@ -289,10 +291,19 @@ public class MainActivity extends Activity {
 
         // Quiz
         mainBtn = (ImageView)findViewById(R.id.imgvCashbook);
+
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, QuizActivity.class));
+                int count = PropertyManager.getInstance().getqCoin();
+                if(count <= 0) {
+                    Intent i = new Intent(MainActivity.this, DialogActivity.class);
+                    i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.COINOVER);
+                    startActivity(i);   //TODO: test
+                } else {
+                    startActivity(new Intent(MainActivity.this, QuizActivity.class));
+                }
+
             }
         });
 
@@ -416,14 +427,14 @@ public class MainActivity extends Activity {
                 case BTConstants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothManager.STATE_CONNECTED:
-                            Toast.makeText(MainActivity.this, "state connected", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, TAG + "/ state connected", Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothManager.STATE_CONNECTING:
-                            Toast.makeText(MainActivity.this, "state connecting", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, TAG + "/ state connecting", Toast.LENGTH_SHORT).show();
                             break;
                         case BluetoothManager.STATE_LISTEN:
                         case BluetoothManager.STATE_NONE:
-                            Toast.makeText(MainActivity.this, "state none", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, TAG + "/ state none", Toast.LENGTH_SHORT).show();
                             break;
                     }
                     break;
@@ -431,7 +442,7 @@ public class MainActivity extends Activity {
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    Toast.makeText(MainActivity.this, "Me : " + writeMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, TAG + " / Me : " + writeMessage, Toast.LENGTH_SHORT).show();
                     break;
                 case BTConstants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;

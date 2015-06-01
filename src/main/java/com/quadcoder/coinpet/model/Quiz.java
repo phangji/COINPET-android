@@ -12,4 +12,9 @@ public class Quiz {
     public String content;
     public int point;
     public int state;
+    public int diff;
+    public String hint;
+    public int time;
+    public int solution;
+    public String explanation;
 }

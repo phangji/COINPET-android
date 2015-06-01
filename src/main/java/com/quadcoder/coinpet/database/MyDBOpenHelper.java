@@ -38,6 +38,11 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 				+ DBConstants.QuizTable.PK + " integer, "
 				+ DBConstants.QuizTable.CONTENT + " text, "
 				+ DBConstants.QuizTable.POINT + " integer, "
+				+ DBConstants.QuizTable.DIFF + " integer, "
+				+ DBConstants.QuizTable.HINT + " text, "
+				+ DBConstants.QuizTable.TIME + " integer, "
+				+ DBConstants.QuizTable.SOLUTION + " integer, "
+                + DBConstants.QuizTable.EXPLANATION + " text, "
 				+ DBConstants.QuizTable.STATE + " integer); ";
 		db.execSQL(sql);
 

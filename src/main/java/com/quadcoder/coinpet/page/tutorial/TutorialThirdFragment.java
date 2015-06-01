@@ -82,7 +82,8 @@ public class TutorialThirdFragment extends Fragment {
     }
 
     BluetoothManager mChatService;
-    private Handler mHandler = new Handler() {
+    boolean utcIsSent;
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -94,7 +95,19 @@ public class TutorialThirdFragment extends Fragment {
                     if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.PN_RESPONSE) {
                         Toast.makeText(getActivity(), "PN RESPONSE " + readBuf[3], Toast.LENGTH_SHORT).show();
                         if(readBuf[3] == BluetoothUtil.SUCCESS) {
+                            mChatService.write(BluetoothUtil.getInstance().sendUTC());
+                            utcIsSent = true;
+                        } else {
+                            mChatService.write(BluetoothUtil.getInstance().ack(false));
+                        }
+                    }
+
+                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.ACK) {
+                        Toast.makeText(getActivity(), "ACK" + readBuf[3], Toast.LENGTH_SHORT).show();
+                        if(readBuf[3] == BluetoothUtil.SUCCESS && utcIsSent) {
                             moveToNextPage();
+                        } else {
+                            Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
                         }
                     }
                     break;

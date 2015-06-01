@@ -37,4 +37,21 @@
     <string name="title_activity_quest">퀘스트</string>
     <string name="title_activity_friends">코인펫 친구들</string>
     <string name="title_activity_quiz">퀴즈</string>
+    <string name="show_hint">힌트보기</string>
+    <string name="diff_easy">쉬움</string>
+    <string name="diff_normal">보통</string>
+    <string name="diff_difficult">어려움</string>
+    
+    
+    <!-- dialog -->
+    <string name="dialog_next_quiz">이제 다른 문제를 풀어볼까요?</string>
+    <string name="i_can">계속 할래요</string>
+    <string name="no_i_cannot">그만 할래요</string>
+    <string name="dialog_time_over">시간 초과</string>
+    <string name="dialog_wrong">아니에요</string>
+    <string name="dialog_qcoin_over">문제 동전이 모두 떨어졌어요.</string>
+    <string name="try_tmr">내일 다시 도전해봐요</string>
+    <string name="reconnect_pad">패드를 다시 연결해주세요.</string>
+    <string name="dialog_right">맞았어요</string>
+    <string name="title_activity_dialog">DialogActivity</string>
 </resources>

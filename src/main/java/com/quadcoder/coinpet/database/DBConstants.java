@@ -26,6 +26,11 @@ public class DBConstants {
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
 		public static final String STATE = "state";
+		public static final String DIFF = "diff";
+		public static final String HINT = "hint";
+		public static final String TIME = "time";
+        public static final String SOLUTION = "solution";
+        public static final String EXPLANATION = "explanation";
 	}
 
 	public static class FriendsTable {

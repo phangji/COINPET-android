@@ -26,6 +26,10 @@ public class PropertyManager {
         mEditor = mPrefs.edit();
     }
 
+    /**
+     * pn
+     * */
+
     private static final String FIELD_PN = "pn";
     private String pn = null;
 
@@ -40,6 +44,10 @@ public class PropertyManager {
 //        mEditor.commit();
     }
 
+    /**
+     * mac
+     * */
+
     private static final String FIELD_MAC = "mac";
     private String mac = null;
 
@@ -53,6 +61,10 @@ public class PropertyManager {
         mEditor.putString(FIELD_MAC, this.mac);
         mEditor.commit();
     }
+
+    /**
+     * token
+     * */
 
     // CREATE: 플로우 검사가 끝난 후, token을 영구적으로 저장해줘야 함.
     private static final String FIELD_TOKEN = "token";
@@ -69,7 +81,16 @@ public class PropertyManager {
         this.token = token;
     }
 
+    /**
+     * goal
+     * */
+
     public Goal mGoal = new Goal();
+
+
+    /**
+     * sound
+     * */
 
     public static final String FIELD_SOUND = "sound";
     private boolean sound;
@@ -82,6 +103,79 @@ public class PropertyManager {
     public void setSound(boolean sound) {
         this.sound = sound;
         mEditor.putBoolean(FIELD_SOUND, sound);
+        mEditor.commit();
+    }
+
+    /**
+     * name
+     * */
+
+    private static final String FIELD_NAME = "name";
+    private String name = null;
+
+    public String getName() {
+        name = mPrefs.getString(FIELD_NAME, "");
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        mEditor.putString(FIELD_NAME, name);
+        mEditor.commit();
+    }
+
+    /**
+     * nowMoney
+     * */
+
+    private static final String FIELD_NOW_MONEY = "nowMoney";
+    private int nowMoney;
+
+    public int getNowMoney() {
+        nowMoney = mPrefs.getInt(FIELD_NOW_MONEY, 0);
+        return nowMoney;
+    }
+
+    public void setNowMoney(int nowMoney) {
+        this.nowMoney = nowMoney;
+        mEditor.putInt(FIELD_NOW_MONEY, nowMoney);
+        mEditor.commit();
+    }
+
+    /**
+     * nowPoint
+     * */
+
+    private static final String FIELD_NOW_POINT = "nowPoint";
+    private int nowPoint;
+
+    public int getNowPoint() {
+        nowPoint = mPrefs.getInt(FIELD_NOW_POINT, 0);
+        return nowPoint;
+    }
+
+    public void setNowPoint(int nowPoint) {
+        this.nowPoint = nowPoint;
+        mEditor.putInt(FIELD_NOW_POINT, nowPoint);
+        mEditor.commit();
+    }
+
+    /**
+     * nowLevel
+     * */
+
+    private static final String FIELD_NOW_LEVEL = "nowLevel";
+    private int nowLevel;
+
+    public int getNowLevel() {
+        nowLevel = mPrefs.getInt(FIELD_NOW_LEVEL, 0);
+        return nowLevel;
+
+    }
+
+    public void setNowLevel(int nowLevel) {
+        this.nowLevel = nowLevel;
+        mEditor.putInt(FIELD_NOW_LEVEL, nowLevel);
         mEditor.commit();
     }
 

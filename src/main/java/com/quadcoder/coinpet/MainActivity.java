@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.bluetooth.BluetoothManager;
 import com.quadcoder.coinpet.bluetooth.BTConstants;
+import com.quadcoder.coinpet.bluetooth.BluetoothUtil;
 import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.logger.LogWrapper;
 import com.quadcoder.coinpet.network.NetworkManager;
@@ -436,9 +437,9 @@ public class MainActivity extends Activity {
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(MainActivity.this, "Device : " + readMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "MainActivity / Device : " + readMessage, Toast.LENGTH_SHORT).show();
 
-                    if(readBuf != null && readBuf[1] == 0x08) {   // 동전입력 프로토콜
+                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.READ_MONEY) {   // 동전입력 프로토콜
                         int[] num = new int[3];
                         for(int i=3; i<=5; i++) {
                             num[i-3] = readBuf[i];
@@ -497,14 +498,14 @@ public class MainActivity extends Activity {
                         });
                     }
 
-                    if(readMessage != null && readBuf[1] == 0x09) {
-
+                    if(readMessage != null && readBuf[1] == BluetoothUtil.Opcode.READ_MONEY_SYNC) {
+                        //오랜만에 sync됐을 때 처리들 - UTC랑 여러 번 옴.
                     }
 
                     break;
                 case BTConstants.MESSAGE_DEVICE_NAME:
                     String deviceName = msg.getData().getString(BTConstants.DEVICE_NAME);
-//                    Toast.makeText(MainActivity.this, "Connected to " + deviceName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Connected to " + deviceName, Toast.LENGTH_SHORT).show();
                     break;
                 case BTConstants.MESSAGE_TOAST:
 //                    Toast.makeText(MainActivity.this, msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();

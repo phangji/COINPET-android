@@ -1,5 +1,8 @@
 package com.quadcoder.coinpet.bluetooth;
 
+import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.logger.Log;
+
 import java.util.Calendar;
 
 /**
@@ -22,7 +25,7 @@ public class BluetoothUtil {
     public static final char SUCCESS = 's';
     public static final char FAIL = 'f';
 
-    interface Opcode {
+    public interface Opcode {
         byte PN_REGISTER = 0x01;
         byte PN_RESPONSE = 0x02;
         byte ACK = 0x03;
@@ -42,7 +45,20 @@ public class BluetoothUtil {
 
     }
 
-    byte[] ack(boolean isSuccess) {
+    public byte[] registerPn() {
+        byte[] buffer = new byte[20];
+        buffer[0] = S;
+        buffer[1] = Opcode.PN_REGISTER;
+        buffer[2] = 16;
+        buffer[19] = E;
+        char[] pn = PropertyManager.getInstance().getPn().toCharArray();
+        for(int i=3; i<19; i++) {
+            buffer[i] = (byte)pn[i-3];
+        }
+        return buffer;
+    }
+
+    public byte[] ack(boolean isSuccess) {
         byte[] buffer = new byte[5];
         buffer[0] = S;
         buffer[1] = Opcode.ACK;
@@ -57,7 +73,7 @@ public class BluetoothUtil {
         return buffer;
     }
 
-    byte[] sendUTC() {
+    public byte[] sendUTC() {
         byte[] buffer = new byte[9];
         buffer[0] = S;
         buffer[1] = Opcode.UTC_SET;
@@ -79,7 +95,7 @@ public class BluetoothUtil {
         return buffer;
     }
 
-    byte[] requestSync() {
+    public byte[] requestSync() {
         final byte[] buffer = new byte[5];
         buffer[0] = S;
         buffer[1] = Opcode.WRITE_SYNC;
@@ -91,7 +107,7 @@ public class BluetoothUtil {
         return buffer;
     }
 
-    byte[] unlock() {
+    public byte[] unlock() {
         final byte[] buffer = new byte[5];
         buffer[0] = S;
         buffer[1] = Opcode.WRITE_UNLOCK;
@@ -103,7 +119,7 @@ public class BluetoothUtil {
         return buffer;
     }
 
-    byte[] requestBoardConn() {
+    public byte[] requestBoardConn() {
         final byte[] buffer = new byte[5];
         buffer[0] = S;
         buffer[1] = Opcode.BOARD_CON_REQ;
@@ -115,7 +131,7 @@ public class BluetoothUtil {
         return buffer;
     }
 
-    byte[] quizTimeOver() {
+    public byte[] quizTimeOver() {
         final byte[] buffer = new byte[5];
         buffer[0] = S;
         buffer[1] = Opcode.QUIZ_TIMEOVER;
@@ -127,7 +143,7 @@ public class BluetoothUtil {
         return buffer;
     }
 
-    byte[] quizIsEnded() {
+    public byte[] quizIsEnded() {
         final byte[] buffer = new byte[5];
         buffer[0] = S;
         buffer[1] = Opcode.QUIZ_TIMEOVER;

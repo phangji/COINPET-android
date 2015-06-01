@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +19,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
+import com.quadcoder.coinpet.bluetooth.BTConstants;
 import com.quadcoder.coinpet.bluetooth.BluetoothManager;
+import com.quadcoder.coinpet.bluetooth.BluetoothUtil;
 import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.page.common.Constants;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
@@ -61,39 +63,45 @@ public class TutorialThirdFragment extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makePnPsg();
-                mChatService.write(pnMsg.getBytes());
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startActivity(new Intent(getActivity(), SignupActivity.class));
-                        getActivity().finish();
-                    }
-                }, 2000);
+                mChatService.write(BluetoothUtil.getInstance().registerPn());
+
             }
         });
 
         return rootView;
     }
 
-    String pnMsg = null;
-
-    void makePnPsg() {
-        final char[] registerPn = new char[20];
-        registerPn[0] = 'S';
-        registerPn[1] = 0x01;
-        registerPn[2] = 16;
-        registerPn[19] = 'E';
-        char[] pn = PropertyManager.getInstance().getPn().toCharArray();
-        for(int i=3; i<19; i++) {
-            registerPn[i] = pn[i-3];
-        }
-        pnMsg = new String(registerPn);
-        Log.d("registerPn", pnMsg);
+    void moveToNextPage() {
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(getActivity(), SignupActivity.class));
+                getActivity().finish();
+            }
+        }, 2000);
     }
 
     BluetoothManager mChatService;
-    Handler mHandler = new Handler();
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case BTConstants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(getActivity(), "Tutorial / Device : " + readMessage, Toast.LENGTH_SHORT).show();
+
+                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.PN_RESPONSE) {
+                        Toast.makeText(getActivity(), "PN RESPONSE " + readBuf[3], Toast.LENGTH_SHORT).show();
+                        if(readBuf[3] == BluetoothUtil.SUCCESS) {
+                            moveToNextPage();
+                        }
+                    }
+                    break;
+            }
+        }
+    };
+
     StringBuffer mOutStringBuffer;
     private void setupChatService() {
         Log.d(TAG, "setupChatService()");
@@ -108,6 +116,14 @@ public class TutorialThirdFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        if (mChatService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (mChatService.getState() == BluetoothManager.STATE_NONE) {
+                // Start the Bluetooth chat services
+                mChatService.start();
+            }
+        }
     }
 
     BluetoothAdapter mBtAdapter;
@@ -184,4 +200,5 @@ public class TutorialThirdFragment extends Fragment {
         if(isRegistered)
             getActivity().unregisterReceiver(mReceiver);
     }
+
 }

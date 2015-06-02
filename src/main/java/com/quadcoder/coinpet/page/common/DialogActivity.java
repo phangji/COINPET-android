@@ -50,21 +50,21 @@ public class DialogActivity extends Activity {
         String desp = getIntent().getStringExtra(TEXT);
         switch (mType) {
             case RIGHT :
-//                imgvIcon.setImageResource(R.id.);
+                imgvIcon.setImageResource(R.drawable.d_o);
                 tvLarge.setText(R.string.dialog_right);
                 tvDesp.setText(desp);
                 setTwoBtnListener();
                 break;
 
             case WRONG :
-//                imgvIcon.setImageResource(R.id.);
+                imgvIcon.setImageResource(R.drawable.d_x);
                 tvLarge.setText(R.string.dialog_wrong);
                 tvDesp.setText(desp);
                 setTwoBtnListener();
                 break;
 
             case TIMEOVER :
-//                imgvIcon.setImageResource(R.id.);
+                imgvIcon.setImageResource(R.drawable.d_timeover);
                 tvLarge.setText(R.string.dialog_time_over);
                 tvDesp.setText(desp);
                 setTwoBtnListener();

@@ -33,8 +33,6 @@ public class SettingActivity extends Activity {
             }
         });
 
-
-
         Log.d("phangji", "onCreate");
     }
 

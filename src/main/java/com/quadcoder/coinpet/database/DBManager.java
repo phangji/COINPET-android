@@ -12,7 +12,7 @@ import com.quadcoder.coinpet.database.DBConstants.ParentQuestTable;
 import com.quadcoder.coinpet.database.DBConstants.QuizTable;
 import com.quadcoder.coinpet.database.DBConstants.FriendsTable;
 import com.quadcoder.coinpet.model.Friend;
-import com.quadcoder.coinpet.model.QuestState;
+import com.quadcoder.coinpet.model.Quest;
 import com.quadcoder.coinpet.model.ParentQuest;
 import com.quadcoder.coinpet.model.Quiz;
 import com.quadcoder.coinpet.model.SystemQuest;
@@ -41,8 +41,8 @@ public class DBManager {
         SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE};
         String orderBy = SystemQuestTable.ORDER + " ASC";
-        String selection = SystemQuestTable.STATE + " = ?  OR " + SystemQuestTable.STATE + " = ? ";
-        String[] selectionArgs = { "" + QuestState.CREATE,  "" + QuestState.DOING};
+        String selection = SystemQuestTable.STATE + " != ? ";
+        String[] selectionArgs = { "" + Quest.DELETE };
         Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
 
         while (c.moveToNext()) {
@@ -62,8 +62,8 @@ public class DBManager {
         ArrayList<ParentQuest> list = new ArrayList<ParentQuest>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {ParentQuestTable.PK, ParentQuestTable.CONTENT, ParentQuestTable.POINT, ParentQuestTable.STATE, ParentQuestTable.START_TIME};
-        String selection = "DATE('" + ParentQuestTable.START_TIME + "', 'utc') < DATE('now', 'utc') AND " + ParentQuestTable.STATE + " = ?  OR " + ParentQuestTable.STATE + " = ? ";
-        String[] selectionArgs = { "" + QuestState.CREATE,  "" + QuestState.DOING};
+        String selection = "DATE('" + ParentQuestTable.START_TIME + "', 'utc') < DATE('now', 'utc') AND " + ParentQuestTable.STATE + " != ? ";
+        String[] selectionArgs = { "" + Quest.DELETE};
         Cursor c = db.query(ParentQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
 
         while (c.moveToNext()) {

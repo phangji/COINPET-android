@@ -240,7 +240,11 @@ public class MainActivity extends Activity {
         Typeface font = Typeface.createFromAsset(getAssets(), com.quadcoder.coinpet.page.common.Constants.FONT_NORMAL);
         tvTalk.setTypeface(font);
 
-        final AudioEffect audio = new AudioEffect(AudioEffect.CARTOON_BOING);
+        final AudioEffect levelupAudio = new AudioEffect(AudioEffect.LEVEL_UP);
+        final AudioEffect pointupAudio = new AudioEffect(AudioEffect.POINT_UP);
+        final AudioEffect boingAudio = new AudioEffect(AudioEffect.CARTOON_BOING);
+        final AudioEffect hahahaAudio = new AudioEffect(AudioEffect.HAHAHA);
+        final AudioEffect hmmmAudio = new AudioEffect(AudioEffect.HMMM);
 
         //펫 이미지 탭 했을 때
         imgvPet.setOnClickListener(new View.OnClickListener() {
@@ -258,7 +262,19 @@ public class MainActivity extends Activity {
                     }, 1000);
 
                 }
-                audio.play();
+
+                int random = (int)(Math.random() * 10) % 3;
+                switch (random) {
+                    case 0:
+                        boingAudio.play();
+                        break;
+                    case 1:
+                        hahahaAudio.play();
+                        break;
+                    case 2:
+                        hmmmAudio.play();
+                        break;
+                }
             }
         });
 

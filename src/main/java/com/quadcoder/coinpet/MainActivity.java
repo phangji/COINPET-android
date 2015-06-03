@@ -96,8 +96,9 @@ public class MainActivity extends Activity {
         mBtAdapter.startDiscovery();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
-        isRegistered = true;
+//        isRegistered = true;
     }
+
 
     @Override
     public void onDestroy() {
@@ -212,10 +213,12 @@ public class MainActivity extends Activity {
         if(mChatService.getState() == BluetoothManager.STATE_BT_ENABLED) {
             mDevice = mChatService.searchPaired();
 
-            if (mDevice == null) {  //페어링된 적이 없다면,
+            if( mDevice != null) {
+                mChatService.connect(mDevice);
+            } else {  //페어링된 적이 없다면,
                 discovery();
             }
-            mChatService.connect(mDevice);
+
         }
     }
 
@@ -391,6 +394,8 @@ public class MainActivity extends Activity {
                         mDevice = device;
                         mBtAdapter.cancelDiscovery();
                         mChatService.setState(BluetoothManager.STATE_DISCOVERING);
+                        mChatService.connect(mDevice);
+                        isRegistered = true;
                     }
             }
         }

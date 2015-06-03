@@ -25,6 +25,7 @@ public class BluetoothManager {
 
     public String SERVICE_NAME = "COINPET-1234";
     static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+//    static final UUID MY_UUID = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB");
 
     private BluetoothAdapter mAdapter;
     private Handler mHandler;

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/background_alpha">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/friend_box"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvPet"
+            android:layout_gravity="left|center_vertical"
+            android:src="@drawable/f_mm"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Text"
+            android:id="@+id/tvTitle"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginTop="30dp"
+            android:textColor="#000"
+            android:textSize="18dp" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="80dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="아이들을 사랑하는 엄마 코인펫"
+                android:id="@+id/tvDesp"
+                android:textColor="#000"
+                android:maxLines="2"
+                android:lines="2"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/way_to_save"
+                android:id="@+id/textView"
+                android:textColor="@color/light_green"
+                android:layout_marginTop="50dp"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="New Text"
+                android:id="@+id/tvCondition"
+                android:textColor="#000"
+                android:layout_marginTop="4dp"
+                android:textSize="18dp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvCancle"
+            android:layout_gravity="right|top"
+            android:src="@drawable/f_x"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:padding="20dp" />
+
+    </FrameLayout>
+
+</FrameLayout>

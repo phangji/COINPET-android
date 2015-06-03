@@ -12,6 +12,7 @@ import com.quadcoder.coinpet.MainActivity;
 import com.quadcoder.coinpet.MyApplication;
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
+import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 public class SplashActivity extends Activity {
 

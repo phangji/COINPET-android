@@ -7,7 +7,7 @@ public class DBConstants {
 		public static final String PK = "pk";
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
-		public static final String ORDER = "order";
+		public static final String ORDER = "seq";
 		public static final String STATE = "state";
 	}
 

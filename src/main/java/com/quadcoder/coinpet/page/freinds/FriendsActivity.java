@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.audio.AudioEffect;
@@ -16,19 +19,38 @@ import java.util.ArrayList;
 
 public class FriendsActivity extends ActionBarActivity {
 
+    FrameLayout mainFrame;
     ImageView imgvMM;
     ImageView imgvTT;
     ImageView imgvKuKu;
     ImageView imgvDD;
     ImageView imgvKoKo;
+    ArrayList<Friend> friendList;
+    ArrayList<ImageView> imageList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
 
-        setLayouts();
+        mainFrame = (FrameLayout) findViewById(R.id.mainFrame);
+        imgvMM = (ImageView) findViewById(R.id.imgvMM);
+        imgvTT = (ImageView) findViewById(R.id.imgvTT);
+        imgvKuKu = (ImageView) findViewById(R.id.imgvKuKu);
+        imgvDD = (ImageView) findViewById(R.id.imgvDD);
+        imgvKoKo = (ImageView) findViewById(R.id.imgvKK);
+
+        imageList = new ArrayList<>(5);
+        imageList.add(imgvMM);  imageList.add(imgvKuKu);  imageList.add(imgvTT);  imageList.add(imgvDD);  imageList.add(imgvKoKo);
+
         setClickListeners();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        setLayouts();
     }
 
     final AudioEffect kukuAudio = new AudioEffect(AudioEffect.FREIND_KUKU);
@@ -37,51 +59,70 @@ public class FriendsActivity extends ActionBarActivity {
     final AudioEffect kokoAudio = new AudioEffect(AudioEffect.FREIND_KOKO);
     final AudioEffect mamaAudio = new AudioEffect(AudioEffect.FREIND_MAMA);
 
-    private void setLayouts() {
-        imgvMM = (ImageView) findViewById(R.id.imgvMM);
-        imgvTT = (ImageView) findViewById(R.id.imgvTT);
-        imgvKuKu = (ImageView) findViewById(R.id.imgvKuKu);
-        imgvDD = (ImageView) findViewById(R.id.imgvDD);
-        imgvKoKo = (ImageView) findViewById(R.id.imgvKK);
+    final AudioEffect[] effectList = {mamaAudio, kukuAudio, chchAudio, ddAudio, kokoAudio};
 
-        ArrayList<Friend> friendList = DBManager.getInstance().getFriendList();
+    private void setLayouts() {
+        friendList = DBManager.getInstance().getFriendList();
+        for(int i=0; i<5; i++) {
+            Friend friend = friendList.get(i);
+            if(friend.isSaved) {
+                imageList.get(i).setImageResource(friend.resId);
+            }
+        }
     }
 
+    boolean isBoxup;
+    View upBox;
     private void setClickListeners() {
-        imgvMM.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                kukuAudio.play();
-            }
-        });
 
-        imgvTT.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chchAudio.play();
-            }
-        });
+        for(int i=0; i<5; i++) {
+            ImageView fView = imageList.get(i);
+            final int idx = i;
+            fView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if( !isBoxup ) {
+                        effectList[idx].play();
+                        upBox = getLayoutInflater().inflate(R.layout.friend_box_layout, null);
 
-        imgvKuKu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mamaAudio.play();
-            }
-        });
+                        //set view
+                        TextView tvTitle = (TextView) upBox.findViewById(R.id.tvTitle);
+                        TextView tvDesp = (TextView) upBox.findViewById(R.id.tvDesp);
+                        TextView tvCond = (TextView) upBox.findViewById(R.id.tvCondition);
+                        ImageView imgvPet = (ImageView) upBox.findViewById(R.id.imgvPet);
+                        ImageView imgvCancle = (ImageView) upBox.findViewById(R.id.imgvCancle);
 
-        imgvDD.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ddAudio.play();
-            }
-        });
+                        Friend friend = friendList.get(idx);
+                        tvTitle.setText(friend.name);
+                        tvDesp.setText(friend.description);
+                            tvCond.setText(friend.condition);
+                        imgvPet.setImageResource(friend.resId);
+                        imgvCancle.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ViewGroup parent = (ViewGroup) upBox.getParent();
+                                parent.removeView(upBox);
+                                isBoxup = false;
+                            }
 
-        imgvKoKo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                kokoAudio.play();
-            }
-        });
+                        });
+                        mainFrame.addView(upBox);
+                        isBoxup = true;
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isBoxup) {
+            ViewGroup parent = (ViewGroup) upBox.getParent();
+            parent.removeView(upBox);
+            isBoxup = false;
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

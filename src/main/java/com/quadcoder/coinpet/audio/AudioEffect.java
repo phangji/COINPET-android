@@ -19,9 +19,21 @@ public class AudioEffect {
     PlayState mState;
     MediaPlayer mPlayer;
 
-    // Audio Resources
-    public static final int CARTOON_BOING = R.raw.cartoon_boing;
+    /**
+     * Audio Resources
+     */
 
+    public static final int CARTOON_BOING = R.raw.cartoon_boing;
+    public static final int LEVEL_UP = R.raw.levelup;
+    public static final int POINT_UP = R.raw.pointup;
+    public static final int HAHAHA = R.raw.hahaha;
+    public static final int HMMM = R.raw.hmmm;
+    public static final int GOOD_JOB = R.raw.goodjob;
+    public static final int FREIND_KUKU = R.raw.f_kuku;
+    public static final int FREIND_DD = R.raw.f_dd;
+    public static final int FREIND_KOKO = R.raw.f_koko;
+    public static final int FREIND_CHCH = R.raw.f_chch;
+    public static final int FREIND_MAMA = R.raw.f_mama;
 
     public AudioEffect(int effect) {
         mState = PlayState.IDLE;

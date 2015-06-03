@@ -260,10 +260,39 @@ public class NetworkManager {
      * */
 
     // TODO: Test
-    public void updateQuest(Context context, int fk_std_que, int state, final OnNetworkResultListener<Res> listener) {
+    public void updateSystemQuest(Context context, int fk_std_que, int state, final OnNetworkResultListener<Res> listener) {
         String url = SERVER_URL + "/quest";
         RequestParams params = new RequestParams();
         params.put("fk_std_que", fk_std_que);
+        params.put("state", state);
+
+        client.addHeader("authorization", PropertyManager.getInstance().getToken());
+
+        client.put(context, url, params, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Res result = gson.fromJson(response, Res.class);
+                listener.onResult(result);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Res result = gson.fromJson(response, Res.class);
+                listener.onFail(result);
+            }
+        });
+    }
+
+    // TODO: Test
+    public void updateParentQuest(Context context, int fk_parents_quest, int state, final OnNetworkResultListener<Res> listener) {
+        String url = SERVER_URL + "/quest/parentsUpdate";
+        RequestParams params = new RequestParams();
+        params.put("fk_parents_quest", fk_parents_quest);
         params.put("state", state);
 
         client.addHeader("authorization", PropertyManager.getInstance().getToken());

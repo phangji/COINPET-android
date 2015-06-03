@@ -42,7 +42,7 @@ public class DBManager {
         String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE};
         String orderBy = SystemQuestTable.ORDER + " ASC";
         String selection = SystemQuestTable.STATE + " != ? ";
-        String[] selectionArgs = { "" + Quest.DELETE };
+        String[] selectionArgs = { "" + Quest.DELETED };
         Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
 
         while (c.moveToNext()) {
@@ -63,7 +63,7 @@ public class DBManager {
         SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {ParentQuestTable.PK, ParentQuestTable.CONTENT, ParentQuestTable.POINT, ParentQuestTable.STATE, ParentQuestTable.START_TIME};
         String selection = "DATE('" + ParentQuestTable.START_TIME + "', 'utc') < DATE('now', 'utc') AND " + ParentQuestTable.STATE + " != ? ";
-        String[] selectionArgs = { "" + Quest.DELETE};
+        String[] selectionArgs = { "" + Quest.DELETED};
         Cursor c = db.query(ParentQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
 
         while (c.moveToNext()) {
@@ -203,6 +203,16 @@ public class DBManager {
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ParentQuestTable.STATE, record.state);
+        String whereClause = ParentQuestTable.PK + " = ? ";
+        String[] whereArgs = { "" + record.pk };
+        db.update(ParentQuestTable.TABLE_NAME, values, whereClause, whereArgs);
+        db.close();
+    }
+
+    public void updateParentQuestComment(ParentQuest record){
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(ParentQuestTable.COMMENT, record.comment);
         String whereClause = ParentQuestTable.PK + " = ? ";
         String[] whereArgs = { "" + record.pk };
         db.update(ParentQuestTable.TABLE_NAME, values, whereClause, whereArgs);

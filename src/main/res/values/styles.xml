@@ -26,4 +26,17 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowIsFloating">true</item>
     </style>
+
+    <style name="purple_button">
+        <item name="android:background">@color/purple</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="grey_button">
+        <item name="android:background">@color/grey</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:gravity">center</item>
+    </style>
+
 </resources>

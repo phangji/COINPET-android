@@ -17,6 +17,7 @@ public class DBConstants {
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
 		public static final String STATE = "state";
+		public static final String COMMENT = "comment";
 		public static final String START_TIME = "startTime";
 	}
 

@@ -5,4 +5,6 @@
     <color name="blue">#3FA9F5</color>
     <color name="background_alpha">#a4535353</color>
     <color name="skyblue">#3496f3</color>
+    <color name="purple">#bb61fb</color>
+    <color name="grey">#818181</color>
 </resources>

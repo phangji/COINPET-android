@@ -31,6 +31,7 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 				+ DBConstants.ParentQuestTable.CONTENT + " text, "
 				+ DBConstants.ParentQuestTable.POINT + " integer, "
 				+ DBConstants.ParentQuestTable.START_TIME + " text, "
+				+ DBConstants.ParentQuestTable.COMMENT + " text, "
 				+ DBConstants.ParentQuestTable.STATE + " integer); ";
 		db.execSQL(sql);
 

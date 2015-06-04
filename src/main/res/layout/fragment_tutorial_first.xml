@@ -34,7 +34,8 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/input_bg"
-                android:layout_marginTop="40dp" />
+                android:layout_marginTop="40dp"
+                android:text="1234123412341234" />
 
             <Button
                 android:layout_width="92dp"

@@ -67,7 +67,7 @@ public class QuestItemView extends FrameLayout {
     }
 
     void setSystemQuest(SystemQuest item) {
-        imgvIcon.setVisibility(View.INVISIBLE);
+        imgvIcon.setImageResource(R.drawable.system_quest);
         tvTitle.setText(item.content);
 //      TODO:  tvDesp
         tvPoint.setText(item.point + "");
@@ -86,7 +86,7 @@ public class QuestItemView extends FrameLayout {
     }
 
     void setParentQuest(ParentQuest item) {
-        imgvIcon.setVisibility(View.VISIBLE);
+        imgvIcon.setImageResource(R.drawable.mom_quest);
         tvTitle.setText(item.content);
         tvPoint.setText(item.point + "");
 

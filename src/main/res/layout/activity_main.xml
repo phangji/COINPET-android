@@ -151,26 +151,26 @@
             android:layout_height="wrap_content"
             android:src="@drawable/mycoinpet_21x1627"
             android:text="나의 코인펫"
-            android:id="@+id/imgvMyPet"
-            android:layout_marginRight="10dp" />
+            android:id="@+id/imgvMyPet" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/cashbook_302x1627"
+            android:src="@drawable/main_btn_quiz"
             android:text="용돈 기록장"
             android:id="@+id/imgvCashbook"
-            android:layout_marginRight="8dp"/>
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="10dp" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/quest_571x1627"
+            android:src="@drawable/main_btn_quest"
             android:text="퀘스트"
             android:id="@+id/imgvQuest"
-            android:layout_marginRight="12dp"/>
+            android:layout_marginRight="14dp" />
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/reward_836x1627"
+            android:src="@drawable/main_btn_friend"
             android:text="획득 업적"
             android:id="@+id/imgvReward" />
     </LinearLayout>

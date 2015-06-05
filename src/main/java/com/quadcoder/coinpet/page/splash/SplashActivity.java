@@ -16,6 +16,7 @@ import com.quadcoder.coinpet.model.Quest;
 import com.quadcoder.coinpet.model.Quiz;
 import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.NetworkManager;
+import com.quadcoder.coinpet.network.response.Goal;
 import com.quadcoder.coinpet.network.response.UpdatedData;
 
 public class SplashActivity extends Activity {
@@ -33,7 +34,27 @@ public class SplashActivity extends Activity {
         anim = (AnimationDrawable)imgvPet.getDrawable();
         anim.start();
 
-//        checkUpdatedData();
+
+        checkUpdatedData();
+//        goToNext();
+    }
+
+    private void getGoalData() {
+        NetworkManager.getInstance().getCurrentGoal(this, new NetworkManager.OnNetworkResultListener<Goal>() {
+            @Override
+            public void onResult(Goal res) {
+                PropertyManager.getInstance().mGoal = res;
+                goToNext();
+            }
+
+            @Override
+            public void onFail(Goal res) {
+                goToNext();
+            }
+        });
+    }
+
+    private void goToNext() {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -42,7 +63,6 @@ public class SplashActivity extends Activity {
                 finish();
             }
         }, DELAY_TIME);
-
     }
 
     private void checkUpdatedData() {
@@ -51,6 +71,9 @@ public class SplashActivity extends Activity {
         NetworkManager.getInstance().getUpdatedData(this, pkQuiz, pkQuest, new NetworkManager.OnNetworkResultListener<UpdatedData>() {
             @Override
             public void onResult(UpdatedData res) {
+
+                getGoalData();
+
                 if(res.needUpdate) {
                     if(res.systemQuiz.size() != 0) {
                         for(Quiz record : res.systemQuiz) {
@@ -62,7 +85,7 @@ public class SplashActivity extends Activity {
                     if(res.systemQuest.size() != 0) {
                         for(SystemQuest record : res.systemQuest) {
                             SystemQuest newOne = record;
-                            newOne.state = Quest.CREATED;
+                            newOne.state = Quest.DOING;
                             DBManager.getInstance().insertSystemQuest(newOne);
                         }
                         SystemQuest last = res.systemQuest.get(res.systemQuiz.size() - 1);
@@ -77,26 +100,12 @@ public class SplashActivity extends Activity {
                     }
                 }
 
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-//                startActivity(new Intent(SplashActivity.this, TutorialActivity.class));
-                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                        finish();
-                    }
-                }, DELAY_TIME);
+
             }
 
             @Override
             public void onFail(UpdatedData res) {
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-//                startActivity(new Intent(SplashActivity.this, TutorialActivity.class));
-                        startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                        finish();
-                    }
-                }, DELAY_TIME);
+                goToNext();
             }
         });
     }

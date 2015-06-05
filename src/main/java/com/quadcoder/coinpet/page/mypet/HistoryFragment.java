@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,6 +149,7 @@ public class HistoryFragment extends Fragment {
 
     }
 
+    private int LENGTH_LIMIT = 20;
 
     TextView tvTodayMoney;
     TextView tvAllMoney;
@@ -160,10 +162,8 @@ public class HistoryFragment extends Fragment {
         mChart = (LineChart) rootView.findViewById(R.id.chart);
         tvTodayMoney = (TextView)rootView.findViewById(R.id.tvTodayMoney);
         tvAllMoney = (TextView)rootView.findViewById(R.id.tvAllMoney);
-        Goal goal = PropertyManager.getInstance().mGoal;
-        tvTodayMoney.setText("" + goal.now_cost);
-        tvAllMoney.setText("" + goal.now_cost);
 
+        Fragment f =((MyPetActivity)getActivity()).getAdapter().getItem(0);
 
         NetworkManager.getInstance().getSavingList(getActivity(), new NetworkManager.OnNetworkResultListener<Saving[]>() {
             @Override
@@ -171,7 +171,11 @@ public class HistoryFragment extends Fragment {
                 ArrayList<String> xVals = new ArrayList<String>();
                 ArrayList<Entry> yVals = new ArrayList<Entry>();
 
-                for (int i = 0; i < res.length; i++) {
+                int length = res.length;
+                if (length > LENGTH_LIMIT)
+                    length = LENGTH_LIMIT;
+
+                for (int i = 0; i < length; i++) {
                     Saving item = res[i];
                     xVals.add(item.date.substring(0, 10));
                     yVals.add(new Entry(item.now_cost, i));
@@ -184,6 +188,10 @@ public class HistoryFragment extends Fragment {
 
             }
         });
+
+        Goal goal = PropertyManager.getInstance().mGoal;
+        if(goal != null)
+            setGoalData(goal);
 
         return rootView;
     }
@@ -205,6 +213,12 @@ public class HistoryFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+    private void setGoalData(Goal goal) {
+        tvTodayMoney.setText("" + goal.now_cost);
+        tvAllMoney.setText("" + goal.now_cost);
+    }
+
 
     @Override
     public void onDetach() {

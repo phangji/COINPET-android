@@ -85,7 +85,7 @@ public class PropertyManager {
      * goal
      * */
 
-    public Goal mGoal = new Goal();
+    public Goal mGoal;
 
 
     /**

@@ -9,9 +9,9 @@ import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
 import com.quadcoder.coinpet.MyApplication;
 import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.network.response.Goal;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.network.response.Saving;
-import com.quadcoder.coinpet.network.response.SavingList;
 import com.quadcoder.coinpet.network.response.UpdatedData;
 
 import org.apache.http.Header;
@@ -193,6 +193,29 @@ public class NetworkManager {
                 Gson gson = new Gson();
                 Res result = gson.fromJson(response, Res.class);
                 listener.onFail(result);
+            }
+        });
+    }
+
+    public void getCurrentGoal(Context context, final OnNetworkResultListener<Goal> listener) {
+        String url = SERVER_URL + "/goal/current";
+
+        client.addHeader("authorization", PropertyManager.getInstance().getToken());
+
+        client.get(context, url, null, new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                String response = new String(responseBody);
+                Gson gson = new Gson();
+                Goal[] goals = gson.fromJson(response, Goal[].class);
+                Goal result = goals[0];
+                listener.onResult(result);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                listener.onFail(null);
             }
         });
     }

@@ -10,6 +10,7 @@ import com.loopj.android.http.RequestParams;
 import com.quadcoder.coinpet.MyApplication;
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.network.response.Res;
+import com.quadcoder.coinpet.network.response.UpdatedData;
 
 import org.apache.http.Header;
 
@@ -105,31 +106,24 @@ public class NetworkManager {
     }
 
     public void getUpdatedData(Context context, int pk_std_que, int pk_std_quiz,
-                          final OnNetworkResultListener<Res> listener) {
-        String url = SERVER_URL + "/getInfo";
-
-        RequestParams params = new RequestParams();
-        params.put("pk_std_que", pk_std_que);
-        params.put("pk_std_quiz", pk_std_quiz);
+                          final OnNetworkResultListener<UpdatedData> listener) {
+        String url = SERVER_URL + "/getInfo" + "/" + pk_std_que + "/" + pk_std_quiz;
 
         client.addHeader("authorization", PropertyManager.getInstance().getToken());
 
-        client.post(context, url, params, new AsyncHttpResponseHandler() {
+        client.get(context, url, null, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
                 Gson gson = new Gson();
-                Res result = gson.fromJson(response, Res.class);
+                UpdatedData result = gson.fromJson(response, UpdatedData.class);
                 listener.onResult(result);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                String response = responseBody == null ? null : new String(responseBody);
-                Gson gson = new Gson();
-                Res result = response == null ? null : gson.fromJson(response, Res.class);
-                listener.onFail(result);
+                listener.onFail(null);
             }
         });
     }

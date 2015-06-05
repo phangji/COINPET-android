@@ -24,6 +24,7 @@ public class BluetoothManager {
     private static final String TAG = "BluetoothManager";
 
     public String SERVICE_NAME = "COINPET-1234";
+    public String COM_MAC = "B8-E8-56-0A-B2-8F";
     static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 //    static final UUID MY_UUID = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB");
 
@@ -253,20 +254,22 @@ public class BluetoothManager {
         public void run() {
             byte[] buffer = new byte[1024]; // buffer store for the stream
             int bytes;  // bytes returned from read()
-            byte[] data = null;
+//            byte[] data = null;
             // Keep listening to the InputStream until an exception occurs
             while(true) {
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);
-                    ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-                    data = wrapped.array(); //byte array
+                    String str = new String(buffer, "UTF-8");
+//                    ByteBuffer wrapped = ByteBuffer.wrap(buffer);
+//                    data = wrapped.array(); //byte array
 
-                    Log.d(TAG, "data : " + data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5]);
+//                    Log.d(TAG, "data : " + data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5]);
 
                     // Send the obtained bytes to the UI Activity
                     mHandler.obtainMessage(BTConstants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
+                    Log.d(TAG, "phangji READ: " + str);
                 } catch (IOException e) {
                     e.printStackTrace();
                     try {
@@ -283,7 +286,7 @@ public class BluetoothManager {
         public void write(byte[] buffer) {
             try {
                 mmOutStream.write(buffer);
-
+                Log.d(TAG, "phangji WRITE: " + buffer.toString());
                 // Share the sent message back to the UI Activity
                 mHandler.obtainMessage(BTConstants.MESSAGE_WRITE, -1, -1, buffer)
                         .sendToTarget();

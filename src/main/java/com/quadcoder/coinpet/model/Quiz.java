@@ -8,13 +8,13 @@ public class Quiz {
     public static final int STATE_WRONG = 2;   // 시도 후 답을 틀림
     public static final int STATE_YET = 3;     //아직 시도하지 않음
 
-    public int pk;
+    public int pk_std_quiz;
     public String content;
     public int point;
     public int state;
-    public int diff;
+    public int level;
     public String hint;
     public int time;
-    public int solution;
-    public String explanation;
+    public String solution;
+    public int answer;
 }

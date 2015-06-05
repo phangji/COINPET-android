@@ -27,6 +27,11 @@ import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.page.common.Constants;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.util.ArrayList;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -38,6 +43,8 @@ public class TutorialThirdFragment extends Fragment {
         // Required empty public constructor
     }
     static final int REQUEST_ENABLE_BT = 1;
+
+    Button btn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,7 +66,8 @@ public class TutorialThirdFragment extends Fragment {
             }
         }
 
-        Button btn = (Button)rootView.findViewById(R.id.btnNext);
+        btn = (Button)rootView.findViewById(R.id.btnNext);
+        btn.setVisibility(View.INVISIBLE);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,35 +95,98 @@ public class TutorialThirdFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
+                case BTConstants.MESSAGE_STATE_CHANGE:
+                    int state = msg.arg1;
+                    if(state == BluetoothManager.STATE_CONNECTED) {
+                        btn.setVisibility(View.VISIBLE);
+                    }
+                    break;
                 case BTConstants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(getActivity(), "Tutorial / Device : " + readMessage, Toast.LENGTH_SHORT).show();
-
-                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.PN_RESPONSE) {
-                        Toast.makeText(getActivity(), "PN RESPONSE " + readBuf[3], Toast.LENGTH_SHORT).show();
-                        if(readBuf[3] == BluetoothUtil.SUCCESS) {
-                            mChatService.write(BluetoothUtil.getInstance().sendUTC());
-                            utcIsSent = true;
-                        } else {
-                            mChatService.write(BluetoothUtil.getInstance().ack(false));
-                        }
+                    String readMessage = null;
+                    try {
+                        readMessage = new String(readBuf, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
                     }
 
-                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.ACK) {
-                        Toast.makeText(getActivity(), "ACK" + readBuf[3], Toast.LENGTH_SHORT).show();
-                        if(readBuf[3] == BluetoothUtil.SUCCESS && utcIsSent) {
-                            moveToNextPage();
-                        } else {
-                            Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
+                    int size = msg.arg1;
+
+                    Toast.makeText(getActivity(), "size : " + size, Toast.LENGTH_SHORT).show();
+
+                    // 일단 데이터를 막 버퍼에 넣는다.
+
+                    int i = 0;
+                    while( i < size) {
+                        mOutBuffer.add(readBuf[i]); // 일단 E도 넣음
+                        if ( readBuf[i] == BluetoothUtil.E) {
+                            Toast.makeText(getActivity(), "Tutorial / Device : " + mOutBuffer.toString(), Toast.LENGTH_SHORT).show();
+                            // E가 나오면 S부터 E까지 사이에 값들을 찾는다.
+                            //S는 0번째, E는 readBuf.lenght-1번째
+                            if(mOutBuffer.size() > 1) {
+                                byte opcode = mOutBuffer.get(1);
+                                if(opcode == BluetoothUtil.Opcode.PN_RESPONSE) {
+                                    Toast.makeText(getActivity(), "PN RESPONSE " + mOutBuffer.get(3), Toast.LENGTH_SHORT).show();
+                                        if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS) {
+                                            mChatService.write(BluetoothUtil.getInstance().sendUTC());
+                                            utcIsSent = true;
+                                        } else {
+                                            mChatService.write(BluetoothUtil.getInstance().ack(false));
+                                        }
+                                    mOutBuffer.clear();
+                                }
+
+                                if(opcode == BluetoothUtil.Opcode.ACK) {
+                                    Toast.makeText(getActivity(), "ACK" + readBuf[3], Toast.LENGTH_SHORT).show();
+                                    if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS && utcIsSent) {
+                                        moveToNextPage();
+                                    } else {
+                                        Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
+                                    }
+                                    mOutBuffer.clear();
+                                }
+                                // 적당한 행동을 한 후 버퍼를 비운다.
+                            }
                         }
+                        i++;
                     }
+
+
+
+
+
+
+
+
+
+//                    Toast.makeText(getActivity(), "Tutorial / Device : " + readMessage, Toast.LENGTH_SHORT).show();
+//
+//
+//
+//                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.PN_RESPONSE) {
+//                        Toast.makeText(getActivity(), "PN RESPONSE " + readBuf[3], Toast.LENGTH_SHORT).show();
+////                        if(readBuf[3] == BluetoothUtil.SUCCESS) {
+////                            mChatService.write(BluetoothUtil.getInstance().sendUTC());
+////                            utcIsSent = true;
+////                        } else {
+////                            mChatService.write(BluetoothUtil.getInstance().ack(false));
+////                        }
+//                    }
+//
+//                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.ACK) {
+//                        Toast.makeText(getActivity(), "ACK" + readBuf[3], Toast.LENGTH_SHORT).show();
+//                        if(readBuf[3] == BluetoothUtil.SUCCESS && utcIsSent) {
+//                            moveToNextPage();
+//                        } else {
+//                            Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
                     break;
             }
         }
     };
 
-    StringBuffer mOutStringBuffer;
+    ArrayList<Byte> mOutBuffer;
     private void setupChatService() {
         Log.d(TAG, "setupChatService()");
 
@@ -123,7 +194,7 @@ public class TutorialThirdFragment extends Fragment {
         mChatService = new BluetoothManager(getActivity(), mHandler);
 
         // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer("");
+        mOutBuffer = new ArrayList<>();
     }
 
     @Override
@@ -135,7 +206,7 @@ public class TutorialThirdFragment extends Fragment {
             if (mChatService.getState() == BluetoothManager.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
-            }
+            } 
         }
     }
 
@@ -168,17 +239,21 @@ public class TutorialThirdFragment extends Fragment {
         mBtAdapter.startDiscovery();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         getActivity().registerReceiver(mReceiver, filter);
-        isRegistered = true;
+
     }
+
     BluetoothDevice mDevice;
+
     void connectBt() {
         if(mChatService.getState() == BluetoothManager.STATE_BT_ENABLED) {
             mDevice = mChatService.searchPaired();
 
-            if (mDevice == null) {  //페어링된 적이 없다면,
+            if( mDevice != null) {
+                mChatService.connect(mDevice);
+            } else {  //페어링된 적이 없다면,
                 discovery();
             }
-            mChatService.connect(mDevice);
+
         }
     }
 
@@ -198,6 +273,8 @@ public class TutorialThirdFragment extends Fragment {
                     mDevice = device;
                     mBtAdapter.cancelDiscovery();
                     mChatService.setState(BluetoothManager.STATE_DISCOVERING);
+                    mChatService.connect(mDevice);
+                    isRegistered = true;
                 }
             }
         }

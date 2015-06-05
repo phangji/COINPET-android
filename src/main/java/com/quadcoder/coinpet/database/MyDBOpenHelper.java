@@ -8,9 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.model.Friend;
-import com.quadcoder.coinpet.database.DBConstants;
-
-import java.util.HashMap;
 
 public class MyDBOpenHelper extends SQLiteOpenHelper {
 
@@ -49,8 +46,8 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 				+ DBConstants.QuizTable.DIFF + " integer, "
 				+ DBConstants.QuizTable.HINT + " text, "
 				+ DBConstants.QuizTable.TIME + " integer, "
-				+ DBConstants.QuizTable.SOLUTION + " integer, "
-                + DBConstants.QuizTable.EXPLANATION + " text, "
+				+ DBConstants.QuizTable.SOLUTION + " text, "
+                + DBConstants.QuizTable.ANSWER + " integer, "
 				+ DBConstants.QuizTable.STATE + " integer); ";
 		db.execSQL(sql);
 

@@ -76,10 +76,12 @@ public class QuestItemView extends FrameLayout {
             case Quest.CREATED:
             case Quest.DOING:
                 btnState.setBackgroundResource(R.color.grey);
+                btnState.setClickable(false);
                 btnState.setText(R.string.btn_doing);
                 break;
             case Quest.FINISHED:
                 btnState.setBackgroundResource(R.color.purple);
+                btnState.setClickable(true);
                 btnState.setText(R.string.btn_finished);
                 break;
         }
@@ -94,18 +96,26 @@ public class QuestItemView extends FrameLayout {
             case Quest.CREATED:
             case Quest.DOING:
                 btnState.setBackgroundResource(R.color.grey);
+                btnState.setClickable(false);
                 btnState.setText(R.string.btn_tocheck);
                 break;
             case Quest.RETRYING:
                 btnState.setBackgroundResource(R.color.purple);
+                btnState.setClickable(true);
                 btnState.setText(R.string.btn_retry);
+                if(item.comment != null) {
+                    tvDesp.setText("\"" + item.comment + "\"");
+                }
+
                 break;
             case Quest.WAITING:
                 btnState.setBackgroundResource(R.color.grey);
+                btnState.setClickable(false);
                 btnState.setText(R.string.btn_checking);
                 break;
             case Quest.FINISHED:
                 btnState.setBackgroundResource(R.color.purple);
+                btnState.setClickable(true);
                 btnState.setText(R.string.btn_finished);
                 break;
         }

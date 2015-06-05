@@ -17,8 +17,6 @@ import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 
-import java.util.ArrayList;
-
 public class QuestActivity extends ActionBarActivity {
 
     ListView mListView;
@@ -40,7 +38,7 @@ public class QuestActivity extends ActionBarActivity {
                         case Quest.FINISHED:
                             Toast.makeText(QuestActivity.this, "시스템 퀘스트 보상을 받았습니다.", Toast.LENGTH_SHORT).show();
 
-                            NetworkManager.getInstance().updateSystemQuest(QuestActivity.this, ((SystemQuest) o).pk, Quest.FINISHED, new NetworkManager.OnNetworkResultListener<Res>() {
+                            NetworkManager.getInstance().updateSystemQuest(QuestActivity.this, ((SystemQuest) o).pk_std_que, Quest.FINISHED, new NetworkManager.OnNetworkResultListener<Res>() {
                                 @Override
                                 public void onResult(Res res) {
                                     //상태 업데이트, 디비, 리스트에서 사라짐
@@ -67,7 +65,7 @@ public class QuestActivity extends ActionBarActivity {
                         case Quest.DOING:
                         case Quest.RETRYING:
                             //검사받기 요청
-                            NetworkManager.getInstance().updateParentQuest(QuestActivity.this, ((ParentQuest) o).pk, ((ParentQuest) o).state, new NetworkManager.OnNetworkResultListener<Res>() {
+                            NetworkManager.getInstance().updateParentQuest(QuestActivity.this, ((ParentQuest) o).pk_parents_quest, ((ParentQuest) o).state, new NetworkManager.OnNetworkResultListener<Res>() {
                                 @Override
                                 public void onResult(Res res) {
                                     //상태 업데이트, 디비, 리스트 수정

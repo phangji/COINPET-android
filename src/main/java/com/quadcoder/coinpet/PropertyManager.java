@@ -70,15 +70,15 @@ public class PropertyManager {
     private static final String FIELD_TOKEN = "token";
     private String token = null;
 
-    public String getToken() {
-//        token = mPrefs.getString(FIELD_TOKEN, "");
+    public String getToken() {  // TODO: 로그인 하는 프로세스로 진입시, 이 토큰 제거해줘야함.
+        token = mPrefs.getString(FIELD_TOKEN, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJma19raWRzIjoxNDUsIm5hbWUiOiLqt6Tqt6QyIiwiaWF0IjoxNDMxNDkyNjQ5fQ.ThWR16YikjVb77lkK1qTp5H3GPVk2i9gFl7C5QDKdlM");
         return "Bearer " + token;
     }
 
     public void setToken(String token) {
-//        mEditor.putString(FIELD_TOKEN, this.token);
-//        mEditor.commit();
         this.token = token;
+        mEditor.putString(FIELD_TOKEN, token);
+        mEditor.commit();
     }
 
     /**
@@ -184,7 +184,7 @@ public class PropertyManager {
      */
 
     private static final String FIELD_QCOIN = "qCoin";
-    private int qCoin = 3;
+    private int qCoin = 3;  //TODO: 하루가 지나면 다시 3개가 되어야함.
 
     public int getqCoin() {
         qCoin = mPrefs.getInt(FIELD_QCOIN, 3);
@@ -194,6 +194,60 @@ public class PropertyManager {
     public void setqCoin(int qCoin) {
         this.qCoin = qCoin;
         mEditor.putInt(FIELD_QCOIN, qCoin);
+        mEditor.commit();
+    }
+
+    /**
+     * pkQuest
+     */
+
+    private static final String FIELD_PK_QUEST = "pkQuest";
+    private int pkQuest;
+
+    public int getPkQuest() {
+        pkQuest = mPrefs.getInt(FIELD_PK_QUEST, 0);
+        return pkQuest;
+    }
+
+    public void setPkQuest(int pkQuest) {
+        this.pkQuest = pkQuest;
+        mEditor.putInt(FIELD_PK_QUEST, pkQuest);
+        mEditor.commit();
+    }
+
+    /**
+     * pkPQuest
+     */
+
+    private static final String FIELD_PK_P_QUEST = "pkPQuest";
+    private int pkPQuest;
+
+    public int getPkPQuest() {
+        pkPQuest = mPrefs.getInt(FIELD_PK_P_QUEST, 0);
+        return pkPQuest;
+    }
+
+    public void setPkPQuest(int pkPQuest) {
+        this.pkPQuest = pkPQuest;
+        mEditor.putInt(FIELD_PK_P_QUEST, pkPQuest);
+        mEditor.commit();
+    }
+
+    /**
+     * pkQuiz
+     */
+
+    private static final String FIELD_PK_QUIZ = "pkQuiz";
+    private int pkQuiz;
+
+    public int getPkQuiz() {
+        pkQuiz = mPrefs.getInt(FIELD_PK_QUIZ, 0);
+        return pkQuiz;
+    }
+
+    public void setPkQuiz(int pkQuiz) {
+        this.pkQuiz = pkQuiz;
+        mEditor.putInt(FIELD_PK_QUIZ, pkQuiz);
         mEditor.commit();
     }
 

@@ -44,7 +44,7 @@ public class QuizReadyFragment extends Fragment {
 
         if( !BluetoothAdapter.getDefaultAdapter().isEnabled() ) {
             Toast.makeText(getActivity(), "블루투스가 켜져 있지 않습니다.", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(getActivity(), MainActivity.class));
+            getActivity().finish();
         }
 
 

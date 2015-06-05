@@ -4,7 +4,7 @@ public class DBConstants {
 
 	public static class SystemQuestTable {
 		public static final String TABLE_NAME = "system_quest";
-		public static final String PK = "pk";
+		public static final String PK = "pk_std_que";
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
 		public static final String ORDER = "seq";
@@ -13,7 +13,7 @@ public class DBConstants {
 
 	public static class ParentQuestTable {
 		public static final String TABLE_NAME = "parent_quest";
-		public static final String PK = "pk";
+		public static final String PK = "pk_parents_quest";
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
 		public static final String STATE = "state";
@@ -23,15 +23,15 @@ public class DBConstants {
 
 	public static class QuizTable {
 		public static final String TABLE_NAME = "quiz";
-		public static final String PK = "pk";
+		public static final String PK = "pk_std_quiz";
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
 		public static final String STATE = "state";
-		public static final String DIFF = "diff";
+		public static final String DIFF = "level";
 		public static final String HINT = "hint";
 		public static final String TIME = "time";
         public static final String SOLUTION = "solution";
-        public static final String EXPLANATION = "explanation";
+        public static final String ANSWER = "answer";
 	}
 
 	public static class FriendsTable {

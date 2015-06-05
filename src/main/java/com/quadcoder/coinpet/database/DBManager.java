@@ -40,14 +40,14 @@ public class DBManager {
         ArrayList<SystemQuest> list = new ArrayList<SystemQuest>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE};
-        String orderBy = SystemQuestTable.ORDER + " ASC";
+        String orderBy = SystemQuestTable.PK + " ASC";
         String selection = SystemQuestTable.STATE + " != ? ";
         String[] selectionArgs = { "" + Quest.DELETED };
-        Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
+        Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, null, null, null, null, orderBy);
 
         while (c.moveToNext()) {
             SystemQuest record = new SystemQuest();
-            record.pk = c.getInt(c.getColumnIndex(SystemQuestTable.PK));
+            record.pk_std_que = c.getInt(c.getColumnIndex(SystemQuestTable.PK));
             record.content = c.getString(c.getColumnIndex(SystemQuestTable.CONTENT));
             record.point = c.getInt(c.getColumnIndex(SystemQuestTable.POINT));
             record.state = c.getInt(c.getColumnIndex(SystemQuestTable.STATE));
@@ -62,13 +62,13 @@ public class DBManager {
         ArrayList<ParentQuest> list = new ArrayList<ParentQuest>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {ParentQuestTable.PK, ParentQuestTable.CONTENT, ParentQuestTable.POINT, ParentQuestTable.STATE, ParentQuestTable.START_TIME};
-        String selection = "DATE('" + ParentQuestTable.START_TIME + "', 'utc') < DATE('now', 'utc') AND " + ParentQuestTable.STATE + " != ? ";
+        String selection = "DATE(" + ParentQuestTable.START_TIME + ", 'utc') < DATE('now', 'utc') AND " + ParentQuestTable.STATE + " != ? ";
         String[] selectionArgs = { "" + Quest.DELETED};
         Cursor c = db.query(ParentQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
 
         while (c.moveToNext()) {
             ParentQuest record = new ParentQuest();
-            record.pk = c.getInt(c.getColumnIndex(ParentQuestTable.PK));
+            record.pk_parents_quest = c.getInt(c.getColumnIndex(ParentQuestTable.PK));
             record.content = c.getString(c.getColumnIndex(ParentQuestTable.CONTENT));
             record.point = c.getInt(c.getColumnIndex(ParentQuestTable.POINT));
             record.state = c.getInt(c.getColumnIndex(ParentQuestTable.STATE));
@@ -82,7 +82,7 @@ public class DBManager {
 
     public Quiz getQuizRandom() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.EXPLANATION};
+        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.ANSWER};
         String selection = QuizTable.STATE + " = ?  OR " + QuizTable.STATE + " = ? limit 1";
         String[] selectionArgs = { "" + Quiz.STATE_YET,  "" + Quiz.STATE_WRONG};
         String orderBy = "random()";
@@ -90,15 +90,15 @@ public class DBManager {
 
         Quiz record = new Quiz();
         while (c.moveToNext()) {
-            record.pk = c.getInt(c.getColumnIndex(QuizTable.PK));
+            record.pk_std_quiz = c.getInt(c.getColumnIndex(QuizTable.PK));
             record.content = c.getString(c.getColumnIndex(QuizTable.CONTENT));
             record.point = c.getInt(c.getColumnIndex(QuizTable.POINT));
             record.state = c.getInt(c.getColumnIndex(QuizTable.STATE));
-            record.diff = c.getInt(c.getColumnIndex(QuizTable.DIFF));
+            record.level = c.getInt(c.getColumnIndex(QuizTable.DIFF));
             record.hint = c.getString(c.getColumnIndex(QuizTable.HINT));
             record.time = c.getInt(c.getColumnIndex(QuizTable.TIME));
-            record.solution = c.getInt(c.getColumnIndex(QuizTable.SOLUTION));
-            record.explanation = c.getString(c.getColumnIndex(QuizTable.EXPLANATION));
+            record.solution = c.getString(c.getColumnIndex(QuizTable.SOLUTION));
+            record.answer = c.getInt(c.getColumnIndex(QuizTable.ANSWER));
         }
         c.close();
 
@@ -134,7 +134,7 @@ public class DBManager {
     public void insertSystemQuest(SystemQuest record) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(SystemQuestTable.PK, record.pk);
+        values.put(SystemQuestTable.PK, record.pk_std_que);
         values.put(SystemQuestTable.CONTENT, record.content);
         values.put(SystemQuestTable.POINT, record.point);
         values.put(SystemQuestTable.STATE, record.state);
@@ -146,7 +146,7 @@ public class DBManager {
     public void insertParentQuest(ParentQuest record) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(ParentQuestTable.PK, record.pk);
+        values.put(ParentQuestTable.PK, record.pk_parents_quest);
         values.put(ParentQuestTable.CONTENT, record.content);
         values.put(ParentQuestTable.POINT, record.point);
         values.put(ParentQuestTable.STATE, record.state);
@@ -158,15 +158,15 @@ public class DBManager {
     public void insertQuiz(Quiz record) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(QuizTable.PK, record.pk);
+        values.put(QuizTable.PK, record.pk_std_quiz);
         values.put(QuizTable.CONTENT, record.content);
         values.put(QuizTable.POINT, record.point);
         values.put(QuizTable.STATE, record.state);
-        values.put(QuizTable.DIFF, record.diff);
+        values.put(QuizTable.DIFF, record.level);
         values.put(QuizTable.HINT, record.hint);
         values.put(QuizTable.TIME, record.time);
         values.put(QuizTable.SOLUTION, record.solution);
-        values.put(QuizTable.EXPLANATION, record.explanation);
+        values.put(QuizTable.ANSWER, record.answer);
         db.insert(QuizTable.TABLE_NAME, null, values);
         db.close();
     }
@@ -194,7 +194,7 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(SystemQuestTable.STATE, record.state);
         String whereClause = SystemQuestTable.PK + " = ? ";
-        String[] whereArgs = { "" + record.pk };
+        String[] whereArgs = { "" + record.pk_std_que};
         db.update(SystemQuestTable.TABLE_NAME, values, whereClause, whereArgs);
         db.close();
     }
@@ -204,7 +204,7 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(ParentQuestTable.STATE, record.state);
         String whereClause = ParentQuestTable.PK + " = ? ";
-        String[] whereArgs = { "" + record.pk };
+        String[] whereArgs = { "" + record.pk_parents_quest};
         db.update(ParentQuestTable.TABLE_NAME, values, whereClause, whereArgs);
         db.close();
     }
@@ -214,7 +214,7 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(ParentQuestTable.COMMENT, record.comment);
         String whereClause = ParentQuestTable.PK + " = ? ";
-        String[] whereArgs = { "" + record.pk };
+        String[] whereArgs = { "" + record.pk_parents_quest};
         db.update(ParentQuestTable.TABLE_NAME, values, whereClause, whereArgs);
         db.close();
     }
@@ -224,7 +224,7 @@ public class DBManager {
         ContentValues values = new ContentValues();
         values.put(QuizTable.STATE, record.state);
         String whereClause = QuizTable.PK + " = ? ";
-        String[] whereArgs = { "" + record.pk };
+        String[] whereArgs = { "" + record.pk_std_quiz};
         db.update(QuizTable.TABLE_NAME, values, whereClause, whereArgs);
         db.close();
     }
@@ -246,7 +246,7 @@ public class DBManager {
     public void deleteSystemQuest(SystemQuest record){
         SQLiteDatabase db = mHelper.getWritableDatabase();
         String whereClause = SystemQuestTable.PK + " = ? ";
-        String[] whereArgs = { "" + record.pk };
+        String[] whereArgs = { "" + record.pk_std_que};
         db.delete(SystemQuestTable.TABLE_NAME, whereClause, whereArgs);
         db.close();
     }
@@ -254,7 +254,7 @@ public class DBManager {
     public void deleteParentQuest(ParentQuest record){
         SQLiteDatabase db = mHelper.getWritableDatabase();
         String whereClause = ParentQuestTable.PK + " = ? ";
-        String[] whereArgs = { "" + record.pk };
+        String[] whereArgs = { "" + record.pk_parents_quest};
         db.delete(ParentQuestTable.TABLE_NAME, whereClause, whereArgs);
         db.close();
     }

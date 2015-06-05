@@ -76,7 +76,7 @@ public class QuizFragment extends Fragment {
     private void settingQuiz() {
         mQuiz = DBManager.getInstance().getQuizRandom();
         tvQuiz.setText(mQuiz.content);
-        tvDiff.setText(Utils.getInstance().getDiffResource(mQuiz.diff));
+        tvDiff.setText(Utils.getInstance().getDiffResource(mQuiz.level));
         tvTime.setText(mQuiz.time);
         tvHint.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +100,7 @@ public class QuizFragment extends Fragment {
                 afterQuizUpdateData();
                 Intent i = new Intent();
                 i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.TIMEOVER);
-                i.putExtra(DialogActivity.TEXT, mQuiz.explanation);
+                i.putExtra(DialogActivity.TEXT, mQuiz.answer);
                 startActivityForResult(i, REQUEST_CODE_TIMEOVER);
             }
         };
@@ -215,14 +215,14 @@ public class QuizFragment extends Fragment {
             afterQuizUpdateData();
             Intent i = new Intent();
             i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.RIGHT);
-            i.putExtra(DialogActivity.TEXT, mQuiz.explanation);
+            i.putExtra(DialogActivity.TEXT, mQuiz.answer);
             startActivityForResult(i, REQUEST_CODE_RIGHT);
         } else {
             mQuiz.state = Quiz.STATE_WRONG;
             afterQuizUpdateData();
             Intent i = new Intent();
             i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.WRONG);
-            i.putExtra(DialogActivity.TEXT, mQuiz.explanation);
+            i.putExtra(DialogActivity.TEXT, mQuiz.answer);
             startActivityForResult(i, REQUEST_CODE_WRONG);
         }
     }
@@ -237,13 +237,13 @@ public class QuizFragment extends Fragment {
     }
 
     boolean isRight(int userValue) {
-        return userValue == mQuiz.solution;
+        return userValue == mQuiz.answer;
     }
 
 
     void afterQuizUpdateData() {
         DBManager.getInstance().updateQuiz(mQuiz);
-        NetworkManager.getInstance().postQuiz(getActivity(), mQuiz.pk, mQuiz.state, new NetworkManager.OnNetworkResultListener<Res>() {
+        NetworkManager.getInstance().postQuiz(getActivity(), mQuiz.pk_std_quiz, mQuiz.state, new NetworkManager.OnNetworkResultListener<Res>() {
             @Override
             public void onResult(Res res) {
 

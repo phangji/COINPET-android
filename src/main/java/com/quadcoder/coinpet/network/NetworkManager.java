@@ -10,9 +10,13 @@ import com.loopj.android.http.RequestParams;
 import com.quadcoder.coinpet.MyApplication;
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.network.response.Res;
+import com.quadcoder.coinpet.network.response.Saving;
+import com.quadcoder.coinpet.network.response.SavingList;
 import com.quadcoder.coinpet.network.response.UpdatedData;
 
 import org.apache.http.Header;
+
+import java.util.ArrayList;
 
 /**
  * Created by Phangji on 4/5/15.
@@ -225,7 +229,7 @@ public class NetworkManager {
     }
 
     public void getSavingList(Context context,
-                         final OnNetworkResultListener<Res> listener) {
+                         final OnNetworkResultListener<Saving[]> listener) {
         String url = SERVER_URL + "/saving";
         client.addHeader("authorization", PropertyManager.getInstance().getToken());
 
@@ -235,16 +239,13 @@ public class NetworkManager {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 String response = new String(responseBody);
                 Gson gson = new Gson();
-                Res result = gson.fromJson(response, Res.class);
+                Saving[] result = gson.fromJson(response, Saving[].class);
                 listener.onResult(result);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                String response = new String(responseBody);
-                Gson gson = new Gson();
-                Res result = gson.fromJson(response, Res.class);
-                listener.onFail(result);
+                listener.onFail(null);
             }
         });
     }

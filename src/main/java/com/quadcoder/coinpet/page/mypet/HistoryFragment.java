@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
@@ -21,7 +22,10 @@ import com.github.mikephil.charting.utils.XLabels;
 import com.github.mikephil.charting.utils.YLabels;
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
+import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Goal;
+import com.quadcoder.coinpet.network.response.Saving;
+import com.quadcoder.coinpet.network.response.SavingList;
 
 import java.util.ArrayList;
 
@@ -56,7 +60,7 @@ public class HistoryFragment extends Fragment {
         // Required empty public constructor
     }
 
-    void setChart() {
+    void setChart(ArrayList<String> xVals, ArrayList<Entry> yVals) {
 
 
         mChart.setUnit(" 원");
@@ -98,7 +102,24 @@ public class HistoryFragment extends Fragment {
 
         // add data
 
-        setData(5, 5000);	//range : 하루에 max 값
+        // create a dataset and give it a type
+        LineDataSet set1 = new LineDataSet(yVals, "저금한 돈 변화 그래프");
+        set1.setColor(ColorTemplate.getHoloBlue());
+        set1.setCircleColor(ColorTemplate.getHoloBlue());
+        set1.setLineWidth(2f);
+        set1.setCircleSize(4f);
+        set1.setFillAlpha(65);
+        set1.setFillColor(ColorTemplate.getHoloBlue());
+        set1.setHighLightColor(Color.rgb(244, 117, 117));
+
+        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
+        dataSets.add(set1); // add the datasets
+
+        // create a data object with the datasets
+        LineData data = new LineData(xVals, dataSets);
+
+        // set data
+        mChart.setData(data);
 
         //animation
         mChart.animateX(2500);
@@ -117,6 +138,8 @@ public class HistoryFragment extends Fragment {
         YLabels yl = mChart.getYLabels();
         yl.setTextColor(ColorTemplate.getHoloBlue());
     }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,42 +149,6 @@ public class HistoryFragment extends Fragment {
 
     }
 
-    private void setData(int count, float range) {
-
-        ArrayList<String> xVals = new ArrayList<String>();
-        for (int i = 0; i < count; i++) {
-            xVals.add((i) + 1 + " 일째");
-        }
-
-        ArrayList<Entry> yVals = new ArrayList<Entry>();
-        float sum = 0;
-        for (int i = 0; i < count; i++) {
-            float mult = (range + 1);
-            float val = (float) (Math.random() * mult);// + (float) ((mult * 0.1) / 10);
-//            float val = (float) (Math.random() % 5000);
-            sum += val;
-            yVals.add(new Entry(sum + val, i));
-        }
-
-        // create a dataset and give it a type
-        LineDataSet set1 = new LineDataSet(yVals, "저금한 돈 변화");
-        set1.setColor(ColorTemplate.getHoloBlue());
-        set1.setCircleColor(ColorTemplate.getHoloBlue());
-        set1.setLineWidth(2f);
-        set1.setCircleSize(4f);
-        set1.setFillAlpha(65);
-        set1.setFillColor(ColorTemplate.getHoloBlue());
-        set1.setHighLightColor(Color.rgb(244, 117, 117));
-
-        ArrayList<LineDataSet> dataSets = new ArrayList<LineDataSet>();
-        dataSets.add(set1); // add the datasets
-
-        // create a data object with the datasets
-        LineData data = new LineData(xVals, dataSets);
-
-        // set data
-        mChart.setData(data);
-    }
 
     TextView tvTodayMoney;
     TextView tvAllMoney;
@@ -172,14 +159,32 @@ public class HistoryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
         //차트 설정
         mChart = (LineChart) rootView.findViewById(R.id.chart);
-        setChart();
-
         tvTodayMoney = (TextView)rootView.findViewById(R.id.tvTodayMoney);
         tvAllMoney = (TextView)rootView.findViewById(R.id.tvAllMoney);
-
         Goal goal = PropertyManager.getInstance().mGoal;
         tvTodayMoney.setText("" + goal.now_cost);
         tvAllMoney.setText("" + goal.now_cost);
+
+
+        NetworkManager.getInstance().getSavingList(getActivity(), new NetworkManager.OnNetworkResultListener<Saving[]>() {
+            @Override
+            public void onResult(Saving[] res) {
+                ArrayList<String> xVals = new ArrayList<String>();
+                ArrayList<Entry> yVals = new ArrayList<Entry>();
+
+                for (int i = 0; i < res.length; i++) {
+                    Saving item = res[i];
+                    xVals.add(item.date.substring(0, 10));
+                    yVals.add(new Entry(item.now_cost, i));
+                }
+                setChart(xVals, yVals);
+            }
+
+            @Override
+            public void onFail(Saving[] res) {
+
+            }
+        });
 
         return rootView;
     }

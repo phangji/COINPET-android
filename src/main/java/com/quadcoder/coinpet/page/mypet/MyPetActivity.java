@@ -28,6 +28,7 @@ import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.response.Goal;
 import com.quadcoder.coinpet.page.common.Constants;
 import com.quadcoder.coinpet.page.common.GoalSettingActivity;
+import com.quadcoder.coinpet.page.common.Utils;
 
 public class MyPetActivity extends ActionBarActivity implements ActionBar.TabListener, HistoryFragment.OnFragmentInteractionListener{
 
@@ -51,7 +52,7 @@ public class MyPetActivity extends ActionBarActivity implements ActionBar.TabLis
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_my_pet);
         View main = getLayoutInflater().inflate(R.layout.activity_my_pet, null);
-        overrideFonts(MyPetActivity.this, main);
+        Utils.getInstance().overrideFonts(MyPetActivity.this, main);
         setContentView(main);
 
         // Set up the action bar.
@@ -89,22 +90,6 @@ public class MyPetActivity extends ActionBarActivity implements ActionBar.TabLis
                             .setTabListener(this));
         }
     }
-
-    private void overrideFonts(final Context context, final View v) {
-        try {
-            if (v instanceof ViewGroup) {
-                ViewGroup vg = (ViewGroup) v;
-                for (int i = 0; i < vg.getChildCount(); i++) {
-                    View child = vg.getChildAt(i);
-                    overrideFonts(context, child);
-                }
-            } else if (v instanceof TextView ) {
-                ((TextView) v).setTypeface(Typeface.createFromAsset(context.getAssets(), Constants.FONT_NORMAL));
-            }
-        } catch (Exception e) {
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

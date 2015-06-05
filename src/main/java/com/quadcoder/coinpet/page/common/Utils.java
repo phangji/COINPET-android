@@ -1,5 +1,11 @@
 package com.quadcoder.coinpet.page.common;
 
+import android.content.Context;
+import android.graphics.Typeface;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
 import com.quadcoder.coinpet.R;
 
 /**
@@ -30,5 +36,20 @@ public class Utils {
             throw new ArrayIndexOutOfBoundsException("diff bound out");
 
         return diffResource[diff - 1];
+    }
+
+    public void overrideFonts(final Context context, final View v) {
+        try {
+            if (v instanceof ViewGroup) {
+                ViewGroup vg = (ViewGroup) v;
+                for (int i = 0; i < vg.getChildCount(); i++) {
+                    View child = vg.getChildAt(i);
+                    overrideFonts(context, child);
+                }
+            } else if (v instanceof TextView) {
+                ((TextView) v).setTypeface(Typeface.createFromAsset(context.getAssets(), Constants.FONT_NORMAL));
+            }
+        } catch (Exception e) {
+        }
     }
 }

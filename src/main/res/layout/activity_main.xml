@@ -254,7 +254,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imgvPet"
                 android:layout_gravity="center|top"
-                android:src="@drawable/pet_baby_anim" />
+                android:src="@drawable/pet_default_anim" />
 
 
         </FrameLayout>

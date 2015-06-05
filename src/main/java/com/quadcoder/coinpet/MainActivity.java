@@ -253,18 +253,17 @@ public class MainActivity extends Activity {
         imgvPet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isLevelup) {
-                    imgvPet.setImageResource(R.drawable.pet_happy_anim);
-                    ((AnimationDrawable)imgvPet.getDrawable()).start();
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            imgvPet.setImageResource(R.drawable.pet_default_anim);
-                            ((AnimationDrawable) imgvPet.getDrawable()).start();
-                        }
-                    }, 1000);
 
-                }
+                imgvPet.setImageResource(R.drawable.pet_happy_anim);
+                ((AnimationDrawable)imgvPet.getDrawable()).start();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        imgvPet.setImageResource(R.drawable.pet_default_anim);
+                        ((AnimationDrawable) imgvPet.getDrawable()).start();
+                    }
+                }, 1000);
+
 
                 int random = (int)(Math.random() * 10) % 3;
                 switch (random) {

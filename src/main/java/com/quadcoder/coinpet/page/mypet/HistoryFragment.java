@@ -25,7 +25,6 @@ import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Goal;
 import com.quadcoder.coinpet.network.response.Saving;
-import com.quadcoder.coinpet.network.response.SavingList;
 
 import java.util.ArrayList;
 

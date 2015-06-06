@@ -15,9 +15,9 @@ import android.widget.TextView;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.page.common.Constants;
 
-public class TutorialSecondFragment extends Fragment {
+public class Tutorial2Fragment extends Fragment {
 
-    public TutorialSecondFragment() {
+    public Tutorial2Fragment() {
         // Required empty public constructor
     }
 

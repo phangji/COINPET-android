@@ -13,7 +13,7 @@ import com.quadcoder.coinpet.network.NetworkManager;
 public class TutorialActivity extends FragmentActivity {
 
     FragmentManager mFM;
-    Fragment[] list = { new TutorialFirstFragment(), new TutorialSecondFragment(), new TutorialThirdFragment() };
+    Fragment[] list = { new Tutorial1Fragment(), new Tutorial2Fragment(), new Tutorial3Fragment() };
     static final String TAG = "TutorialActivity";
 
 
@@ -25,7 +25,7 @@ public class TutorialActivity extends FragmentActivity {
         mFM = getSupportFragmentManager();
 
         if (savedInstanceState == null) {
-            TutorialFirstFragment f = new TutorialFirstFragment();
+            Tutorial1Fragment f = new Tutorial1Fragment();
             FragmentTransaction ft = mFM.beginTransaction();
             ft.add(R.id.container, f);
             ft.commit();

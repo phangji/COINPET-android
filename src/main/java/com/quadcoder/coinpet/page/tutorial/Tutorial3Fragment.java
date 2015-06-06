@@ -35,11 +35,11 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TutorialThirdFragment extends Fragment {
+public class Tutorial3Fragment extends Fragment {
 
 
     private final String TAG = "TutorialThirdFragment";
-    public TutorialThirdFragment() {
+    public Tutorial3Fragment() {
         // Required empty public constructor
     }
     static final int REQUEST_ENABLE_BT = 1;

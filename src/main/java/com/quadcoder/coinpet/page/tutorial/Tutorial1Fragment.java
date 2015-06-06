@@ -22,10 +22,10 @@ import com.quadcoder.coinpet.page.common.Constants;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TutorialFirstFragment extends Fragment {
+public class Tutorial1Fragment extends Fragment {
 
 
-    public TutorialFirstFragment() {
+    public Tutorial1Fragment() {
         // Required empty public constructor
     }
 

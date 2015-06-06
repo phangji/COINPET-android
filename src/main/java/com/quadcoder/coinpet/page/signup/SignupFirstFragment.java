@@ -54,20 +54,18 @@ public class SignupFirstFragment extends Fragment {
         imgvCloud1 = (ImageView)rootView.findViewById(R.id.imgvCloud1);
         imgvCloud2 = (ImageView)rootView.findViewById(R.id.imgvCloud2);
 
-        // TODO : Text로 변경
-        final Integer idx = new Integer(0);
-        final int[] resources = { R.drawable.story1, R.drawable.story2, R.drawable.story3, R.drawable.story4, R.drawable.story5, R.drawable.talk1, R.drawable.talk2 };
+        final int[] resources = { R.drawable.talk1, R.drawable.talk2 };
 
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (idx.intValue() == 6) {
+                if (isClicked) {
                     ((SignupActivity)getActivity()).onNextClicked();
                 }
                 else {
                     imgvPet.setImageResource(R.drawable.pet_right);
-                    imgvBox.setImageResource(resources[idx.intValue()]);
+                    imgvBox.setImageResource(resources[1]);
                     isClicked = true;
                 }
             }

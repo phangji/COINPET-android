@@ -59,4 +59,5 @@
     <string name="dialog_right">맞았어요</string>
     <string name="title_activity_dialog">DialogActivity</string>
     <string name="way_to_save">구출 방법</string>
+    <string name="title_activity_story">StoryActivity</string>
 </resources>

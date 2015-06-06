@@ -79,6 +79,11 @@
             android:label="@string/title_activity_dialog"
             android:theme="@style/AppTheme.DialogTheme" >
         </activity>
+        <activity
+            android:name=".page.story.StoryActivity"
+            android:label="@string/title_activity_story"
+            android:theme="@style/AppTheme.FullscreenTheme" >
+        </activity>
     </application>
 
 </manifest>

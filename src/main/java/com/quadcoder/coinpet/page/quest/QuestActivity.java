@@ -89,7 +89,7 @@ public class QuestActivity extends ActionBarActivity {
                         case Quest.DOING:
                         case Quest.RETRYING:
                             //검사받기 요청
-                            NetworkManager.getInstance().updateParentQuest(QuestActivity.this, ((ParentQuest) o).pk_parents_quest, ((ParentQuest) o).state, new NetworkManager.OnNetworkResultListener<Res>() {
+                            NetworkManager.getInstance().updateParentQuest(QuestActivity.this, ((ParentQuest) o).pk_parents_quest, Quest.WAITING, new NetworkManager.OnNetworkResultListener<Res>() {
                                 @Override
                                 public void onResult(Res res) {
                                     //상태 업데이트, 디비, 리스트 수정

@@ -146,7 +146,7 @@ public class PropertyManager {
      * nowPoint
      * */
 
-    private static final String FIELD_NOW_POINT = "nowPoint";
+    private static final String FIELD_NOW_POINT = "nowPoint";   //프로그레스바의 현재 값
     private int nowPoint;
 
     public int getNowPoint() {
@@ -160,6 +160,11 @@ public class PropertyManager {
         mEditor.commit();
     }
 
+    public void pointUp(int point) {
+        nowPoint += point;
+        setNowPoint(nowPoint);
+    }
+
     /**
      * nowLevel
      * */
@@ -168,7 +173,7 @@ public class PropertyManager {
     private int nowLevel;
 
     public int getNowLevel() {
-        nowLevel = mPrefs.getInt(FIELD_NOW_LEVEL, 0);
+        nowLevel = mPrefs.getInt(FIELD_NOW_LEVEL, 1);
         return nowLevel;
 
     }
@@ -177,6 +182,11 @@ public class PropertyManager {
         this.nowLevel = nowLevel;
         mEditor.putInt(FIELD_NOW_LEVEL, nowLevel);
         mEditor.commit();
+    }
+
+    public void levelUp() {
+        nowLevel += 1;
+        setNowLevel(nowLevel);
     }
 
     /**

@@ -1,7 +1,6 @@
 package com.quadcoder.coinpet;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -13,8 +12,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -59,7 +56,7 @@ public class MainActivity extends Activity {
     private StringBuffer mOutStringBuffer;
 
     TextView tvNowMoney;
-    boolean isDoneFirstQuest;
+
     static final int REQUEST_CODE_GOAL_SETTING_ACTIVITY = 10;
 
     @Override
@@ -120,7 +117,43 @@ public class MainActivity extends Activity {
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
 
+        if( imgvMail.getVisibility() == View.VISIBLE) {
+            frameTalk.setVisibility(View.GONE);
+        } else {
+            frameTalk.setVisibility(View.VISIBLE);
+        }
 
+        PropertyManager.getInstance().setNowPoint(0);
+        PropertyManager.getInstance().setNowLevel(1);
+
+        int nowLevel = PropertyManager.getInstance().getNowLevel();
+        int nowPoint = PropertyManager.getInstance().getNowPoint();
+
+        pbarExp.setMax(nowLevel * GAP_LEVELUP);
+        pbarExp.setProgress(nowPoint);
+        tvLevel.setText("Lv " + nowLevel);
+        tvExpText.setText(nowPoint + "/" + nowLevel * GAP_LEVELUP);
+
+//        devPointUpTest();
+    }
+
+    Runnable pointupRunnable;
+
+    private void devPointUpTest() {
+        pointupRunnable = new Runnable() {
+            @Override
+            public void run() {
+                effectPointUp(40);
+                mHandler.postDelayed(this, 5000);
+            }
+        };
+        mHandler.postDelayed(pointupRunnable, 5000);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mHandler.removeCallbacks(pointupRunnable);
     }
 
     void startAnimation() {
@@ -170,22 +203,7 @@ public class MainActivity extends Activity {
                 break;
             case REQUEST_CODE_GOAL_SETTING_ACTIVITY:
                 if(resultCode == Activity.RESULT_OK) {
-                    isDoneFirstQuest = data.getBooleanExtra(GoalSettingActivity.RESULT_GOAL_SET, false);
-                    if(isDoneFirstQuest) {
-                        frameQuest.setVisibility(View.INVISIBLE);
-                        frameTalk.setVisibility(View.VISIBLE);
-                        int gage = 70;
-                        pbarExp.setProgress(gage);
-                        tvExpText.setText(gage + "/100");
-
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                frameTalk.setVisibility(View.INVISIBLE);
-                                frameQuest.setVisibility(View.VISIBLE);
-                            }
-                        }, 2000);
-                    }
+                    boolean isDoneFirstQuest = data.getBooleanExtra(GoalSettingActivity.RESULT_GOAL_SET, false);
                 }
                 break;
         }
@@ -222,8 +240,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    boolean isLevelup;
-
     void setMainLayout() {
 
         tvNowMoney = (TextView)findViewById(R.id.tvNowMoney);
@@ -243,8 +259,15 @@ public class MainActivity extends Activity {
         Typeface font = Typeface.createFromAsset(getAssets(), com.quadcoder.coinpet.page.common.Constants.FONT_NORMAL);
         tvTalk.setTypeface(font);
 
-        final AudioEffect levelupAudio = new AudioEffect(AudioEffect.LEVEL_UP);
-        final AudioEffect pointupAudio = new AudioEffect(AudioEffect.POINT_UP);
+        if( PropertyManager.getInstance().mGoal != null ) { //목표 설정 완료하면 안보이기
+            imgvMail.setVisibility(View.GONE);
+            imgvMailBg.setVisibility(View.GONE);
+        }
+
+
+
+
+
         final AudioEffect boingAudio = new AudioEffect(AudioEffect.CARTOON_BOING);
         final AudioEffect hahahaAudio = new AudioEffect(AudioEffect.HAHAHA);
         final AudioEffect hmmmAudio = new AudioEffect(AudioEffect.HMMM);
@@ -284,17 +307,8 @@ public class MainActivity extends Activity {
         imgvMail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isDoneFirstQuest) {
-                    Intent i = new Intent(MainActivity.this, GoalSettingActivity.class);
-                    startActivity(i);
-                } else {
-                    imgvHeart.setVisibility(View.INVISIBLE);
-                    frameQuest.setVisibility(View.INVISIBLE);
-                    tvTalk.setVisibility(View.VISIBLE);
-                    frameTalk.setVisibility(View.VISIBLE);
-                    tvTalk.setText("첫 동전 넣기");
-                }
-
+                Intent i = new Intent(MainActivity.this, GoalSettingActivity.class);
+                startActivity(i);
             }
         });
 
@@ -488,38 +502,6 @@ public class MainActivity extends Activity {
                             @Override
                             public void onResult(Res res) {
 
-                                if(!isLevelup) {
-                                    imgvPet.setImageResource(R.drawable.pet_happy_anim);
-                                    ((AnimationDrawable)imgvPet.getDrawable()).start();
-                                    mHandler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            imgvPet.setImageResource(R.drawable.pet_default_anim);
-                                            ((AnimationDrawable)imgvPet.getDrawable()).start();
-                                        }
-                                    }, 1000);
-
-                                    imgvLevelup.setVisibility(View.VISIBLE);
-                                    Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.mail_bg_anim);
-                                    imgvLevelup.startAnimation(shake);
-                                    mHandler.postDelayed(new Runnable() {   //edited
-                                        @Override
-                                        public void run() {
-                                            imgvLevelup.setVisibility(View.INVISIBLE);
-                                            imgvLevelup.setImageDrawable(null);
-                                        }
-                                    }, 3000);
-                                    frameQuest.setVisibility(View.INVISIBLE);
-                                    tvTalk.setVisibility(View.INVISIBLE);
-                                    frameTalk.setVisibility(View.VISIBLE);
-                                    pbarExp.setMax(200);
-                                    pbarExp.setProgress(20);
-                                    tvExpText.setText("20/200");
-                                    tvLevel.setText("Lv 2");
-                                    imgvHeart.setVisibility(View.VISIBLE);
-                                    isLevelup = true;
-                                }
-
                             }
 
                             @Override
@@ -540,9 +522,72 @@ public class MainActivity extends Activity {
                     break;
                 case BTConstants.MESSAGE_TOAST:
 //                    Toast.makeText(MainActivity.this, msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
-
                     break;
+
             }
         }
     };
+
+    private void effectLevelUp() {
+        final AudioEffect levelupAudio = new AudioEffect(AudioEffect.LEVEL_UP);
+        levelupAudio.play();
+        imgvPet.setImageResource(R.drawable.pet_happy_anim);
+        ((AnimationDrawable)imgvPet.getDrawable()).start();
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                imgvPet.setImageResource(R.drawable.pet_default_anim);
+                ((AnimationDrawable) imgvPet.getDrawable()).start();
+            }
+        }, 3000);
+
+        imgvLevelup.setVisibility(View.VISIBLE);
+        imgvLevelup.setImageResource(R.drawable.syntax_level_up);
+        Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.mail_bg_anim);
+        imgvLevelup.startAnimation(shake);
+        mHandler.postDelayed(new Runnable() {   //edited
+            @Override
+            public void run() {
+                imgvLevelup.setVisibility(View.INVISIBLE);
+                imgvLevelup.setImageDrawable(null);
+            }
+        }, 3000);
+    }
+
+    static final int GAP_LEVELUP = 100;
+
+    private void effectPointUp(int point) {
+        final AudioEffect pointupAudio = new AudioEffect(AudioEffect.POINT_UP);
+        pointupAudio.play();
+
+        final int nowMax = pbarExp.getMax();
+        int nowExp = pbarExp.getProgress();
+
+        final int sum = nowExp + point;
+
+        if( sum >= nowMax ) {
+            //level up
+            PropertyManager.getInstance().levelUp();
+            PropertyManager.getInstance().pointUp(sum - nowMax);
+
+            pbarExp.setMax(nowMax + GAP_LEVELUP);
+            pbarExp.setProgress(sum - nowMax);
+            tvLevel.setText("Lv " + PropertyManager.getInstance().getNowLevel());
+            tvExpText.setText((sum - nowMax) + "/" + (nowMax + GAP_LEVELUP));
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    effectLevelUp();
+                }
+            }, 1000);
+
+        } else {
+            nowExp += point;
+            pbarExp.setProgress(nowExp);
+            tvExpText.setText(nowExp + "/" + nowMax);
+            PropertyManager.getInstance().pointUp(point);
+        }
+    }
 }

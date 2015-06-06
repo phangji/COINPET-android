@@ -37,6 +37,14 @@ public class QuestItemView extends FrameLayout {
         tvDesp = (TextView) findViewById(R.id.tvDesp);
         tvPoint = (TextView) findViewById(R.id.tvPoint);
         btnState = (Button) findViewById(R.id.btnState);
+
+        btnState.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mListener != null)
+                    mListener.onButtonListen(QuestItemView.this, mItem);
+            }
+        });
     }
 
     void setQuestItem(Quest item) {
@@ -47,20 +55,13 @@ public class QuestItemView extends FrameLayout {
         } else {
             setParentQuest( (ParentQuest)item);
         }
-        btnState.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mListener != null)
-                    mListener.onButtonListen(QuestItemView.this, mItem);
-            }
-        });
     }
 
     interface OnButtonListener {
         void onButtonListen(View v, Quest item);
     }
 
-    OnButtonListener mListener;
+    private OnButtonListener mListener;
 
     public void setOnButtonListener(OnButtonListener listener) {
         mListener = listener;
@@ -73,15 +74,14 @@ public class QuestItemView extends FrameLayout {
         tvPoint.setText(item.point + "");
 
         switch(item.state) {
-            case Quest.CREATED:
             case Quest.DOING:
                 btnState.setBackgroundResource(R.color.grey);
-                btnState.setClickable(false);
+//                btnState.setClickable(false);
                 btnState.setText(R.string.btn_doing);
                 break;
             case Quest.FINISHED:
                 btnState.setBackgroundResource(R.color.purple);
-                btnState.setClickable(true);
+//                btnState.setClickable(true);
                 btnState.setText(R.string.btn_finished);
                 break;
         }
@@ -93,15 +93,14 @@ public class QuestItemView extends FrameLayout {
         tvPoint.setText(item.point + "");
 
         switch(item.state) {
-            case Quest.CREATED:
             case Quest.DOING:
-                btnState.setBackgroundResource(R.color.grey);
-                btnState.setClickable(false);
+                btnState.setBackgroundResource(R.color.purple);
+//                btnState.setClickable(false);
                 btnState.setText(R.string.btn_tocheck);
                 break;
             case Quest.RETRYING:
                 btnState.setBackgroundResource(R.color.purple);
-                btnState.setClickable(true);
+//                btnState.setClickable(true);
                 btnState.setText(R.string.btn_retry);
                 if(item.comment != null) {
                     tvDesp.setText("\"" + item.comment + "\"");
@@ -110,12 +109,12 @@ public class QuestItemView extends FrameLayout {
                 break;
             case Quest.WAITING:
                 btnState.setBackgroundResource(R.color.grey);
-                btnState.setClickable(false);
+//                btnState.setClickable(false);
                 btnState.setText(R.string.btn_checking);
                 break;
             case Quest.FINISHED:
                 btnState.setBackgroundResource(R.color.purple);
-                btnState.setClickable(true);
+//                btnState.setClickable(true);
                 btnState.setText(R.string.btn_finished);
                 break;
         }

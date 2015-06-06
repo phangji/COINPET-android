@@ -1,7 +1,9 @@
 package com.quadcoder.coinpet.page.quest;
 
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -9,7 +11,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.MyApplication;
 import com.quadcoder.coinpet.R;
+import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.database.DBManager;
 import com.quadcoder.coinpet.model.ParentQuest;
 import com.quadcoder.coinpet.model.Quest;
@@ -21,19 +25,35 @@ public class QuestActivity extends ActionBarActivity {
 
     ListView mListView;
     QuestItemAdapter mAdapter;
+    Handler mHandler;
+    private static final int TIME_REMOVE_ITEM = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quest);
         mListView = (ListView) findViewById(R.id.listView);
-        mAdapter = new QuestItemAdapter(QuestActivity.this);
+
+        levelupAudio = new AudioEffect(AudioEffect.GOOD_JOB);
+
+        mHandler = new Handler();
+
+        mAdapter = new QuestItemAdapter();
+
+        mAdapter.setOnAdapterClickListener(new QuestItemAdapter.OnAdapterClickListener() {
+            @Override
+            public void onAdapterClick(View v, Quest item) {
+                Toast.makeText(getApplicationContext(), "Button Clicked", Toast.LENGTH_SHORT).show();
+
+            }
+        });
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Object o = mListView.getItemAtPosition(position);
-                if( o instanceof SystemQuest) {
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+                final Object o = mAdapter.getItem(position);
+                if (o instanceof SystemQuest) {
                     switch (((SystemQuest) o).state) {
                         case Quest.FINISHED:
                             Toast.makeText(QuestActivity.this, "시스템 퀘스트 보상을 받았습니다.", Toast.LENGTH_SHORT).show();
@@ -43,8 +63,9 @@ public class QuestActivity extends ActionBarActivity {
                                 public void onResult(Res res) {
                                     //상태 업데이트, 디비, 리스트에서 사라짐
                                     ((SystemQuest) o).state = Quest.DELETED;
-                                    DBManager.getInstance().updateSystemQuest((SystemQuest)o);
-                                    makeData(); //리스트에서 사라지도록.
+                                    DBManager.getInstance().updateSystemQuest((SystemQuest) o);
+
+                                    finishQuest(position);
                                 }
 
                                 @Override
@@ -59,9 +80,14 @@ public class QuestActivity extends ActionBarActivity {
                         case Quest.FINISHED:
                             Toast.makeText(QuestActivity.this, "부모 퀘스트 보상을 받았습니다.", Toast.LENGTH_SHORT).show();
                             //상태 업데이트, 디비, 리스트에서 사라짐
+                            ((ParentQuest) o).state = Quest.DELETED;
+                            DBManager.getInstance().updateParentQuest((ParentQuest) o);
+
+                            //finish quest
+                            finishQuest(position);
+
 
                             break;
-                        case Quest.CREATED:
                         case Quest.DOING:
                         case Quest.RETRYING:
                             //검사받기 요청
@@ -69,6 +95,9 @@ public class QuestActivity extends ActionBarActivity {
                                 @Override
                                 public void onResult(Res res) {
                                     //상태 업데이트, 디비, 리스트 수정
+                                    ((ParentQuest) o).state = Quest.WAITING;
+                                    DBManager.getInstance().updateParentQuest((ParentQuest)o);
+                                    mAdapter.notifyDataSetChanged();
                                 }
 
                                 @Override
@@ -84,10 +113,21 @@ public class QuestActivity extends ActionBarActivity {
     }
 
     void makeData() {
-        mAdapter = new QuestItemAdapter(QuestActivity.this);
+        mAdapter = new QuestItemAdapter();
         mAdapter.addParentAll(DBManager.getInstance().getParentQuestList());
         mAdapter.addSystemAll(DBManager.getInstance().getSystemQuestList());
         mListView.setAdapter(mAdapter);
+    }
+
+    AudioEffect levelupAudio;
+    void finishQuest(final int position) {
+        levelupAudio.play();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.removeItem(position);
+            }
+        }, TIME_REMOVE_ITEM);
     }
 
     @Override

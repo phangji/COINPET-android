@@ -1,13 +1,13 @@
 package com.quadcoder.coinpet.page.quest;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.quadcoder.coinpet.model.ParentQuest;
 import com.quadcoder.coinpet.model.Quest;
-import com.quadcoder.coinpet.model.Quiz;
 import com.quadcoder.coinpet.model.SystemQuest;
 
 import java.util.ArrayList;
@@ -15,17 +15,14 @@ import java.util.ArrayList;
 /**
  * Created by Phangji on 6/2/15.
  */
-public class QuestItemAdapter extends BaseAdapter implements QuestItemView.OnButtonListener{
+public class QuestItemAdapter extends BaseAdapter implements QuestItemView.OnButtonListener {
 
-    Context mContext;
     ArrayList<Quest> mItems = new ArrayList<>();
 
-    public QuestItemAdapter(Context context) {
-        this.mContext = context;
+    public QuestItemAdapter() {
     }
 
-    public QuestItemAdapter(Context context, ArrayList<Quest> items) {
-        this.mContext = context;
+    public QuestItemAdapter(ArrayList<Quest> items) {
         this.mItems = items;
 
         addAll(items);
@@ -52,6 +49,16 @@ public class QuestItemAdapter extends BaseAdapter implements QuestItemView.OnBut
         }
     }
 
+    public void clear() {
+        mItems.clear();
+        notifyDataSetChanged();
+    }
+
+    public void removeItem(int position) {
+        mItems.remove(position);
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getCount() {
         return mItems.size();
@@ -71,29 +78,33 @@ public class QuestItemAdapter extends BaseAdapter implements QuestItemView.OnBut
     public View getView(int position, View convertView, ViewGroup parent) {
         QuestItemView itemView;
 
-        if(convertView != null){
-            itemView = (QuestItemView)convertView;
+        if(convertView == null){
+            itemView = new QuestItemView(parent.getContext());
+            itemView.setOnButtonListener(QuestItemAdapter.this);
+
         }else{
-            itemView = new QuestItemView(mContext);
+            itemView = (QuestItemView)convertView;
         }
+
         itemView.setQuestItem(mItems.get(position));
 
         return itemView;
     }
 
-    public interface OnAdapterItemClickListener{
-        public void onAdapterItemClick(View v, Quest item);
+    public interface OnAdapterClickListener {
+        void onAdapterClick(View v, Quest item);
     }
-    OnAdapterItemClickListener mListener;
 
-    public void setOnAdapterClickListener(OnAdapterItemClickListener onAdapterItemClickListener){
-        mListener = onAdapterItemClickListener;
+    private OnAdapterClickListener mAdapterListener;
+
+    public void setOnAdapterClickListener(OnAdapterClickListener onAdapterClickListener){
+        mAdapterListener = onAdapterClickListener;
     }
 
     @Override
     public void onButtonListen(View v, Quest item) {
-        if(mListener != null){
-            mListener.onAdapterItemClick(v, item);
+        if(mAdapterListener != null){
+            mAdapterListener.onAdapterClick(v, item);
         }
     }
 }

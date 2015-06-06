@@ -44,9 +44,9 @@ public class NetworkManager {
     public static final String SERVER_URL = SERVER_EXTERNAL_URL;
 
     public interface OnNetworkResultListener<T> {
-        public void onResult(T res);
+        void onResult(T res);
 
-        public void onFail(T res);
+        void onFail(T res);
     }
 
     public void cancelRequests(Context context) {
@@ -160,10 +160,7 @@ public class NetworkManager {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                String response = new String(responseBody);
-                Gson gson = new Gson();
-                Res result = gson.fromJson(response, Res.class);
-                listener.onFail(result);
+                listener.onFail(null);
             }
         });
     }
@@ -189,10 +186,7 @@ public class NetworkManager {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                String response = new String(responseBody);
-                Gson gson = new Gson();
-                Res result = gson.fromJson(response, Res.class);
-                listener.onFail(result);
+                listener.onFail(null);
             }
         });
     }
@@ -243,10 +237,7 @@ public class NetworkManager {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                String response = responseBody == null ? null : new String(responseBody);
-                Gson gson = new Gson();
-                Res result = response == null ? null : gson.fromJson(response, Res.class);
-                listener.onFail(result);
+                listener.onFail(null);
             }
         });
     }
@@ -298,10 +289,7 @@ public class NetworkManager {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                String response = new String(responseBody);
-                Gson gson = new Gson();
-                Res result = gson.fromJson(response, Res.class);
-                listener.onFail(result);
+                listener.onFail(null);
             }
         });
     }
@@ -327,10 +315,7 @@ public class NetworkManager {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                String response = new String(responseBody);
-                Gson gson = new Gson();
-                Res result = gson.fromJson(response, Res.class);
-                listener.onFail(result);
+                listener.onFail(null);
             }
         });
     }
@@ -362,10 +347,7 @@ public class NetworkManager {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                String response = new String(responseBody);
-                Gson gson = new Gson();
-                Res result = gson.fromJson(response, Res.class);
-                listener.onFail(result);
+                listener.onFail(null);
             }
         });
     }

@@ -199,7 +199,7 @@ public class DBManager {
         db.close();
     }
 
-    public void updateParentQuest(ParentQuest record){
+    public void updateParentQuestState(ParentQuest record){
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ParentQuestTable.STATE, record.state);
@@ -209,10 +209,14 @@ public class DBManager {
         db.close();
     }
 
-    public void updateParentQuestComment(ParentQuest record){
+    public void updateParentQuest(ParentQuest record){
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(ParentQuestTable.COMMENT, record.comment);
+        values.put(ParentQuestTable.POINT, record.point);
+        values.put(ParentQuestTable.CONTENT, record.content);
+        values.put(ParentQuestTable.START_TIME, record.startTime);
+        values.put(ParentQuestTable.STATE, record.state);
         String whereClause = ParentQuestTable.PK + " = ? ";
         String[] whereArgs = { "" + record.pk_parents_quest};
         db.update(ParentQuestTable.TABLE_NAME, values, whereClause, whereArgs);

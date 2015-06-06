@@ -3,7 +3,6 @@ package com.quadcoder.coinpet.page.quest;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.quadcoder.coinpet.MyApplication;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.database.DBManager;
@@ -81,7 +79,7 @@ public class QuestActivity extends ActionBarActivity {
                             Toast.makeText(QuestActivity.this, "부모 퀘스트 보상을 받았습니다.", Toast.LENGTH_SHORT).show();
                             //상태 업데이트, 디비, 리스트에서 사라짐
                             ((ParentQuest) o).state = Quest.DELETED;
-                            DBManager.getInstance().updateParentQuest((ParentQuest) o);
+                            DBManager.getInstance().updateParentQuestState((ParentQuest) o);
 
                             //finish quest
                             finishQuest(position);
@@ -96,7 +94,7 @@ public class QuestActivity extends ActionBarActivity {
                                 public void onResult(Res res) {
                                     //상태 업데이트, 디비, 리스트 수정
                                     ((ParentQuest) o).state = Quest.WAITING;
-                                    DBManager.getInstance().updateParentQuest((ParentQuest)o);
+                                    DBManager.getInstance().updateParentQuestState((ParentQuest) o);
                                     mAdapter.notifyDataSetChanged();
                                 }
 

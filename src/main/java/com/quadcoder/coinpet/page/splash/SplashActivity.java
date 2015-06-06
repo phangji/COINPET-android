@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.quadcoder.coinpet.MainActivity;
@@ -68,6 +69,9 @@ public class SplashActivity extends Activity {
     private void checkUpdatedData() {
         int pkQuiz = PropertyManager.getInstance().getPkQuiz();
         int pkQuest = PropertyManager.getInstance().getPkQuest();
+        int pkParentQuiz = PropertyManager.getInstance().getPkPQuest();
+
+        Log.d("getUpdatedData", "pkQuiz: " + pkQuiz + "\tpkQuest: " + pkQuest + "\tpkParentQuest: " + pkParentQuiz);
         NetworkManager.getInstance().getUpdatedData(this, pkQuiz, pkQuest, new NetworkManager.OnNetworkResultListener<UpdatedData>() {
             @Override
             public void onResult(UpdatedData res) {
@@ -93,7 +97,10 @@ public class SplashActivity extends Activity {
                     }
                     if(res.parentsQuest.size() != 0) {
                         for(ParentQuest record : res.parentsQuest) {
-                            DBManager.getInstance().insertParentQuest(record);
+                            if( record.state == Quest.DOING)
+                                DBManager.getInstance().insertParentQuest(record);
+                            else
+                                DBManager.getInstance().updateParentQuest(record);
                         }
                         ParentQuest last = res.parentsQuest.get(res.parentsQuest.size() - 1);
                         PropertyManager.getInstance().setPkPQuest(last.pk_parents_quest);

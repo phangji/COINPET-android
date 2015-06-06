@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ToggleButton;
 
 import com.quadcoder.coinpet.MyApplication;
@@ -15,6 +17,7 @@ public class SettingActivity extends Activity {
 
     ToggleButton tbtnSound;
     boolean isChanged;
+    FrameLayout layClose;
 
     static AudioManager mAM;
 
@@ -23,6 +26,7 @@ public class SettingActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
+        layClose = (FrameLayout)findViewById(R.id.layClose);
         tbtnSound = (ToggleButton)findViewById(R.id.tbtnSound);
         tbtnSound.setChecked(PropertyManager.getInstance().isSound());
 
@@ -34,6 +38,13 @@ public class SettingActivity extends Activity {
         });
 
         Log.d("phangji", "onCreate");
+
+        layClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override

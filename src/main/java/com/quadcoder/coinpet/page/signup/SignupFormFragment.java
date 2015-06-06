@@ -91,7 +91,7 @@ public class SignupFormFragment extends Fragment {
                         @Override
                         public void onResult(Res res) {
                             PropertyManager.getInstance().setToken(res.Authorization);
-                            startActivity(new Intent(getActivity(), StoryActivity.class));
+                            startActivity(new Intent(getActivity(), MainActivity.class));
                             getActivity().finish();
                         }
 

@@ -1,6 +1,8 @@
 package com.quadcoder.coinpet.page.common;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
@@ -12,10 +14,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.quadcoder.coinpet.MainActivity;
 import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkManager;
+import com.quadcoder.coinpet.network.response.Goal;
 import com.quadcoder.coinpet.network.response.Res;
 
 import java.text.DateFormat;
@@ -65,34 +70,40 @@ public class GoalSettingActivity extends Activity {
                 c.add(Calendar.DATE, plus);
                 String goal_date = myFormat.format(new Date(c.getTimeInMillis()));
 
-                PropertyManager.getInstance().mGoal.content = etName.getText().toString();
-                PropertyManager.getInstance().mGoal.goal_cost = Integer.parseInt(etGoalMoney.getText().toString());
-                PropertyManager.getInstance().mGoal.method = 0;
-                PropertyManager.getInstance().mGoal.now_cost = 0;
-                PropertyManager.getInstance().mGoal.plus = plus;
-                PropertyManager.getInstance().mGoal.goal_date = goal_date;
 
-//                Toast.makeText(TransparentActivity.this, goal_date, Toast.LENGTH_SHORT).show();
-                NetworkManager.getInstance().setGoal(GoalSettingActivity.this, 0,
-                        etName.getText().toString(), goal_date, Integer.parseInt(etGoalMoney.getText().toString()), 0, new NetworkManager.OnNetworkResultListener<Res>() {
-                            @Override
-                            public void onResult(Res res) {
-                                Intent resultIntent = new Intent();
-                                resultIntent.putExtra(RESULT_GOAL_SET,true);
-                                setResult(Activity.RESULT_OK, resultIntent);
-                                finish();
-                            }
+                final Goal goal = new Goal();
+                goal.content = etName.getText().toString();
+                if(etGoalMoney.getText().toString().length() != 0)
+                    goal.goal_cost = Integer.parseInt(etGoalMoney.getText().toString());
+                goal.method = 0;
+                goal.now_cost = 0;
+                goal.plus = plus;
+                goal.goal_date = goal_date;
 
-                            @Override
-                            public void onFail(Res res) {
+                if (goal.goal_cost != 0 && goal.content.length() != 0 && goal.plus > 0) {
 
-                            }
-                        });
+                    NetworkManager.getInstance().setGoal(GoalSettingActivity.this, 0,
+                            etName.getText().toString(), goal_date, Integer.parseInt(etGoalMoney.getText().toString()), 0, new NetworkManager.OnNetworkResultListener<Res>() {
+                                @Override
+                                public void onResult(Res res) {
 
-//                Intent resultIntent = new Intent();
-//                resultIntent.putExtra(RESULT_GOAL_SET,true);
-//                setResult(Activity.RESULT_OK, resultIntent);
-//                finish();
+                                    PropertyManager.getInstance().mGoal = goal;
+
+                                    Intent resultIntent = new Intent();
+                                    resultIntent.putExtra(RESULT_GOAL_SET, true);
+                                    setResult(Activity.RESULT_OK, resultIntent);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onFail(Res res) {
+
+                                }
+                            });
+                } else {
+                    showDialog();
+                }
+
             }
         });
 
@@ -115,5 +126,19 @@ public class GoalSettingActivity extends Activity {
                 etPeriod.setText(num + "");
             }
         });
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(GoalSettingActivity.this);
+        builder.setTitle("목표 설정하기");
+        builder.setMessage("빈칸을 채워서 목표를 작성해주세요.");
+        builder.setPositiveButton("응", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.create().show();
+
+
     }
 }

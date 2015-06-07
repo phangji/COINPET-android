@@ -58,12 +58,13 @@ public class QuizReadyFragment extends Fragment {
 
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothManager.STATE_NONE) {
+            if (mChatService.getState() == BTConstants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
         } else {
-            mChatService = new BluetoothManager(getActivity(), mHandler);
+            mChatService = BluetoothManager.getInstance();
+            mChatService.setBtHandler(mHandler);
         }
 
         ((AnimationDrawable)imgvPad.getDrawable()).start();
@@ -99,14 +100,14 @@ public class QuizReadyFragment extends Fragment {
             switch (msg.what) {
                 case BTConstants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothManager.STATE_CONNECTED:
+                        case BTConstants.STATE_CONNECTED:
                             Toast.makeText(getActivity(), TAG + "/ state connected", Toast.LENGTH_SHORT).show();
                             break;
-                        case BluetoothManager.STATE_CONNECTING:
+                        case BTConstants.STATE_CONNECTING:
                             Toast.makeText(getActivity(), TAG + "/ state connecting", Toast.LENGTH_SHORT).show();
                             break;
-                        case BluetoothManager.STATE_LISTEN:
-                        case BluetoothManager.STATE_NONE:
+                        case BTConstants.STATE_LISTEN:
+                        case BTConstants.STATE_NONE:
                             Toast.makeText(getActivity(), TAG + "/ state none", Toast.LENGTH_SHORT).show();
                             break;
                     }
@@ -143,6 +144,7 @@ public class QuizReadyFragment extends Fragment {
         Log.d(TAG, "setupChatService()");
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothManager(getActivity(), mHandler);
+        mChatService = BluetoothManager.getInstance();
+        mChatService.setBtHandler(mHandler);
     }
 }

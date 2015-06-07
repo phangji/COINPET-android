@@ -36,6 +36,7 @@ import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.quest.QuestActivity;
 import com.quadcoder.coinpet.page.quiz.QuizActivity;
 import com.quadcoder.coinpet.page.setting.SettingActivity;
+import com.quadcoder.coinpet.page.story.StoryActivity;
 import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 
@@ -65,7 +66,7 @@ public class MainActivity extends Activity {
 
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothManager.STATE_NONE) {
+            if (mChatService.getState() == BTConstants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
@@ -93,7 +94,6 @@ public class MainActivity extends Activity {
         mBtAdapter.startDiscovery();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
-//        isRegistered = true;
     }
 
 
@@ -134,7 +134,7 @@ public class MainActivity extends Activity {
         tvLevel.setText("Lv " + nowLevel);
         tvExpText.setText(nowPoint + "/" + nowLevel * GAP_LEVELUP);
 
-//        devPointUpTest();
+        devPointUpTest();
     }
 
     Runnable pointupRunnable;
@@ -187,7 +187,7 @@ public class MainActivity extends Activity {
             case REQUEST_ENABLE_BT:
                 if (resultCode == Activity.RESULT_OK) {
                     setupChatService();
-                    mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
+                    mChatService.setState(BTConstants.STATE_BT_ENABLED);
                     connectBt();
                     PropertyManager.getInstance().setBtRequested(true);
                     Log.d("phangji bt", "bt enabled result ok");
@@ -228,7 +228,7 @@ public class MainActivity extends Activity {
     }
 
     void connectBt() {
-        if(mChatService.getState() == BluetoothManager.STATE_BT_ENABLED) {
+        if(mChatService.getState() == BTConstants.STATE_BT_ENABLED) {
             mDevice = mChatService.searchPaired();
 
             if( mDevice != null) {
@@ -363,7 +363,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //임시로 Tutorial 실행
-                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
+//                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
+                startActivity(new Intent(MainActivity.this, StoryActivity.class));
             }
         });
 
@@ -406,7 +407,7 @@ public class MainActivity extends Activity {
                         Toast.makeText(MainActivity.this, device.getName() + " discovered", Toast.LENGTH_SHORT).show();
                         mDevice = device;
                         mBtAdapter.cancelDiscovery();
-                        mChatService.setState(BluetoothManager.STATE_DISCOVERING);
+                        mChatService.setState(BTConstants.STATE_DISCOVERING);
                         mChatService.connect(mDevice);
                         isRegistered = true;
                     }
@@ -430,11 +431,11 @@ public class MainActivity extends Activity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else if(mChatService == null) {
             setupChatService();
-            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
+            mChatService.setState(BTConstants.STATE_BT_ENABLED);
             connectBt();
         }
         else {
-            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
+            mChatService.setState(BTConstants.STATE_BT_ENABLED);
             connectBt();
         }
     }
@@ -443,7 +444,8 @@ public class MainActivity extends Activity {
         Log.d(TAG, "setupChatService()");
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothManager(MainActivity.this, mHandler);
+        mChatService = BluetoothManager.getInstance();
+        mChatService.setBtHandler(mHandler);    //TODO: 액티비티별로 이것만 바꿔서
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
@@ -460,14 +462,14 @@ public class MainActivity extends Activity {
             switch (msg.what) {
                 case BTConstants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothManager.STATE_CONNECTED:
+                        case BTConstants.STATE_CONNECTED:
                             Toast.makeText(MainActivity.this, TAG + "/ state connected", Toast.LENGTH_SHORT).show();
                             break;
-                        case BluetoothManager.STATE_CONNECTING:
+                        case BTConstants.STATE_CONNECTING:
                             Toast.makeText(MainActivity.this, TAG + "/ state connecting", Toast.LENGTH_SHORT).show();
                             break;
-                        case BluetoothManager.STATE_LISTEN:
-                        case BluetoothManager.STATE_NONE:
+                        case BTConstants.STATE_LISTEN:
+                        case BTConstants.STATE_NONE:
                             Toast.makeText(MainActivity.this, TAG + "/ state none", Toast.LENGTH_SHORT).show();
                             break;
                     }

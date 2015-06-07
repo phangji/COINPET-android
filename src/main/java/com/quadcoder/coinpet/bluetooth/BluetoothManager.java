@@ -3,17 +3,15 @@ package com.quadcoder.coinpet.bluetooth;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-
+import com.quadcoder.coinpet.bluetooth.BTConstants;
 import com.quadcoder.coinpet.logger.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,10 +21,9 @@ import java.util.UUID;
 public class BluetoothManager {
     private static final String TAG = "BluetoothManager";
 
-    public String SERVICE_NAME = "COINPET-1234";
-    public String COM_MAC = "B8-E8-56-0A-B2-8F";
+    public String SERVICE_NAME = "COINPET-1234";    //TODO: PN번호 앞자리 잘라서 하는 걸로 추후 수정
     static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-//    static final UUID MY_UUID = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB");
+//    static final UUID MY_UUID = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB"); // 안되는 UUID
 
     private BluetoothAdapter mAdapter;
     private Handler mHandler;
@@ -34,20 +31,29 @@ public class BluetoothManager {
     private ChatThread mConnectedThread;
     private int mState;
 
-    // Constants that indicate the current connection state
-    public static final int STATE_NONE = 0;       // we're doing nothing
-    public static final int STATE_BT_ENABLED = 1;     // now listening for incoming connections
-    public static final int STATE_CONNECTING = 2; // now initiating an outgoing connection
-    public static final int STATE_CONNECTED = 3;  // now connected to a remote device
-    public static final int STATE_LISTEN = 4;
-    public static final int STATE_PAIRING = 5;
-    public static final int STATE_DISCOVERING = 6;
 
-    public BluetoothManager(Context context, Handler handler) {
+
+    private static class BluetoothManagerHolder {
+        private static final BluetoothManager instance = new BluetoothManager();
+    }
+
+    public static BluetoothManager getInstance() {
+        return BluetoothManagerHolder.instance;
+    }
+
+    private BluetoothManager() {
         Log.d(TAG, "BluetoothService created ");
         mAdapter = BluetoothAdapter.getDefaultAdapter();
-        mState = STATE_NONE;
+        mState = BTConstants.STATE_NONE;
+        mHandler = new Handler();   //TODO:
+    }
+
+    public void setBtHandler(Handler handler) {
         mHandler = handler;
+    }
+
+    public Handler getBtHandler() {
+        return mHandler;
     }
 
     public synchronized void setState(int state) {
@@ -71,7 +77,7 @@ public class BluetoothManager {
             for (BluetoothDevice device : pairedDevice) {
                 if (device.getName().equals(SERVICE_NAME)) {
                     searchedDevice = device;
-                    setState(STATE_PAIRING);
+                    setState(BTConstants.STATE_PAIRING);
                     break;
                 }
             }
@@ -82,7 +88,7 @@ public class BluetoothManager {
         Log.d(TAG, "connect to: " + device);
 
         // Cancel any thread attempting to make a connection
-        if (mState == STATE_CONNECTING) {
+        if (mState == BTConstants.STATE_CONNECTING) {
             if (mConnectThread != null) {
                 mConnectThread.cancel();
                 mConnectThread = null;
@@ -98,7 +104,7 @@ public class BluetoothManager {
         // Start the thread to connect with the given device
         mConnectThread = new ConnectThread(device);
         mConnectThread.start();
-        setState(STATE_CONNECTING);
+        setState(BTConstants.STATE_CONNECTING);
     }
 
     public synchronized void connected(BluetoothSocket socket, BluetoothDevice
@@ -128,7 +134,7 @@ public class BluetoothManager {
         msg.setData(bundle);
         mHandler.sendMessage(msg);
 
-        setState(STATE_CONNECTED);
+        setState(BTConstants.STATE_CONNECTED);
     }
 
     public synchronized void start() {
@@ -146,7 +152,7 @@ public class BluetoothManager {
             mConnectedThread = null;
         }
 
-        setState(STATE_LISTEN);
+        setState(BTConstants.STATE_LISTEN);
     }
 
     public synchronized void stop() {
@@ -162,7 +168,7 @@ public class BluetoothManager {
             mConnectedThread = null;
         }
 
-        setState(STATE_NONE);
+        setState(BTConstants.STATE_NONE);
     }
 
     public void write(byte[] out) {
@@ -170,7 +176,7 @@ public class BluetoothManager {
         ChatThread r;
         // Synchronize a copy of the ConnectedThread
         synchronized (this) {
-            if (mState != STATE_CONNECTED) return;
+            if (mState != BTConstants.STATE_CONNECTED) return;
             r = mConnectedThread;
         }
         // Perform the write unsynchronized

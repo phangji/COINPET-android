@@ -27,6 +27,7 @@ import com.quadcoder.coinpet.network.response.UpdatedData;
 import com.quadcoder.coinpet.page.common.Utils;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
 import com.quadcoder.coinpet.page.story.StoryActivity;
+import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 public class SplashActivity extends Activity {
 

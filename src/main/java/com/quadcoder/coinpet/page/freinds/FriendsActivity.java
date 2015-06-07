@@ -14,6 +14,7 @@ import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.database.DBManager;
 import com.quadcoder.coinpet.model.Friend;
+import com.quadcoder.coinpet.page.common.Utils;
 
 import java.util.ArrayList;
 
@@ -84,7 +85,7 @@ public class FriendsActivity extends ActionBarActivity {
                     if( !isBoxup ) {
                         effectList[idx].play();
                         upBox = getLayoutInflater().inflate(R.layout.friend_box_layout, null);
-
+                        Utils.getInstance().overrideFonts(FriendsActivity.this, upBox);
                         //set view
                         TextView tvTitle = (TextView) upBox.findViewById(R.id.tvTitle);
                         TextView tvDesp = (TextView) upBox.findViewById(R.id.tvDesp);

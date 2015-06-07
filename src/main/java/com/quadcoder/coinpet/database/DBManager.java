@@ -39,7 +39,7 @@ public class DBManager {
     public ArrayList<SystemQuest> getSystemQuestList() {
         ArrayList<SystemQuest> list = new ArrayList<SystemQuest>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE};
+        String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE, SystemQuestTable.CON_TYPE, SystemQuestTable.CON_METHOD, SystemQuestTable.CON_COUNT};
         String orderBy = SystemQuestTable.PK + " ASC";
         String selection = SystemQuestTable.STATE + " != ? ";
         String[] selectionArgs = { "" + Quest.DELETED };
@@ -51,6 +51,9 @@ public class DBManager {
             record.content = c.getString(c.getColumnIndex(SystemQuestTable.CONTENT));
             record.point = c.getInt(c.getColumnIndex(SystemQuestTable.POINT));
             record.state = c.getInt(c.getColumnIndex(SystemQuestTable.STATE));
+            record.con_type = c.getString(c.getColumnIndex(SystemQuestTable.CON_TYPE));
+            record.con_method = c.getString(c.getColumnIndex(SystemQuestTable.CON_METHOD));
+            record.con_count = c.getInt(c.getColumnIndex(SystemQuestTable.CON_COUNT));
             list.add(record);
         }
         c.close();
@@ -139,6 +142,9 @@ public class DBManager {
         values.put(SystemQuestTable.POINT, record.point);
         values.put(SystemQuestTable.STATE, record.state);
         values.put(SystemQuestTable.ORDER, record.order);
+        values.put(SystemQuestTable.CON_TYPE, record.con_type);
+        values.put(SystemQuestTable.CON_METHOD, record.con_method);
+        values.put(SystemQuestTable.CON_COUNT, record.con_count);
         db.insert(SystemQuestTable.TABLE_NAME, null, values);
         db.close();
     }

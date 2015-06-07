@@ -9,6 +9,9 @@ public class DBConstants {
 		public static final String POINT = "point";
 		public static final String ORDER = "seq";
 		public static final String STATE = "state";
+		public static final String CON_TYPE = "con_type";
+		public static final String CON_METHOD = "con_method";
+		public static final String CON_COUNT = "con_count";
 	}
 
 	public static class ParentQuestTable {

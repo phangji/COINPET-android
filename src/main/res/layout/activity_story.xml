@@ -25,7 +25,7 @@
             android:textSize="18dp"
             android:text="@string/story_text1"
             android:linksClickable="true"
-            android:elegantTextHeight="false"
+            android:lineSpacingExtra="15dp"
             android:padding="40dp" />
 
         <Button

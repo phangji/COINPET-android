@@ -172,11 +172,13 @@ public class HistoryFragment extends Fragment {
                 ArrayList<Entry> yVals = new ArrayList<Entry>();
 
                 int length = res.length;
-                if (length > LENGTH_LIMIT)
+                int gap = 0;
+                if (length > LENGTH_LIMIT) {
+                    gap = length - LENGTH_LIMIT;
                     length = LENGTH_LIMIT;
-
+                }
                 for (int i = 0; i < length; i++) {
-                    Saving item = res[i];
+                    Saving item = res[i + gap];
                     xVals.add(item.date.substring(0, 10));
                     yVals.add(new Entry(item.now_cost, i));
                 }

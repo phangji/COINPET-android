@@ -101,7 +101,7 @@ public class GoalSettingActivity extends Activity {
                                 }
                             });
                 } else {
-                    showDialog();
+                    Utils.getInstance().showYesDialog(GoalSettingActivity.this, "목표 설정하기", "빈칸을 채워서 목표를 작성해주세요.");
                 }
 
             }
@@ -126,19 +126,5 @@ public class GoalSettingActivity extends Activity {
                 etPeriod.setText(num + "");
             }
         });
-    }
-
-    private void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(GoalSettingActivity.this);
-        builder.setTitle("목표 설정하기");
-        builder.setMessage("빈칸을 채워서 목표를 작성해주세요.");
-        builder.setPositiveButton("응", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        builder.create().show();
-
-
     }
 }

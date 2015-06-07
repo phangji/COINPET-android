@@ -26,6 +26,7 @@ import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.Constants;
+import com.quadcoder.coinpet.page.common.Utils;
 import com.quadcoder.coinpet.page.story.StoryActivity;
 
 /**
@@ -101,7 +102,7 @@ public class SignupFormFragment extends Fragment {
                         }
                     });
                 } else {
-                    showDialog();
+                    Utils.getInstance().showYesDialog(getActivity(), "친구 맺기", "빈칸을 채워서 코인펫과 친구를 맺어보세요.");
                 }
             }
         });
@@ -146,18 +147,4 @@ public class SignupFormFragment extends Fragment {
         imgvCloud2.startAnimation(animCloud2);
 
     }
-
-    private void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("친구 맺기");
-        builder.setMessage("빈칸을 채워서 코인펫과 친구를 맺어보세요.");
-        builder.setPositiveButton("응", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        builder.create().show();
-    }
-
-
 }

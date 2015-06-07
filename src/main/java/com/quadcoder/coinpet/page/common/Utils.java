@@ -1,6 +1,8 @@
 package com.quadcoder.coinpet.page.common;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,5 +53,17 @@ public class Utils {
             }
         } catch (Exception e) {
         }
+    }
+
+    public void showYesDialog(Context context, String title, String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(msg);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.create().show();
     }
 }

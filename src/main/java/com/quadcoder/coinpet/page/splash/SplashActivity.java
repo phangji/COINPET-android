@@ -1,8 +1,13 @@
 package com.quadcoder.coinpet.page.splash;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +24,9 @@ import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Goal;
 import com.quadcoder.coinpet.network.response.UpdatedData;
+import com.quadcoder.coinpet.page.common.Utils;
+import com.quadcoder.coinpet.page.signup.SignupActivity;
+import com.quadcoder.coinpet.page.story.StoryActivity;
 
 public class SplashActivity extends Activity {
 
@@ -35,9 +43,32 @@ public class SplashActivity extends Activity {
         anim = (AnimationDrawable)imgvPet.getDrawable();
         anim.start();
 
+        ConnectivityManager connManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        if ( connManager.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
+                || connManager.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING ) {
 
-        checkUpdatedData();
+            checkUpdatedData();
+
+        }
+        else if ( connManager.getNetworkInfo(0).getState() == NetworkInfo.State.DISCONNECTED
+                || connManager.getNetworkInfo(1).getState() == NetworkInfo.State.DISCONNECTED) {
+            showDialog();
+        }
+
 //        goToNext();
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("인터넷 연결");
+        builder.setMessage("인터넷을 연결해주세요!");
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.create().show();
     }
 
     private void getGoalData() {
@@ -61,6 +92,7 @@ public class SplashActivity extends Activity {
             public void run() {
 //                startActivity(new Intent(SplashActivity.this, TutorialActivity.class));
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
+//                startActivity(new Intent(SplashActivity.this, StoryActivity.class));
                 finish();
             }
         }, DELAY_TIME);

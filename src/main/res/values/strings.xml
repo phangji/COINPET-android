@@ -46,6 +46,7 @@
     <string name="btn_finished">완료</string>
     <string name="btn_retry">다시 검사 받기</string>
     <string name="btn_doing">수행 중</string>
+    <string name="yes">알겠어요!</string>
     
     <!-- dialog -->
     <string name="dialog_next_quiz">이제 다른 문제를 풀어볼까요?</string>

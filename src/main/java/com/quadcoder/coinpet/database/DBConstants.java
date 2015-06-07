@@ -7,12 +7,16 @@ public class DBConstants {
 		public static final String PK = "pk_std_que";
 		public static final String CONTENT = "content";
 		public static final String POINT = "point";
-		public static final String ORDER = "seq";
 		public static final String STATE = "state";
 		public static final String CON_TYPE = "con_type";
 		public static final String CON_METHOD = "con_method";
 		public static final String CON_COUNT = "con_count";
 	}
+
+    public static class ActiveSystemQuestTable {
+        public static final String TABLE_NAME = "active_system_quest";
+        // same as SystemQuestTable
+    }
 
 	public static class ParentQuestTable {
 		public static final String TABLE_NAME = "parent_quest";

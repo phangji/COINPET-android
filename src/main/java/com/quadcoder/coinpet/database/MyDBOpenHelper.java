@@ -26,12 +26,21 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 				+ DBConstants.SystemQuestTable.PK + " integer, "
 				+ DBConstants.SystemQuestTable.CONTENT + " text, "
 				+ DBConstants.SystemQuestTable.POINT + " integer, "
-				+ DBConstants.SystemQuestTable.ORDER + " integer, "
 				+ DBConstants.SystemQuestTable.CON_TYPE + " text, "
 				+ DBConstants.SystemQuestTable.CON_METHOD + " text, "
-				+ DBConstants.SystemQuestTable.CON_COUNT + " text, "
+				+ DBConstants.SystemQuestTable.CON_COUNT + " integer, "
 				+ DBConstants.SystemQuestTable.STATE + " integer); ";
 		db.execSQL(sql);
+
+        sql = "CREATE TABLE " + DBConstants.ActiveSystemQuestTable.TABLE_NAME + "("
+                + DBConstants.SystemQuestTable.PK + " integer, "
+                + DBConstants.SystemQuestTable.CONTENT + " text, "
+                + DBConstants.SystemQuestTable.POINT + " integer, "
+                + DBConstants.SystemQuestTable.CON_TYPE + " text, "
+                + DBConstants.SystemQuestTable.CON_METHOD + " text, "
+                + DBConstants.SystemQuestTable.CON_COUNT + " integer, "
+                + DBConstants.SystemQuestTable.STATE + " integer); ";
+        db.execSQL(sql);
 
 		sql = "CREATE TABLE " + DBConstants.ParentQuestTable.TABLE_NAME + "("
 				+ DBConstants.ParentQuestTable.PK + " integer, "

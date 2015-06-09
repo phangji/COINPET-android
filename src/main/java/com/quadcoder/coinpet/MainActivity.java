@@ -134,7 +134,7 @@ public class MainActivity extends Activity {
         tvLevel.setText("Lv " + nowLevel);
         tvExpText.setText(nowPoint + "/" + nowLevel * GAP_LEVELUP);
 
-        devPointUpTest();
+//        devPointUpTest();
     }
 
     Runnable pointupRunnable;

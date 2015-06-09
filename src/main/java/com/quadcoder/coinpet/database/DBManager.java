@@ -111,7 +111,7 @@ public class DBManager {
 
     public Quiz getQuizRandom() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.ANSWER};
+        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.ANSWER, QuizTable.STATE};
         String selection = QuizTable.STATE + " = ?  OR " + QuizTable.STATE + " = ? limit 1";
         String[] selectionArgs = { "" + Quiz.STATE_YET,  "" + Quiz.STATE_WRONG};
         String orderBy = "random()";
@@ -132,6 +132,32 @@ public class DBManager {
         c.close();
 
         return record;
+    }
+
+    public ArrayList<Quiz> getQuizList() {
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.ANSWER, QuizTable.STATE};
+        String orderBy = "random()";
+        Cursor c = db.query(QuizTable.TABLE_NAME, columns, null, null, null, null, orderBy);
+
+        ArrayList<Quiz> list = new ArrayList<>();
+
+        while (c.moveToNext()) {
+            Quiz record = new Quiz();
+            record.pk_std_quiz = c.getInt(c.getColumnIndex(QuizTable.PK));
+            record.content = c.getString(c.getColumnIndex(QuizTable.CONTENT));
+            record.point = c.getInt(c.getColumnIndex(QuizTable.POINT));
+            record.state = c.getInt(c.getColumnIndex(QuizTable.STATE));
+            record.level = c.getInt(c.getColumnIndex(QuizTable.DIFF));
+            record.hint = c.getString(c.getColumnIndex(QuizTable.HINT));
+            record.time = c.getInt(c.getColumnIndex(QuizTable.TIME));
+            record.solution = c.getString(c.getColumnIndex(QuizTable.SOLUTION));
+            record.answer = c.getInt(c.getColumnIndex(QuizTable.ANSWER));
+            list.add(record);
+        }
+        c.close();
+
+        return list;
     }
 
     public ArrayList<Friend> getFriendList() {

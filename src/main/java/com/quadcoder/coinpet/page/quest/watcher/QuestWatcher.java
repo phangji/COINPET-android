@@ -4,9 +4,11 @@ import com.quadcoder.coinpet.database.DBManager;
 import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.response.Saving;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Phangji on 6/3/15.
@@ -37,8 +39,14 @@ public class QuestWatcher {
                         quest.con_count --;
                     } else if(quest.con_method.equals(Parsing.Method.MORNING)) {
                         //아침 시간대 판별
+                        if( getTimeMarkerString().equals("AM") ) {
+                            quest.con_count --;
+                        }
                     } else if(quest.con_method.equals(Parsing.Method.EVENING)) {
                         //저녁 시간대 판별
+                        if( getTimeMarkerString().equals("PM") ) {
+                            quest.con_count --;
+                        }
                     }
                 }
             }
@@ -52,11 +60,15 @@ public class QuestWatcher {
         }
     }
 
-    void saveChanges() {
+    public void saveChanges() {
         for(SystemQuest record : mActiveList) {
             DBManager.getInstance().updateActiveSystemQuestCount(record);
         }
     }
 
-
+    private String getTimeMarkerString() {
+        SimpleDateFormat now = new SimpleDateFormat("a", Locale.KOREA);
+        String text= now.format(new Date()).toString();
+        return text;
+    }
 }

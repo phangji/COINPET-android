@@ -6,12 +6,12 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import com.quadcoder.coinpet.bluetooth.BTConstants;
-import com.quadcoder.coinpet.logger.Log;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.Set;
 import java.util.UUID;
 
@@ -258,24 +258,24 @@ public class BluetoothManager {
 
         @Override
         public void run() {
-            byte[] buffer = new byte[1024]; // buffer store for the stream
+            byte[] buffer = new byte[1024]; // buffer store for the stream. It is not cleared after getting data.
             int bytes;  // bytes returned from read()
-//            byte[] data = null;
             // Keep listening to the InputStream until an exception occurs
             while(true) {
                 try {
                     // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    String str = new String(buffer, "UTF-8");
-//                    ByteBuffer wrapped = ByteBuffer.wrap(buffer);
-//                    data = wrapped.array(); //byte array
+                    bytes = mmInStream.read(buffer);    //length
 
-//                    Log.d(TAG, "data : " + data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5]);
-
+                    Log.d(TAG, "MESSAGE_READ " + bytes + " bytes read");
                     // Send the obtained bytes to the UI Activity
                     mHandler.obtainMessage(BTConstants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
-                    Log.d(TAG, "phangji READ: " + str);
+
+//                    for(int i=0; i < bytes; i++) {
+//                        Log.d(TAG, "phangji READ: " + buffer[i]);
+//                        i++;
+//                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     try {
@@ -291,8 +291,12 @@ public class BluetoothManager {
 
         public void write(byte[] buffer) {
             try {
+                Log.d(TAG, "MESSAGE_WRITE " + buffer.length + " bytes writen");
+                for(int i=0; i<buffer.length; i++) {
+                    Log.d(TAG, "phangji write " + buffer[i]);
+                }
                 mmOutStream.write(buffer);
-                Log.d(TAG, "phangji WRITE: " + buffer.toString());
+
                 // Share the sent message back to the UI Activity
                 mHandler.obtainMessage(BTConstants.MESSAGE_WRITE, -1, -1, buffer)
                         .sendToTarget();

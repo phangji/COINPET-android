@@ -82,7 +82,7 @@ public class BluetoothUtil {
 
         Calendar now = Calendar.getInstance();
         int[] data = new int[5];
-        data[0] = now.get(Calendar.YEAR);
+        data[0] = now.get(Calendar.YEAR) - 2000;
         data[1] = now.get(Calendar.MONTH);
         data[2] = now.get(Calendar.DAY_OF_MONTH);
         data[3] = now.get(Calendar.HOUR_OF_DAY);

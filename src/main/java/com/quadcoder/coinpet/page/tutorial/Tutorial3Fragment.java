@@ -1,6 +1,7 @@
 package com.quadcoder.coinpet.page.tutorial;
 
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +21,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.bluetooth.BTConstants;
 import com.quadcoder.coinpet.bluetooth.BluetoothManager;
 import com.quadcoder.coinpet.bluetooth.BluetoothUtil;
-import com.quadcoder.coinpet.logger.Log;
 import com.quadcoder.coinpet.page.common.Constants;
+import com.quadcoder.coinpet.page.common.GoalSettingActivity;
+import com.quadcoder.coinpet.page.quest.QuestActivity;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
 
 import java.io.UnsupportedEncodingException;
@@ -104,36 +108,28 @@ public class Tutorial3Fragment extends Fragment {
                 case BTConstants.MESSAGE_READ:
                     btn.setVisibility(View.VISIBLE);
                     byte[] readBuf = (byte[]) msg.obj;
-                    String readMessage = null;
-                    try {
-                        readMessage = new String(readBuf, "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-
                     int size = msg.arg1;
 
-                    Toast.makeText(getActivity(), "size : " + size, Toast.LENGTH_SHORT).show();
-
-                    // 일단 데이터를 막 버퍼에 넣는다.
-
-                    int i = 0;
-                    while( i < size) {
-                        mOutBuffer.add(readBuf[i]); // 일단 E도 넣음
-                        if ( readBuf[i] == BluetoothUtil.E) {
+                    Log.d(TAG, "MESSAGE_READ " + size + " bytes read");
+                    int idx = 0;
+                    while(idx < size) {
+                        Log.d(TAG, "phangji READ: " + readBuf[idx]);
+                        mOutBuffer.add(readBuf[idx]); // 일단 E도 넣음
+                        if ( readBuf[idx] == BluetoothUtil.E) {
                             Toast.makeText(getActivity(), "Tutorial / Device : " + mOutBuffer.toString(), Toast.LENGTH_SHORT).show();
                             // E가 나오면 S부터 E까지 사이에 값들을 찾는다.
-                            //S는 0번째, E는 readBuf.lenght-1번째
+                            //S는 0번째, E는 readBuf.lenghth-1번째
                             if(mOutBuffer.size() > 1) {
                                 byte opcode = mOutBuffer.get(1);
+
                                 if(opcode == BluetoothUtil.Opcode.PN_RESPONSE) {
                                     Toast.makeText(getActivity(), "PN RESPONSE " + mOutBuffer.get(3), Toast.LENGTH_SHORT).show();
-                                        if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS) {
-                                            mChatService.write(BluetoothUtil.getInstance().sendUTC());
-                                            utcIsSent = true;
-                                        } else {
-                                            mChatService.write(BluetoothUtil.getInstance().ack(false));
-                                        }
+                                    if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS) {
+                                        mChatService.write(BluetoothUtil.getInstance().sendUTC());
+                                        utcIsSent = true;
+                                    } else {
+                                        mChatService.write(BluetoothUtil.getInstance().registerPn());
+                                    }
                                     mOutBuffer.clear();
                                 }
 
@@ -146,42 +142,54 @@ public class Tutorial3Fragment extends Fragment {
                                     }
                                     mOutBuffer.clear();
                                 }
-                                // 적당한 행동을 한 후 버퍼를 비운다.
                             }
                         }
-                        i++;
+                        idx++;
                     }
 
+//                    Toast.makeText(getActivity(), "size : " + size, Toast.LENGTH_SHORT).show();
 
 
 
-
-
-
-
-
-//                    Toast.makeText(getActivity(), "Tutorial / Device : " + readMessage, Toast.LENGTH_SHORT).show();
+//                    // 일단 데이터를 막 버퍼에 넣는다.
 //
+//                    int i = 0;
+//                    while( i < size) {
+//                        mOutBuffer.add(readBuf[i]); // 일단 E도 넣음
+//                        if ( readBuf[i] == BluetoothUtil.E) {
+//                            Toast.makeText(getActivity(), "Tutorial / Device : " + mOutBuffer.toString(), Toast.LENGTH_SHORT).show();
+//                            // E가 나오면 S부터 E까지 사이에 값들을 찾는다.
+//                            //S는 0번째, E는 readBuf.lenghth-1번째
+//                            if(mOutBuffer.size() > 1) {
+//                                byte opcode = mOutBuffer.get(1);
 //
+//                                if(opcode == BluetoothUtil.Opcode.PN_RESPONSE) {
+//                                    Toast.makeText(getActivity(), "PN RESPONSE " + mOutBuffer.get(3), Toast.LENGTH_SHORT).show();
+//                                        if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS) {
+//                                            mChatService.write(BluetoothUtil.getInstance().sendUTC());
+//                                            utcIsSent = true;
+//                                        } else {
+//                                            mChatService.write(BluetoothUtil.getInstance().registerPn());
+//                                        }
+//                                    mOutBuffer.clear();
+//                                }
 //
-//                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.PN_RESPONSE) {
-//                        Toast.makeText(getActivity(), "PN RESPONSE " + readBuf[3], Toast.LENGTH_SHORT).show();
-////                        if(readBuf[3] == BluetoothUtil.SUCCESS) {
-////                            mChatService.write(BluetoothUtil.getInstance().sendUTC());
-////                            utcIsSent = true;
-////                        } else {
-////                            mChatService.write(BluetoothUtil.getInstance().ack(false));
-////                        }
-//                    }
-//
-//                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.ACK) {
-//                        Toast.makeText(getActivity(), "ACK" + readBuf[3], Toast.LENGTH_SHORT).show();
-//                        if(readBuf[3] == BluetoothUtil.SUCCESS && utcIsSent) {
-//                            moveToNextPage();
-//                        } else {
-//                            Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
+//                                if(opcode == BluetoothUtil.Opcode.ACK) {
+//                                    Toast.makeText(getActivity(), "ACK" + readBuf[3], Toast.LENGTH_SHORT).show();
+//                                    if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS && utcIsSent) {
+//                                        moveToNextPage();
+//                                    } else {
+//                                        Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                    mOutBuffer.clear();
+//                                }
+//                            }
 //                        }
+//                        i++;
 //                    }
+
+
+
                     break;
             }
         }
@@ -281,6 +289,28 @@ public class Tutorial3Fragment extends Fragment {
             }
         }
     };
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) { //블루투스 연결 권장 다이얼로그 호출 결과
+        switch (requestCode) {
+            case REQUEST_ENABLE_BT:
+                if (resultCode == Activity.RESULT_OK) {
+                    setupChatService();
+                    mChatService.setState(BTConstants.STATE_BT_ENABLED);
+                    connectBt();
+                    Log.d("phangji bt", "bt enabled result ok");
+
+                } else if (requestCode == Activity.RESULT_CANCELED) {
+                    PropertyManager.getInstance().setBtRequested(false);
+                    Log.d("phangji bt", "bt enabled canceled");
+                } else {    //블루투스를 켜시겠습니까? 아니요. OR 취소
+                    PropertyManager.getInstance().setBtRequested(false);
+                    Log.d("phangji bt", "BT not enabled");
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     @Override
     public void onDestroy() {

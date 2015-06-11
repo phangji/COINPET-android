@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.quadcoder.coinpet.MainActivity;
 import com.quadcoder.coinpet.R;
+import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.page.common.Utils;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
 
@@ -31,6 +32,9 @@ public class StoryActivity extends Activity {
     int textStory[] = {R.string.story_text1, R.string.story_text2, R.string.story_text3,
             R.string.story_text4, R.string.story_text5};
 
+    int audioStory[] = {AudioEffect.STORY1, AudioEffect.STORY2, AudioEffect.STORY3,
+            AudioEffect.STORY4, AudioEffect.STORY5};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,9 +51,25 @@ public class StoryActivity extends Activity {
             public void onClick(View v) {
                 pageIndex++;
                 goToNextStory(pageIndex);
+
             }
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        nowPlaying.play();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(nowPlaying != null)
+            nowPlaying.stop();
+    }
+
+    AudioEffect nowPlaying = new AudioEffect(AudioEffect.STORY1);
 
     private void goToNextStory(int index) {
         if(index == 5) {
@@ -58,6 +78,9 @@ public class StoryActivity extends Activity {
         } else {
             imgvStory.setImageResource(imgStory[index]);
             tvStory.setText(textStory[index]);
+            nowPlaying.stop();
+            nowPlaying = new AudioEffect(audioStory[index]);
+            nowPlaying.play();
         }
 
     }

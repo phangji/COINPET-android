@@ -35,6 +35,12 @@ public class AudioEffect {
     public static final int FREIND_CHCH = R.raw.f_chch;
     public static final int FREIND_MAMA = R.raw.f_mama;
 
+    public static final int STORY1 = R.raw.audio_story1;
+    public static final int STORY2 = R.raw.audio_story2;
+    public static final int STORY3 = R.raw.audio_story3;
+    public static final int STORY4 = R.raw.audio_story4;
+    public static final int STORY5 = R.raw.audio_story5;
+
     public AudioEffect(int effect) {
         mState = PlayState.IDLE;
         mPlayer = MediaPlayer.create(MyApplication.getContext(), effect);

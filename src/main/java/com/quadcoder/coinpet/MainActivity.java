@@ -36,12 +36,16 @@ import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.quest.QuestActivity;
 import com.quadcoder.coinpet.page.quiz.QuizActivity;
 import com.quadcoder.coinpet.page.setting.SettingActivity;
+import com.quadcoder.coinpet.page.story.StoryActivity;
 import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends Activity {
 
     static final int REQUEST_ENABLE_BT = 1;
+    public static final int REQUEST_CODE_EVENT = 100;
     BluetoothDevice mDevice;
     /**
      * Local Bluetooth adapter
@@ -65,7 +69,7 @@ public class MainActivity extends Activity {
 
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothManager.STATE_NONE) {
+            if (mChatService.getState() == BTConstants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
@@ -93,7 +97,6 @@ public class MainActivity extends Activity {
         mBtAdapter.startDiscovery();
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
-//        isRegistered = true;
     }
 
 
@@ -122,9 +125,6 @@ public class MainActivity extends Activity {
         } else {
             frameTalk.setVisibility(View.VISIBLE);
         }
-
-        PropertyManager.getInstance().setNowPoint(0);
-        PropertyManager.getInstance().setNowLevel(1);
 
         int nowLevel = PropertyManager.getInstance().getNowLevel();
         int nowPoint = PropertyManager.getInstance().getNowPoint();
@@ -187,7 +187,7 @@ public class MainActivity extends Activity {
             case REQUEST_ENABLE_BT:
                 if (resultCode == Activity.RESULT_OK) {
                     setupChatService();
-                    mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
+                    mChatService.setState(BTConstants.STATE_BT_ENABLED);
                     connectBt();
                     PropertyManager.getInstance().setBtRequested(true);
                     Log.d("phangji bt", "bt enabled result ok");
@@ -204,6 +204,22 @@ public class MainActivity extends Activity {
             case REQUEST_CODE_GOAL_SETTING_ACTIVITY:
                 if(resultCode == Activity.RESULT_OK) {
                     boolean isDoneFirstQuest = data.getBooleanExtra(GoalSettingActivity.RESULT_GOAL_SET, false);
+                }
+                break;
+            case REQUEST_CODE_EVENT:
+                if(resultCode == Activity.RESULT_OK) {
+                    ArrayList<Integer> pointListUp = (ArrayList<Integer>)(data.getSerializableExtra(QuestActivity.INTENT_POINT_UP));
+                    Log.d("main phangji", pointListUp.get(0).intValue() + " 값 ");
+                    for(Integer val : pointListUp) {
+                        final int point = val.intValue();
+                        int idx = pointListUp.indexOf(val);
+                        mHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                effectPointUp(point);
+                            }
+                        }, idx * 3000);
+                    }
                 }
                 break;
         }
@@ -228,7 +244,7 @@ public class MainActivity extends Activity {
     }
 
     void connectBt() {
-        if(mChatService.getState() == BluetoothManager.STATE_BT_ENABLED) {
+        if(mChatService.getState() == BTConstants.STATE_BT_ENABLED) {
             mDevice = mChatService.searchPaired();
 
             if( mDevice != null) {
@@ -344,7 +360,7 @@ public class MainActivity extends Activity {
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, QuestActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, QuestActivity.class), REQUEST_CODE_EVENT);
             }
         });
 
@@ -363,7 +379,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //임시로 Tutorial 실행
-                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
+//                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
+                startActivity(new Intent(MainActivity.this, StoryActivity.class));
             }
         });
 
@@ -406,7 +423,7 @@ public class MainActivity extends Activity {
                         Toast.makeText(MainActivity.this, device.getName() + " discovered", Toast.LENGTH_SHORT).show();
                         mDevice = device;
                         mBtAdapter.cancelDiscovery();
-                        mChatService.setState(BluetoothManager.STATE_DISCOVERING);
+                        mChatService.setState(BTConstants.STATE_DISCOVERING);
                         mChatService.connect(mDevice);
                         isRegistered = true;
                     }
@@ -430,11 +447,11 @@ public class MainActivity extends Activity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else if(mChatService == null) {
             setupChatService();
-            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
+            mChatService.setState(BTConstants.STATE_BT_ENABLED);
             connectBt();
         }
         else {
-            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
+            mChatService.setState(BTConstants.STATE_BT_ENABLED);
             connectBt();
         }
     }
@@ -443,13 +460,12 @@ public class MainActivity extends Activity {
         Log.d(TAG, "setupChatService()");
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothManager(MainActivity.this, mHandler);
+        mChatService = BluetoothManager.getInstance();
+        mChatService.setBtHandler(mHandler);    //TODO: 액티비티별로 이것만 바꿔서
 
         // Initialize the buffer for outgoing messages
         mOutStringBuffer = new StringBuffer("");
     }
-
-
 
     /**
      * The Handler that gets information back from the BluetoothChatManager
@@ -460,14 +476,14 @@ public class MainActivity extends Activity {
             switch (msg.what) {
                 case BTConstants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
-                        case BluetoothManager.STATE_CONNECTED:
+                        case BTConstants.STATE_CONNECTED:
                             Toast.makeText(MainActivity.this, TAG + "/ state connected", Toast.LENGTH_SHORT).show();
                             break;
-                        case BluetoothManager.STATE_CONNECTING:
+                        case BTConstants.STATE_CONNECTING:
                             Toast.makeText(MainActivity.this, TAG + "/ state connecting", Toast.LENGTH_SHORT).show();
                             break;
-                        case BluetoothManager.STATE_LISTEN:
-                        case BluetoothManager.STATE_NONE:
+                        case BTConstants.STATE_LISTEN:
+                        case BTConstants.STATE_NONE:
                             Toast.makeText(MainActivity.this, TAG + "/ state none", Toast.LENGTH_SHORT).show();
                             break;
                     }
@@ -534,13 +550,10 @@ public class MainActivity extends Activity {
         imgvPet.setImageResource(R.drawable.pet_happy_anim);
         ((AnimationDrawable)imgvPet.getDrawable()).start();
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                imgvPet.setImageResource(R.drawable.pet_default_anim);
-                ((AnimationDrawable) imgvPet.getDrawable()).start();
-            }
-        }, 3000);
+        // levelup effect
+        imgvPet.setImageResource(R.drawable.pet_default_anim);
+        ((AnimationDrawable) imgvPet.getDrawable()).start();
+
 
         imgvLevelup.setVisibility(View.VISIBLE);
         imgvLevelup.setImageResource(R.drawable.syntax_level_up);
@@ -569,7 +582,7 @@ public class MainActivity extends Activity {
         if( sum >= nowMax ) {
             //level up
             PropertyManager.getInstance().levelUp();
-            PropertyManager.getInstance().pointUp(sum - nowMax);
+            PropertyManager.getInstance().setNowPoint(sum - nowMax);
 
             pbarExp.setMax(nowMax + GAP_LEVELUP);
             pbarExp.setProgress(sum - nowMax);

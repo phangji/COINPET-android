@@ -60,7 +60,7 @@ public class Tutorial3Fragment extends Fragment {
 
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothManager.STATE_NONE) {
+            if (mChatService.getState() == BTConstants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
@@ -97,11 +97,12 @@ public class Tutorial3Fragment extends Fragment {
             switch (msg.what) {
                 case BTConstants.MESSAGE_STATE_CHANGE:
                     int state = msg.arg1;
-                    if(state == BluetoothManager.STATE_CONNECTED) {
+                    if(state == BTConstants.STATE_CONNECTED) {
                         btn.setVisibility(View.VISIBLE);
                     }
                     break;
                 case BTConstants.MESSAGE_READ:
+                    btn.setVisibility(View.VISIBLE);
                     byte[] readBuf = (byte[]) msg.obj;
                     String readMessage = null;
                     try {
@@ -191,7 +192,8 @@ public class Tutorial3Fragment extends Fragment {
         Log.d(TAG, "setupChatService()");
 
         // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = new BluetoothManager(getActivity(), mHandler);
+        mChatService = BluetoothManager.getInstance();
+        mChatService.setBtHandler(mHandler);
 
         // Initialize the buffer for outgoing messages
         mOutBuffer = new ArrayList<>();
@@ -203,7 +205,7 @@ public class Tutorial3Fragment extends Fragment {
 
         if (mChatService != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BluetoothManager.STATE_NONE) {
+            if (mChatService.getState() == BTConstants.STATE_NONE) {
                 // Start the Bluetooth chat services
                 mChatService.start();
             } 
@@ -224,11 +226,11 @@ public class Tutorial3Fragment extends Fragment {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else if(mChatService == null) {
             setupChatService();
-            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
+            mChatService.setState(BTConstants.STATE_BT_ENABLED);
             connectBt();
         }
         else {
-            mChatService.setState(BluetoothManager.STATE_BT_ENABLED);
+            mChatService.setState(BTConstants.STATE_BT_ENABLED);
             connectBt();
         }
     }
@@ -245,7 +247,7 @@ public class Tutorial3Fragment extends Fragment {
     BluetoothDevice mDevice;
 
     void connectBt() {
-        if(mChatService.getState() == BluetoothManager.STATE_BT_ENABLED) {
+        if(mChatService.getState() == BTConstants.STATE_BT_ENABLED) {
             mDevice = mChatService.searchPaired();
 
             if( mDevice != null) {
@@ -272,7 +274,7 @@ public class Tutorial3Fragment extends Fragment {
                     Toast.makeText(getActivity(), device.getName() + " discovered", Toast.LENGTH_SHORT).show();
                     mDevice = device;
                     mBtAdapter.cancelDiscovery();
-                    mChatService.setState(BluetoothManager.STATE_DISCOVERING);
+                    mChatService.setState(BTConstants.STATE_DISCOVERING);
                     mChatService.connect(mDevice);
                     isRegistered = true;
                 }

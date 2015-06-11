@@ -23,15 +23,30 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 
 		String sql = "CREATE TABLE " + DBConstants.SystemQuestTable.TABLE_NAME + "("
-				+ DBConstants.SystemQuestTable.PK + " integer, "
+				+ DBConstants.SystemQuestTable.PK
+				+ " integer PRIMARY KEY , "
 				+ DBConstants.SystemQuestTable.CONTENT + " text, "
 				+ DBConstants.SystemQuestTable.POINT + " integer, "
-				+ DBConstants.SystemQuestTable.ORDER + " integer, "
+				+ DBConstants.SystemQuestTable.CON_TYPE + " text, "
+				+ DBConstants.SystemQuestTable.CON_METHOD + " text, "
+				+ DBConstants.SystemQuestTable.CON_COUNT + " integer, "
 				+ DBConstants.SystemQuestTable.STATE + " integer); ";
 		db.execSQL(sql);
 
+        sql = "CREATE TABLE " + DBConstants.ActiveSystemQuestTable.TABLE_NAME + "("
+                + DBConstants.SystemQuestTable.PK
+                + " integer PRIMARY KEY , "
+                + DBConstants.SystemQuestTable.CONTENT + " text, "
+                + DBConstants.SystemQuestTable.POINT + " integer, "
+                + DBConstants.SystemQuestTable.CON_TYPE + " text, "
+                + DBConstants.SystemQuestTable.CON_METHOD + " text, "
+                + DBConstants.SystemQuestTable.CON_COUNT + " integer, "
+                + DBConstants.SystemQuestTable.STATE + " integer); ";
+        db.execSQL(sql);
+
 		sql = "CREATE TABLE " + DBConstants.ParentQuestTable.TABLE_NAME + "("
-				+ DBConstants.ParentQuestTable.PK + " integer, "
+				+ DBConstants.ParentQuestTable.PK
+				+ " integer PRIMARY KEY , "
 				+ DBConstants.ParentQuestTable.CONTENT + " text, "
 				+ DBConstants.ParentQuestTable.POINT + " integer, "
 				+ DBConstants.ParentQuestTable.START_TIME + " text, "
@@ -40,7 +55,8 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 		db.execSQL(sql);
 
 		sql = "CREATE TABLE " + DBConstants.QuizTable.TABLE_NAME + "("
-				+ DBConstants.QuizTable.PK + " integer, "
+				+ DBConstants.QuizTable.PK
+				+ " integer PRIMARY KEY , "
 				+ DBConstants.QuizTable.CONTENT + " text, "
 				+ DBConstants.QuizTable.POINT + " integer, "
 				+ DBConstants.QuizTable.DIFF + " integer, "
@@ -52,7 +68,8 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 		db.execSQL(sql);
 
 		sql = "CREATE TABLE " + DBConstants.FriendsTable.TABLE_NAME + "("
-				+ DBConstants.FriendsTable.PK + " integer, "
+				+ DBConstants.FriendsTable.PK
+				+ " integer PRIMARY KEY , "
 				+ DBConstants.FriendsTable.NAME + " text, "
 				+ DBConstants.FriendsTable.DESCRIPTION + " integer, "
 				+ DBConstants.FriendsTable.CONDITION + " text, "

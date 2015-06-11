@@ -49,6 +49,13 @@ public class QuestItemAdapter extends BaseAdapter implements QuestItemView.OnBut
         }
     }
 
+    public void addActiveQuest(SystemQuest item){
+        if(item != null){
+            mItems.add(item);
+            notifyDataSetChanged();
+        }
+    }
+
     public void clear() {
         mItems.clear();
         notifyDataSetChanged();

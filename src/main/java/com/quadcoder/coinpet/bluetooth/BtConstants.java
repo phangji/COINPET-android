@@ -9,6 +9,15 @@ public interface BTConstants {
     int MESSAGE_DEVICE_NAME = 4;
     int MESSAGE_TOAST = 5;
 
+    // Constants that indicate the current connection state
+    int STATE_NONE = 0;       // we're doing nothing
+    int STATE_BT_ENABLED = 1;     // now listening for incoming connections
+    int STATE_CONNECTING = 2; // now initiating an outgoing connection
+    int STATE_CONNECTED = 3;  // now connected to a remote device
+    int STATE_LISTEN = 4;
+    int STATE_PAIRING = 5;
+    int STATE_DISCOVERING = 6;
+
     // Key names received from the BluetoothManager Handler
     String DEVICE_NAME = "COINPET";
     String TOAST = "toast";

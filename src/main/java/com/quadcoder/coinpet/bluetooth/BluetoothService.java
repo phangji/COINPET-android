@@ -33,7 +33,7 @@ public class BluetoothService extends Service {
 
     public BluetoothService() {
         mHandler = ((MyApplication)getApplication()).getHandler();
-        mManager = new BluetoothManager(this, mHandler);
+//        mManager = new BluetoothManager(this, mHandler);
     }
 
 

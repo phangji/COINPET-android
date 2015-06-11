@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.quadcoder.coinpet.MyApplication;
 import com.quadcoder.coinpet.database.DBConstants.SystemQuestTable;
+import com.quadcoder.coinpet.database.DBConstants.ActiveSystemQuestTable;
 import com.quadcoder.coinpet.database.DBConstants.ParentQuestTable;
 import com.quadcoder.coinpet.database.DBConstants.QuizTable;
 import com.quadcoder.coinpet.database.DBConstants.FriendsTable;
@@ -39,11 +40,11 @@ public class DBManager {
     public ArrayList<SystemQuest> getSystemQuestList() {
         ArrayList<SystemQuest> list = new ArrayList<SystemQuest>();
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE};
+        String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE, SystemQuestTable.CON_TYPE, SystemQuestTable.CON_METHOD, SystemQuestTable.CON_COUNT};
         String orderBy = SystemQuestTable.PK + " ASC";
         String selection = SystemQuestTable.STATE + " != ? ";
         String[] selectionArgs = { "" + Quest.DELETED };
-        Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, null, null, null, null, orderBy);
+        Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
 
         while (c.moveToNext()) {
             SystemQuest record = new SystemQuest();
@@ -51,6 +52,76 @@ public class DBManager {
             record.content = c.getString(c.getColumnIndex(SystemQuestTable.CONTENT));
             record.point = c.getInt(c.getColumnIndex(SystemQuestTable.POINT));
             record.state = c.getInt(c.getColumnIndex(SystemQuestTable.STATE));
+            record.con_type = c.getString(c.getColumnIndex(SystemQuestTable.CON_TYPE));
+            record.con_method = c.getString(c.getColumnIndex(SystemQuestTable.CON_METHOD));
+            record.con_count = c.getInt(c.getColumnIndex(SystemQuestTable.CON_COUNT));
+            list.add(record);
+        }
+        c.close();
+
+        return list;
+    }
+
+    public SystemQuest getSystemQuestRandom() {
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE, SystemQuestTable.CON_TYPE, SystemQuestTable.CON_METHOD, SystemQuestTable.CON_COUNT};
+        String orderBy = "random()";
+        Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, null, null, null, null, orderBy);
+
+        SystemQuest record = new SystemQuest();
+        while (c.moveToNext()) {
+            record.pk_std_que = c.getInt(c.getColumnIndex(SystemQuestTable.PK));
+            record.content = c.getString(c.getColumnIndex(SystemQuestTable.CONTENT));
+            record.point = c.getInt(c.getColumnIndex(SystemQuestTable.POINT));
+            record.state = c.getInt(c.getColumnIndex(SystemQuestTable.STATE));
+            record.con_type = c.getString(c.getColumnIndex(SystemQuestTable.CON_TYPE));
+            record.con_method = c.getString(c.getColumnIndex(SystemQuestTable.CON_METHOD));
+            record.con_count = c.getInt(c.getColumnIndex(SystemQuestTable.CON_COUNT));
+        }
+        c.close();
+
+        return record;
+    }
+
+
+    /**
+     * SAVE
+     */
+
+    public SystemQuest createNewActiveSystemQuest() {
+
+        // 현재 액티브 퀘스트에 없는 것을 시스템 퀘스트로부터 가져온다.
+        SystemQuest activeQuest = null;
+
+        do {
+            activeQuest = getSystemQuestRandom();
+            if( insertActiveSystemQuest(activeQuest) ) {
+                activeQuest = null;
+            }
+        } while (activeQuest == null);
+
+        return activeQuest;
+    }
+
+    public ArrayList<SystemQuest> getActiveSystemQuestList() {
+        ArrayList<SystemQuest> list = new ArrayList<SystemQuest>();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE, SystemQuestTable.CON_TYPE, SystemQuestTable.CON_METHOD, SystemQuestTable.CON_COUNT};
+        String orderBy = SystemQuestTable.PK + " ASC";
+        String selection = SystemQuestTable.STATE + " != ? ";
+        String[] selectionArgs = { "" + Quest.DELETED };
+        Cursor c = db.query(ActiveSystemQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
+
+        if(c.getCount() < 3)
+        while (c.moveToNext()) {
+            SystemQuest record = new SystemQuest();
+            record.pk_std_que = c.getInt(c.getColumnIndex(SystemQuestTable.PK));
+            record.content = c.getString(c.getColumnIndex(SystemQuestTable.CONTENT));
+            record.point = c.getInt(c.getColumnIndex(SystemQuestTable.POINT));
+            record.state = c.getInt(c.getColumnIndex(SystemQuestTable.STATE));
+            record.con_type = c.getString(c.getColumnIndex(SystemQuestTable.CON_TYPE));
+            record.con_method = c.getString(c.getColumnIndex(SystemQuestTable.CON_METHOD));
+            record.con_count = c.getInt(c.getColumnIndex(SystemQuestTable.CON_COUNT));
             list.add(record);
         }
         c.close();
@@ -82,7 +153,7 @@ public class DBManager {
 
     public Quiz getQuizRandom() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
-        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.ANSWER};
+        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.ANSWER, QuizTable.STATE};
         String selection = QuizTable.STATE + " = ?  OR " + QuizTable.STATE + " = ? limit 1";
         String[] selectionArgs = { "" + Quiz.STATE_YET,  "" + Quiz.STATE_WRONG};
         String orderBy = "random()";
@@ -103,6 +174,32 @@ public class DBManager {
         c.close();
 
         return record;
+    }
+
+    public ArrayList<Quiz> getQuizList() {
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.ANSWER, QuizTable.STATE};
+        String orderBy = "random()";
+        Cursor c = db.query(QuizTable.TABLE_NAME, columns, null, null, null, null, orderBy);
+
+        ArrayList<Quiz> list = new ArrayList<>();
+
+        while (c.moveToNext()) {
+            Quiz record = new Quiz();
+            record.pk_std_quiz = c.getInt(c.getColumnIndex(QuizTable.PK));
+            record.content = c.getString(c.getColumnIndex(QuizTable.CONTENT));
+            record.point = c.getInt(c.getColumnIndex(QuizTable.POINT));
+            record.state = c.getInt(c.getColumnIndex(QuizTable.STATE));
+            record.level = c.getInt(c.getColumnIndex(QuizTable.DIFF));
+            record.hint = c.getString(c.getColumnIndex(QuizTable.HINT));
+            record.time = c.getInt(c.getColumnIndex(QuizTable.TIME));
+            record.solution = c.getString(c.getColumnIndex(QuizTable.SOLUTION));
+            record.answer = c.getInt(c.getColumnIndex(QuizTable.ANSWER));
+            list.add(record);
+        }
+        c.close();
+
+        return list;
     }
 
     public ArrayList<Friend> getFriendList() {
@@ -138,9 +235,29 @@ public class DBManager {
         values.put(SystemQuestTable.CONTENT, record.content);
         values.put(SystemQuestTable.POINT, record.point);
         values.put(SystemQuestTable.STATE, record.state);
-        values.put(SystemQuestTable.ORDER, record.order);
+        values.put(SystemQuestTable.CON_TYPE, record.con_type);
+        values.put(SystemQuestTable.CON_METHOD, record.con_method);
+        values.put(SystemQuestTable.CON_COUNT, record.con_count);
         db.insert(SystemQuestTable.TABLE_NAME, null, values);
         db.close();
+    }
+
+    public boolean insertActiveSystemQuest(SystemQuest record) {
+        boolean isInserted = true;
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(SystemQuestTable.PK, record.pk_std_que);
+        values.put(SystemQuestTable.CONTENT, record.content);
+        values.put(SystemQuestTable.POINT, record.point);
+        values.put(SystemQuestTable.STATE, record.state);
+        values.put(SystemQuestTable.CON_TYPE, record.con_type);
+        values.put(SystemQuestTable.CON_METHOD, record.con_method);
+        values.put(SystemQuestTable.CON_COUNT, record.con_count);
+        long val = db.insert(ActiveSystemQuestTable.TABLE_NAME, null, values);
+        if(val == -1)
+            isInserted = false;
+        db.close();
+        return isInserted;
     }
 
     public void insertParentQuest(ParentQuest record) {
@@ -196,6 +313,26 @@ public class DBManager {
         String whereClause = SystemQuestTable.PK + " = ? ";
         String[] whereArgs = { "" + record.pk_std_que};
         db.update(SystemQuestTable.TABLE_NAME, values, whereClause, whereArgs);
+        db.close();
+    }   //TODO:
+
+    public void updateActiveSystemQuestState(SystemQuest record){
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(SystemQuestTable.STATE, record.state);
+        String whereClause = SystemQuestTable.PK + " = ? ";
+        String[] whereArgs = { "" + record.pk_std_que};
+        db.update(ActiveSystemQuestTable.TABLE_NAME, values, whereClause, whereArgs);
+        db.close();
+    }
+
+    public void updateActiveSystemQuestCount(SystemQuest record){
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(SystemQuestTable.CON_COUNT, record.con_count);
+        String whereClause = SystemQuestTable.PK + " = ? ";
+        String[] whereArgs = { "" + record.pk_std_que};
+        db.update(ActiveSystemQuestTable.TABLE_NAME, values, whereClause, whereArgs);
         db.close();
     }
 
@@ -255,6 +392,14 @@ public class DBManager {
         db.close();
     }
 
+    public void deleteActiveSystemQuest(SystemQuest record){
+        SQLiteDatabase db = mHelper.getWritableDatabase();
+        String whereClause = SystemQuestTable.PK + " = ? ";
+        String[] whereArgs = { "" + record.pk_std_que};
+        db.delete(ActiveSystemQuestTable.TABLE_NAME, whereClause, whereArgs);
+        db.close();
+    }
+
     public void deleteParentQuest(ParentQuest record){
         SQLiteDatabase db = mHelper.getWritableDatabase();
         String whereClause = ParentQuestTable.PK + " = ? ";
@@ -262,4 +407,5 @@ public class DBManager {
         db.delete(ParentQuestTable.TABLE_NAME, whereClause, whereArgs);
         db.close();
     }
+
 }

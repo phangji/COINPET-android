@@ -131,7 +131,7 @@ public class Tutorial3Fragment extends Fragment {
                                     } else {
                                         mChatService.write(BluetoothUtil.getInstance().registerPn());
                                     }
-                                    mOutBuffer.clear();
+//                                    mOutBuffer.clear();
                                 }
 
                                 if(opcode == BluetoothUtil.Opcode.ACK) {
@@ -141,8 +141,9 @@ public class Tutorial3Fragment extends Fragment {
                                     } else {
                                         Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
                                     }
-                                    mOutBuffer.clear();
+//                                    mOutBuffer.clear();
                                 }
+                                mOutBuffer.clear();
                             }
                         }
                         idx++;

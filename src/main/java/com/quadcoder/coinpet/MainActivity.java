@@ -379,8 +379,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //임시로 Tutorial 실행
-//                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
-                startActivity(new Intent(MainActivity.this, StoryActivity.class));
+                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
+//                startActivity(new Intent(MainActivity.this, StoryActivity.class));
             }
         });
 
@@ -456,6 +456,7 @@ public class MainActivity extends Activity {
         }
     }
 
+    ArrayList<Byte> mOutBuffer;
     private void setupChatService() {
         Log.d(TAG, "setupChatService()");
 
@@ -464,7 +465,7 @@ public class MainActivity extends Activity {
         mChatService.setBtHandler(mHandler);    //TODO: 액티비티별로 이것만 바꿔서
 
         // Initialize the buffer for outgoing messages
-        mOutStringBuffer = new StringBuffer("");
+        mOutBuffer = new ArrayList<>();
     }
 
     /**
@@ -496,40 +497,61 @@ public class MainActivity extends Activity {
                     break;
                 case BTConstants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(MainActivity.this, "MainActivity / Device : " + readMessage, Toast.LENGTH_SHORT).show();
+                    int size = msg.arg1;
 
-                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.READ_MONEY) {   // 동전입력 프로토콜
-                        int[] num = new int[3];
-                        for(int i=3; i<=5; i++) {
-                            num[i-3] = readBuf[i];
-                            if(num[i-3] < 0) {
-                                num[i-3] += 256;
+                    android.util.Log.d(TAG, "MESSAGE_READ " + size + " bytes read");
+                    int idx = 0;
+                    while(idx < size) {
+                        android.util.Log.d(TAG, "phangji READ: " + readBuf[idx]);
+                        mOutBuffer.add(readBuf[idx]); // 일단 E도 넣음
+                        if ( readBuf[idx] == BluetoothUtil.E) {
+                            Toast.makeText(MainActivity.this, "Tutorial / Device : " + mOutBuffer.toString(), Toast.LENGTH_SHORT).show();
+                            // E가 나오면 S부터 E까지 사이에 값들을 찾는다.
+                            //S는 0번째, E는 readBuf.lenghth-1번째
+                            if(mOutBuffer.size() > 1) {
+                                byte opcode = mOutBuffer.get(1);
+
+                                if(opcode == BluetoothUtil.Opcode.READ_MONEY) {
+
+                                    int[] num = new int[3];
+                                    for(int i=3; i<=5; i++) {
+                                        num[i-3] = mOutBuffer.get(i);
+                                        if(num[i-3] < 0) {
+                                            num[i-3] += 256;
+                                        }
+                                    }
+                                    Log.d("TAG", num[0] + " " + num[1] + " " + num[2] + " ");
+                                    final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
+                                    int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
+
+                                    Toast.makeText(MainActivity.this, "READ_MONEY " + money, Toast.LENGTH_SHORT).show();
+
+                                    tvNowMoney.setText("" + sum);
+                                    PropertyManager.getInstance().mGoal.now_cost = sum;
+                                    PropertyManager.getInstance().moneyUp(sum);
+
+                                    NetworkManager.getInstance().sendCoin(MainActivity.this, money, new NetworkManager.OnNetworkResultListener<Res>() {
+                                        @Override
+                                        public void onResult(Res res) {
+                                        }
+
+                                        @Override
+                                        public void onFail(Res res) {
+                                        }
+                                    });
+
+                                }
+                                mOutBuffer.clear();
+
+//                                if(readMessage != null && readBuf[1] == BluetoothUtil.Opcode.READ_MONEY_SYNC) {
+//                          //오랜만에 sync됐을 때 처리들 - UTC랑 여러 번 옴.
+//                                  }
                             }
                         }
-                        Log.d("TAG", num[0] + " " + num[1] + " " + num[2] + " ");
-                        final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
-                        int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
-                        tvNowMoney.setText("" + sum);
-                        PropertyManager.getInstance().mGoal.now_cost = sum;
-
-                        NetworkManager.getInstance().sendCoin(MainActivity.this, money, new NetworkManager.OnNetworkResultListener<Res>() {
-                            @Override
-                            public void onResult(Res res) {
-
-                            }
-
-                            @Override
-                            public void onFail(Res res) {
-
-                            }
-                        });
+                        idx++;
                     }
 
-                    if(readMessage != null && readBuf[1] == BluetoothUtil.Opcode.READ_MONEY_SYNC) {
-                        //오랜만에 sync됐을 때 처리들 - UTC랑 여러 번 옴.
-                    }
+//
 
                     break;
                 case BTConstants.MESSAGE_DEVICE_NAME:

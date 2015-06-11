@@ -142,6 +142,10 @@ public class PropertyManager {
         mEditor.commit();
     }
 
+    public void moneyUp(int upMoney) {
+        setNowMoney(getNowMoney() + upMoney);
+    }
+
     /**
      * nowPoint
      * */

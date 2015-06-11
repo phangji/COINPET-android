@@ -7,4 +7,5 @@ public class Res {
     public String error;
     public String Authorization;
     public String field;
+    public String msg;
 }

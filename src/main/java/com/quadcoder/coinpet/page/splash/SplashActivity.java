@@ -27,6 +27,7 @@ import com.quadcoder.coinpet.network.response.UpdatedData;
 import com.quadcoder.coinpet.page.common.Utils;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
 import com.quadcoder.coinpet.page.story.StoryActivity;
+import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 public class SplashActivity extends Activity {
 
@@ -99,11 +100,11 @@ public class SplashActivity extends Activity {
     }
 
     private void checkUpdatedData() {
-        int pkQuiz = PropertyManager.getInstance().getPkQuiz();
-        int pkQuest = PropertyManager.getInstance().getPkQuest();
-        int pkParentQuiz = PropertyManager.getInstance().getPkPQuest();
+        int pkQuiz = 0;
+        int pkQuest = 0;
+        int pkParentQuest = PropertyManager.getInstance().getPkPQuest();
 
-        Log.d("getUpdatedData", "pkQuiz: " + pkQuiz + "\tpkQuest: " + pkQuest + "\tpkParentQuest: " + pkParentQuiz);
+        Log.d("getUpdatedData", "pkQuiz: " + pkQuiz + "\tpkQuest: " + pkQuest + "\tpkParentQuest: " + pkParentQuest);
         NetworkManager.getInstance().getUpdatedData(this, pkQuiz, pkQuest, new NetworkManager.OnNetworkResultListener<UpdatedData>() {
             @Override
             public void onResult(UpdatedData res) {
@@ -113,7 +114,7 @@ public class SplashActivity extends Activity {
                 if(res.needUpdate) {
                     if(res.systemQuiz.size() != 0) {
                         for(Quiz record : res.systemQuiz) {
-                            DBManager.getInstance().insertQuiz(record);
+                            DBManager.getInstance().insertQuiz(record); // STATE_YET
                         }
                         Quiz last = res.systemQuiz.get(res.systemQuiz.size() - 1);
                         PropertyManager.getInstance().setPkQuiz(last.pk_std_quiz);
@@ -124,7 +125,7 @@ public class SplashActivity extends Activity {
                             newOne.state = Quest.DOING;
                             DBManager.getInstance().insertSystemQuest(newOne);
                         }
-                        SystemQuest last = res.systemQuest.get(res.systemQuiz.size() - 1);
+                        SystemQuest last = res.systemQuest.get(res.systemQuest.size() - 1);
                         PropertyManager.getInstance().setPkQuest(last.pk_std_que);
                     }
                     if(res.parentsQuest.size() != 0) {

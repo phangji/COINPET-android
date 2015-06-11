@@ -3,6 +3,7 @@ package com.quadcoder.coinpet.page.quest;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,9 +16,12 @@ import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.database.DBManager;
 import com.quadcoder.coinpet.model.ParentQuest;
 import com.quadcoder.coinpet.model.Quest;
+import com.quadcoder.coinpet.model.Quiz;
 import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
+
+import java.util.ArrayList;
 
 public class QuestActivity extends ActionBarActivity {
 
@@ -61,7 +65,7 @@ public class QuestActivity extends ActionBarActivity {
                                 public void onResult(Res res) {
                                     //상태 업데이트, 디비, 리스트에서 사라짐
                                     ((SystemQuest) o).state = Quest.DELETED;
-                                    DBManager.getInstance().updateSystemQuest((SystemQuest) o);
+                                    DBManager.getInstance().updateActiveSystemQuestState((SystemQuest) o);
 
                                     finishQuest(position);
                                 }
@@ -108,6 +112,11 @@ public class QuestActivity extends ActionBarActivity {
                 }
             }
         });
+
+        ArrayList<Quiz> quizs = DBManager.getInstance().getQuizList();
+        for(Quiz record : quizs) {
+            Log.d("quiz phangji", record.toString());
+        }
     }
 
     void makeData() {

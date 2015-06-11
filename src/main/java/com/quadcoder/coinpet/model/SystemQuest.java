@@ -9,4 +9,7 @@ public class SystemQuest implements Quest {
     public int point;
     public int state;
     public int order;
+    public String con_type;
+    public String con_method;
+    public int con_count;
 }

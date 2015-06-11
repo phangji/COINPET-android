@@ -167,6 +167,8 @@ public class QuestActivity extends ActionBarActivity {
             result.putExtra(INTENT_POINT_UP, pointUpList);
             setResult(Activity.RESULT_OK, result);
             finish();
+        } else {
+            finish();
         }
     }
 

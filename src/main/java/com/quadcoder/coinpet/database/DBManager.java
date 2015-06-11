@@ -37,30 +37,6 @@ public class DBManager {
      * SELECT
      */
 
-    public ArrayList<SystemQuest> getSystemQuestList() {
-        ArrayList<SystemQuest> list = new ArrayList<SystemQuest>();
-        SQLiteDatabase db = mHelper.getReadableDatabase();
-        String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE, SystemQuestTable.CON_TYPE, SystemQuestTable.CON_METHOD, SystemQuestTable.CON_COUNT};
-        String orderBy = SystemQuestTable.PK + " ASC";
-        String selection = SystemQuestTable.STATE + " != ? ";
-        String[] selectionArgs = { "" + Quest.DELETED };
-        Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
-
-        while (c.moveToNext()) {
-            SystemQuest record = new SystemQuest();
-            record.pk_std_que = c.getInt(c.getColumnIndex(SystemQuestTable.PK));
-            record.content = c.getString(c.getColumnIndex(SystemQuestTable.CONTENT));
-            record.point = c.getInt(c.getColumnIndex(SystemQuestTable.POINT));
-            record.state = c.getInt(c.getColumnIndex(SystemQuestTable.STATE));
-            record.con_type = c.getString(c.getColumnIndex(SystemQuestTable.CON_TYPE));
-            record.con_method = c.getString(c.getColumnIndex(SystemQuestTable.CON_METHOD));
-            record.con_count = c.getInt(c.getColumnIndex(SystemQuestTable.CON_COUNT));
-            list.add(record);
-        }
-        c.close();
-
-        return list;
-    }
 
     public SystemQuest getSystemQuestRandom() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
@@ -122,6 +98,7 @@ public class DBManager {
             record.con_type = c.getString(c.getColumnIndex(SystemQuestTable.CON_TYPE));
             record.con_method = c.getString(c.getColumnIndex(SystemQuestTable.CON_METHOD));
             record.con_count = c.getInt(c.getColumnIndex(SystemQuestTable.CON_COUNT));
+
             list.add(record);
         }
         c.close();
@@ -244,6 +221,7 @@ public class DBManager {
 
     public boolean insertActiveSystemQuest(SystemQuest record) {
         boolean isInserted = true;
+
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SystemQuestTable.PK, record.pk_std_que);
@@ -253,6 +231,7 @@ public class DBManager {
         values.put(SystemQuestTable.CON_TYPE, record.con_type);
         values.put(SystemQuestTable.CON_METHOD, record.con_method);
         values.put(SystemQuestTable.CON_COUNT, record.con_count);
+
         long val = db.insert(ActiveSystemQuestTable.TABLE_NAME, null, values);
         if(val == -1)
             isInserted = false;

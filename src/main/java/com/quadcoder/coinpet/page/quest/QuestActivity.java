@@ -125,6 +125,11 @@ public class QuestActivity extends ActionBarActivity {
                 }
             }
         });
+
+        ArrayList<Quiz> quizs = DBManager.getInstance().getQuizList();
+        for(Quiz record : quizs) {
+            Log.d("quiz phangji", record.toString());
+        }
     }
 
     private void devLogQuizData() {

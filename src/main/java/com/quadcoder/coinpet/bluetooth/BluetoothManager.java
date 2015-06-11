@@ -271,10 +271,9 @@ public class BluetoothManager {
                     mHandler.obtainMessage(BTConstants.MESSAGE_READ, bytes, -1, buffer)
                             .sendToTarget();
 
-//                    for(int i=0; i < bytes; i++) {
-//                        Log.d(TAG, "phangji READ: " + buffer[i]);
-//                        i++;
-//                    }
+                    for(int i=0; i < bytes; i++) {
+                        Log.d(TAG, "phangji READ: " + buffer[i]);
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();

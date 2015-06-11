@@ -30,6 +30,7 @@ import com.quadcoder.coinpet.page.common.Constants;
 import com.quadcoder.coinpet.page.common.GoalSettingActivity;
 import com.quadcoder.coinpet.page.quest.QuestActivity;
 import com.quadcoder.coinpet.page.signup.SignupActivity;
+import com.quadcoder.coinpet.page.story.StoryActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -87,7 +88,7 @@ public class Tutorial3Fragment extends Fragment {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(new Intent(getActivity(), SignupActivity.class));
+                startActivity(new Intent(getActivity(), StoryActivity.class));
                 getActivity().finish();
             }
         }, 2000);
@@ -134,7 +135,7 @@ public class Tutorial3Fragment extends Fragment {
                                 }
 
                                 if(opcode == BluetoothUtil.Opcode.ACK) {
-                                    Toast.makeText(getActivity(), "ACK" + readBuf[3], Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "ACK " + readBuf[3], Toast.LENGTH_SHORT).show();
                                     if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS && utcIsSent) {
                                         moveToNextPage();
                                     } else {
@@ -148,48 +149,7 @@ public class Tutorial3Fragment extends Fragment {
                     }
 
 //                    Toast.makeText(getActivity(), "size : " + size, Toast.LENGTH_SHORT).show();
-
-
-
-//                    // 일단 데이터를 막 버퍼에 넣는다.
-//
-//                    int i = 0;
-//                    while( i < size) {
-//                        mOutBuffer.add(readBuf[i]); // 일단 E도 넣음
-//                        if ( readBuf[i] == BluetoothUtil.E) {
-//                            Toast.makeText(getActivity(), "Tutorial / Device : " + mOutBuffer.toString(), Toast.LENGTH_SHORT).show();
-//                            // E가 나오면 S부터 E까지 사이에 값들을 찾는다.
-//                            //S는 0번째, E는 readBuf.lenghth-1번째
-//                            if(mOutBuffer.size() > 1) {
-//                                byte opcode = mOutBuffer.get(1);
-//
-//                                if(opcode == BluetoothUtil.Opcode.PN_RESPONSE) {
-//                                    Toast.makeText(getActivity(), "PN RESPONSE " + mOutBuffer.get(3), Toast.LENGTH_SHORT).show();
-//                                        if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS) {
-//                                            mChatService.write(BluetoothUtil.getInstance().sendUTC());
-//                                            utcIsSent = true;
-//                                        } else {
-//                                            mChatService.write(BluetoothUtil.getInstance().registerPn());
-//                                        }
-//                                    mOutBuffer.clear();
-//                                }
-//
-//                                if(opcode == BluetoothUtil.Opcode.ACK) {
-//                                    Toast.makeText(getActivity(), "ACK" + readBuf[3], Toast.LENGTH_SHORT).show();
-//                                    if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS && utcIsSent) {
-//                                        moveToNextPage();
-//                                    } else {
-//                                        Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
-//                                    }
-//                                    mOutBuffer.clear();
-//                                }
-//                            }
-//                        }
-//                        i++;
-//                    }
-
-
-
+                    // 이게 버퍼에 데이터 넣는 것 앞에 있으면 안됌!
                     break;
             }
         }

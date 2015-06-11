@@ -41,7 +41,7 @@ public class QuestActivity extends ActionBarActivity {
         setContentView(R.layout.activity_quest);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        pointUpList = new ArrayList<Integer>();
+        pointUpList = new ArrayList<Integer>();
 //        pointUpList.add(new Integer(10));
 //        pointUpList.add(new Integer(50));
 //        pointUpList.add(new Integer(30));

@@ -142,10 +142,10 @@ public class DBManager {
     public Quiz getQuizRandom() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {QuizTable.PK, QuizTable.CONTENT, QuizTable.POINT, QuizTable.DIFF, QuizTable.HINT, QuizTable.TIME, QuizTable.SOLUTION, QuizTable.ANSWER, QuizTable.STATE};
-        String selection = QuizTable.STATE + " = ?  OR " + QuizTable.STATE + " = ? limit 1";
+        String selection = QuizTable.STATE + " = ?  OR " + QuizTable.STATE + " = ? ";
         String[] selectionArgs = { "" + Quiz.STATE_YET,  "" + Quiz.STATE_WRONG};
         String orderBy = "random()";
-        Cursor c = db.query(QuizTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
+        Cursor c = db.query(QuizTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy, "1");
 
         Quiz record = new Quiz();
         while (c.moveToNext()) {

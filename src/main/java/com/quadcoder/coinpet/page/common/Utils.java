@@ -34,7 +34,7 @@ public class Utils {
     }
 
     public int getDiffResource(int diff) {
-        if(diff < 1 || diff > 2)
+        if(diff < 1 || diff > 3)
             throw new ArrayIndexOutOfBoundsException("diff bound out");
 
         return diffResource[diff - 1];

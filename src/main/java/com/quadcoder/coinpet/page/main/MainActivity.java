@@ -72,10 +72,9 @@ public class MainActivity extends Activity {
                 // Start the Bluetooth chat services
                 mChatService.start();
             }
+            setupChatService();
         }
         startAnimation();
-
-        initializeLogging();
     }
 
     public static final String TAG = "MainActivity";

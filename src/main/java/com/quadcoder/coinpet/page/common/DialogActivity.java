@@ -95,6 +95,7 @@ public class DialogActivity extends Activity {
                 Intent i = new Intent();
                 i.putExtra(RESULT_NEXT_QUIZ, true);
                 setResult(Activity.RESULT_OK, i);
+                finish();
             }
         });
 
@@ -104,6 +105,7 @@ public class DialogActivity extends Activity {
                 Intent i = new Intent();
                 i.putExtra(RESULT_NEXT_QUIZ, false);
                 setResult(Activity.RESULT_OK, i);
+                finish();
             }
         });
     }

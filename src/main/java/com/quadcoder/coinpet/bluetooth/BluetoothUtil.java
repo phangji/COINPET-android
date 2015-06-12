@@ -23,6 +23,8 @@ public class BluetoothUtil {
     public static final char UNLOCK = 'u';
     public static final char SUCCESS = 's';
     public static final char FAIL = 'f';
+    public static final char YES = 'y';
+    public static final char NO = 'n';
 
     public interface Opcode {
         byte PN_REGISTER = 0x01;

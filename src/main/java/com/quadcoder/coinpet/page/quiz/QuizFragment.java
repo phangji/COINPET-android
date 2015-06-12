@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.page.common.MyApplication;
 import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.bluetooth.BTConstants;
@@ -29,6 +30,8 @@ import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.DialogActivity;
 import com.quadcoder.coinpet.page.common.Utils;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,7 +71,7 @@ public class QuizFragment extends Fragment {
 
         imgvQCoin.setImageResource(Utils.getInstance().getQCoinResource(PropertyManager.getInstance().getqCoin()));
 
-        settingQuiz();
+
     }
 
     Quiz mQuiz;
@@ -77,7 +80,8 @@ public class QuizFragment extends Fragment {
         mQuiz = DBManager.getInstance().getQuizRandom();
         tvQuiz.setText(mQuiz.content);
         tvDiff.setText(Utils.getInstance().getDiffResource(mQuiz.level));
-        tvTime.setText(mQuiz.time);
+        tvTime.setText(mQuiz.time + "");
+        tvHint.setText(R.string.show_hint);
         tvHint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,7 +89,7 @@ public class QuizFragment extends Fragment {
             }
         });
 
-        mTimer = new CountDownTimer(mQuiz.time, 1000) {
+        mTimer = new CountDownTimer(mQuiz.time * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 tvTime.setText("" + millisUntilFinished / 1000);
@@ -98,9 +102,9 @@ public class QuizFragment extends Fragment {
                 //TODO : ack와 연결 필요
                 mQuiz.state = Quiz.STATE_WRONG;
                 afterQuizUpdateData();
-                Intent i = new Intent();
+                Intent i = new Intent(getActivity(), DialogActivity.class);
                 i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.TIMEOVER);
-                i.putExtra(DialogActivity.TEXT, mQuiz.answer);
+                i.putExtra(DialogActivity.TEXT, mQuiz.solution);
                 startActivityForResult(i, REQUEST_CODE_TIMEOVER);
             }
         };
@@ -122,6 +126,8 @@ public class QuizFragment extends Fragment {
             mChatService = BluetoothManager.getInstance();
             mChatService.setBtHandler(mHandler);
         }
+
+        settingQuiz();
 
     }
 
@@ -158,29 +164,35 @@ public class QuizFragment extends Fragment {
                 case BTConstants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BTConstants.STATE_CONNECTED:
-                            Toast.makeText(getActivity(), TAG + "/ state connected", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MyApplication.getContext(), TAG + "/ state connected", Toast.LENGTH_SHORT).show();
                             break;
                         case BTConstants.STATE_CONNECTING:
-                            Toast.makeText(getActivity(), TAG + "/ state connecting", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MyApplication.getContext(), TAG + "/ state connecting", Toast.LENGTH_SHORT).show();
                             break;
                         case BTConstants.STATE_LISTEN:
                         case BTConstants.STATE_NONE:
-                            Toast.makeText(getActivity(), TAG + "/ state none", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MyApplication.getContext(), TAG + "/ state none", Toast.LENGTH_SHORT).show();
                             break;
                     }
                     break;
                 case BTConstants.MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     String writeMessage = new String(writeBuf);
-                    Toast.makeText(getActivity(), TAG + " / Me : " + writeMessage, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MyApplication.getContext(), TAG + " / Me : " + writeMessage, Toast.LENGTH_SHORT).show();
                     break;
 
                 case BTConstants.MESSAGE_READ :
-                    byte[] readBuf = (byte[]) msg.obj;
-                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.QUIZ_USER_INPUT) {
+
+                    ArrayList<Byte> readBuffer = (ArrayList<Byte>) msg.obj;
+                    Toast.makeText(getActivity(), "Tutorial / Device : " + readBuffer.toString(), Toast.LENGTH_SHORT).show();
+                    int length = msg.arg1;
+                    android.util.Log.d(TAG, "MESSAGE_READ " + length + " bytes read");
+                    byte opcode = readBuffer.get(1);
+
+                    if(opcode == BluetoothUtil.Opcode.QUIZ_USER_INPUT) {
                         int[] num = new int[3];
                         for(int i=3; i<=5; i++) {
-                            num[i-3] = readBuf[i];
+                            num[i-3] = readBuffer.get(i);
                             if(num[i-3] < 0) {
                                 num[i-3] += 256;
                             }
@@ -189,12 +201,12 @@ public class QuizFragment extends Fragment {
                         int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
                         checkUserInput(money);
                     }
-                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.QUIZ_DISCONN) {
+                    if(opcode == BluetoothUtil.Opcode.QUIZ_DISCONN) {
                         beforeFinishing();
                         goReadyPage();
                     }
 
-                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.ACK) {
+                    if(opcode == BluetoothUtil.Opcode.ACK) {
                         Toast.makeText(getActivity(), TAG + "/ ACK", Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -214,16 +226,16 @@ public class QuizFragment extends Fragment {
         if( isRight(userValue) ) {
             mQuiz.state = Quiz.STATE_CORRECT;
             afterQuizUpdateData();
-            Intent i = new Intent();
+            Intent i = new Intent(getActivity(), DialogActivity.class);
             i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.RIGHT);
-            i.putExtra(DialogActivity.TEXT, mQuiz.answer);
+            i.putExtra(DialogActivity.TEXT, mQuiz.solution);
             startActivityForResult(i, REQUEST_CODE_RIGHT);
         } else {
             mQuiz.state = Quiz.STATE_WRONG;
             afterQuizUpdateData();
-            Intent i = new Intent();
+            Intent i = new Intent(getActivity(), DialogActivity.class);
             i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.WRONG);
-            i.putExtra(DialogActivity.TEXT, mQuiz.answer);
+            i.putExtra(DialogActivity.TEXT, mQuiz.solution);
             startActivityForResult(i, REQUEST_CODE_WRONG);
         }
     }
@@ -243,18 +255,18 @@ public class QuizFragment extends Fragment {
 
 
     void afterQuizUpdateData() {
-        DBManager.getInstance().updateQuiz(mQuiz);
-        NetworkManager.getInstance().postQuiz(getActivity(), mQuiz.pk_std_quiz, mQuiz.state, new NetworkManager.OnNetworkResultListener<Res>() {
-            @Override
-            public void onResult(Res res) {
-
-            }
-
-            @Override
-            public void onFail(Res res) {
-
-            }
-        });
+//        DBManager.getInstance().updateQuiz(mQuiz);
+//        NetworkManager.getInstance().postQuiz(getActivity(), mQuiz.pk_std_quiz, mQuiz.state, new NetworkManager.OnNetworkResultListener<Res>() {
+//            @Override
+//            public void onResult(Res res) {
+//
+//            }
+//
+//            @Override
+//            public void onFail(Res res) {
+//
+//            }
+//        });
     }
 
     @Override

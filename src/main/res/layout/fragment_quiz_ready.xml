@@ -5,13 +5,28 @@
     android:background="#fff"
     >
 
-    <ImageView
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgvPad"
-        android:layout_gravity="center_horizontal|top"
-        android:src="@drawable/pad_connecting_anim"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal|top" >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvPad"
+            android:src="@drawable/pad_connecting_anim" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="재시도"
+            android:id="@+id/btnRetry"
+            android:layout_gravity="center"
+            android:background="@drawable/sync"
+            android:layout_marginTop="40dp" />
+
+    </FrameLayout>
+
 
     <ImageView
         android:layout_width="wrap_content"
@@ -20,4 +35,6 @@
         android:layout_gravity="center_horizontal|bottom"
         android:src="@drawable/q_coin_3"
         android:layout_marginBottom="20dp" />
+
+
 </FrameLayout>

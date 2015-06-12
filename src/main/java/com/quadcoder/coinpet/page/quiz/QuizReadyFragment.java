@@ -2,6 +2,7 @@ package com.quadcoder.coinpet.page.quiz;
 
 import android.bluetooth.BluetoothAdapter;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,9 @@ import com.quadcoder.coinpet.bluetooth.BTConstants;
 import com.quadcoder.coinpet.bluetooth.BluetoothManager;
 import com.quadcoder.coinpet.bluetooth.BluetoothUtil;
 import com.quadcoder.coinpet.logger.Log;
+import com.quadcoder.coinpet.page.common.MyApplication;
+
+import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -44,6 +48,25 @@ public class QuizReadyFragment extends Fragment {
             getActivity().finish();
         }
 
+        rootView.findViewById(R.id.btnRetry).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mChatService.write(BluetoothUtil.getInstance().requestBoardConn());
+            }
+        });
+
+        mTimer = new CountDownTimer(120 * 1000, 15 * 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mChatService.write(BluetoothUtil.getInstance().requestBoardConn());
+            }
+
+            @Override
+            public void onFinish() {
+                Toast.makeText(getActivity(), "연결이 되지 않아 퀴즈를 종료합니다.", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        };
 
         return rootView;
     }
@@ -65,22 +88,27 @@ public class QuizReadyFragment extends Fragment {
         }
 
         ((AnimationDrawable)imgvPad.getDrawable()).start();
+
+
     }
+
+    CountDownTimer mTimer;
 
     @Override
     public void onResume() {
         super.onResume();
         // check board
-        mChatService.write(BluetoothUtil.getInstance().requestBoardConn());
+//        mChatService.write(BluetoothUtil.getInstance().requestBoardConn());
+        mTimer.start();
 
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mChatService != null) {
-            mChatService.stop();
-        }
+//        if (mChatService != null) {
+//            mChatService.stop();
+//        }
     }
 
     private void goNext() {
@@ -105,7 +133,7 @@ public class QuizReadyFragment extends Fragment {
                             break;
                         case BTConstants.STATE_LISTEN:
                         case BTConstants.STATE_NONE:
-                            Toast.makeText(getActivity(), TAG + "/ state none", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MyApplication.getContext(), TAG + "/ state none", Toast.LENGTH_SHORT).show();
                             break;
                     }
                     break;
@@ -116,15 +144,19 @@ public class QuizReadyFragment extends Fragment {
                     break;
 
                 case BTConstants.MESSAGE_READ :
-                    byte[] readBuf = (byte[]) msg.obj;
-                    if(readBuf != null && readBuf[1] == BluetoothUtil.Opcode.BOARD_CON_RES) {
-                        if( readBuf[3] == BluetoothUtil.DUMM ) {
-                            Toast.makeText(getActivity(), "BOARD CONN SUCCESS", Toast.LENGTH_SHORT).show();
-                            mChatService.write(BluetoothUtil.getInstance().ack(true));
+
+                    ArrayList<Byte> readBuffer = (ArrayList<Byte>) msg.obj;
+                    Toast.makeText(getActivity(), "Device : " + readBuffer.toString(), Toast.LENGTH_SHORT).show();
+                    int length = msg.arg1;
+                    android.util.Log.d(TAG, "MESSAGE_READ " + length + " bytes read");
+                    byte opcode = readBuffer.get(1);
+
+                    if(opcode == BluetoothUtil.Opcode.BOARD_CON_RES) {
+                        if( readBuffer.get(3) == BluetoothUtil.YES ) {
+                            Toast.makeText(getActivity(), "BOARD CONN YES", Toast.LENGTH_SHORT).show();
                             goNext();
-                        } else {
-                            Toast.makeText(getActivity(), "BOARD CONN FAIL", Toast.LENGTH_SHORT).show();
-                            mChatService.write(BluetoothUtil.getInstance().ack(false));
+                        } else if ( readBuffer.get(3) == BluetoothUtil.NO ){
+                            Toast.makeText(getActivity(), "BOARD CONN NO", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -143,5 +175,11 @@ public class QuizReadyFragment extends Fragment {
         // Initialize the BluetoothChatService to perform bluetooth connections
         mChatService = BluetoothManager.getInstance();
         mChatService.setBtHandler(mHandler);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mTimer.cancel();
     }
 }

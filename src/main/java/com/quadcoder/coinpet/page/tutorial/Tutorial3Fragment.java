@@ -249,9 +249,9 @@ public class Tutorial3Fragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mChatService != null) {
-            mChatService.stop();
-        }
+//        if (mChatService != null) {
+//            mChatService.stop();
+//        }
 
         if(isRegistered)
             getActivity().unregisterReceiver(mReceiver);

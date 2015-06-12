@@ -275,9 +275,9 @@ public class BluetoothManager {
                             // Send the obtained bytes to the UI Activity
                             mHandler.obtainMessage(BTConstants.MESSAGE_READ, length, -1, mOutBuffer.clone()).sendToTarget();
 
-//                            for(int i=0; i < mOutBuffer.size(); i++) {
-//                                Log.d(TAG, "phangji READ: " + mOutBuffer.get(i));
-//                            }
+                            for(int i=0; i < mOutBuffer.size(); i++) {
+                                Log.d(TAG, "phangji READ: " + mOutBuffer.get(i));
+                            }
 
                             mOutBuffer.clear();
                         }

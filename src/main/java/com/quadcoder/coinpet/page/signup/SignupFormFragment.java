@@ -1,8 +1,6 @@
 package com.quadcoder.coinpet.page.signup;
 
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -20,14 +18,13 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.quadcoder.coinpet.MainActivity;
-import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.page.main.MainActivity;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.Constants;
 import com.quadcoder.coinpet.page.common.Utils;
-import com.quadcoder.coinpet.page.story.StoryActivity;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.

@@ -1,13 +1,11 @@
 package com.quadcoder.coinpet.bluetooth;
 
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 
-import com.quadcoder.coinpet.MyApplication;
+import com.quadcoder.coinpet.page.common.MyApplication;
 
 public class BluetoothService extends Service {
 

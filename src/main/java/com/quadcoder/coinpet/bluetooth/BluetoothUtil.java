@@ -1,7 +1,6 @@
 package com.quadcoder.coinpet.bluetooth;
 
-import com.quadcoder.coinpet.PropertyManager;
-import com.quadcoder.coinpet.logger.Log;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 
 import java.util.Calendar;
 

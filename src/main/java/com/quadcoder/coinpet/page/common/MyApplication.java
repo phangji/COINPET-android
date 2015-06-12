@@ -1,4 +1,4 @@
-package com.quadcoder.coinpet;
+package com.quadcoder.coinpet.page.common;
 
 import android.app.Application;
 import android.content.Context;

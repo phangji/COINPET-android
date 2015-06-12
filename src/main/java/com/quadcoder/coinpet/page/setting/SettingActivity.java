@@ -9,8 +9,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ToggleButton;
 
-import com.quadcoder.coinpet.MyApplication;
-import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
 
 public class SettingActivity extends Activity {

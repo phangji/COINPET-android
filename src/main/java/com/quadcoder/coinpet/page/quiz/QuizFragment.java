@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.bluetooth.BTConstants;
 import com.quadcoder.coinpet.bluetooth.BluetoothManager;

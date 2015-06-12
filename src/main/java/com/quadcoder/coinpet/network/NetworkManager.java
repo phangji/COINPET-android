@@ -7,16 +7,14 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
-import com.quadcoder.coinpet.MyApplication;
-import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.page.common.MyApplication;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.network.response.Goal;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.network.response.Saving;
 import com.quadcoder.coinpet.network.response.UpdatedData;
 
 import org.apache.http.Header;
-
-import java.util.ArrayList;
 
 /**
  * Created by Phangji on 4/5/15.

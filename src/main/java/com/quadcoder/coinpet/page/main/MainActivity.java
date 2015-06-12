@@ -1,4 +1,4 @@
-package com.quadcoder.coinpet;
+package com.quadcoder.coinpet.page.main;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -21,6 +21,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.page.common.PropertyManager;
+import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.bluetooth.BluetoothManager;
 import com.quadcoder.coinpet.bluetooth.BTConstants;
@@ -36,7 +38,6 @@ import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.quest.QuestActivity;
 import com.quadcoder.coinpet.page.quiz.QuizActivity;
 import com.quadcoder.coinpet.page.setting.SettingActivity;
-import com.quadcoder.coinpet.page.story.StoryActivity;
 import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 import java.util.ArrayList;

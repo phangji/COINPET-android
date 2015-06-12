@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;

@@ -1,4 +1,4 @@
-package com.quadcoder.coinpet;
+package com.quadcoder.coinpet.page.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;

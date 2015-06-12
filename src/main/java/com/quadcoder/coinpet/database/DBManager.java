@@ -6,7 +6,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.quadcoder.coinpet.MyApplication;
+import com.quadcoder.coinpet.page.common.MyApplication;
 import com.quadcoder.coinpet.database.DBConstants.SystemQuestTable;
 import com.quadcoder.coinpet.database.DBConstants.ActiveSystemQuestTable;
 import com.quadcoder.coinpet.database.DBConstants.ParentQuestTable;

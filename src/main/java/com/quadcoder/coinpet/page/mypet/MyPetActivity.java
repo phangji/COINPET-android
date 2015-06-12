@@ -2,9 +2,6 @@ package com.quadcoder.coinpet.page.mypet;
 
 import java.util.Locale;
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -14,22 +11,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.quadcoder.coinpet.MainActivity;
-import com.quadcoder.coinpet.PropertyManager;
 import com.quadcoder.coinpet.R;
-import com.quadcoder.coinpet.network.NetworkManager;
-import com.quadcoder.coinpet.network.response.Goal;
-import com.quadcoder.coinpet.page.common.Constants;
-import com.quadcoder.coinpet.page.common.GoalSettingActivity;
 import com.quadcoder.coinpet.page.common.Utils;
 
 public class MyPetActivity extends ActionBarActivity implements ActionBar.TabListener, HistoryFragment.OnFragmentInteractionListener{

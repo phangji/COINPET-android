@@ -3,8 +3,6 @@ package com.quadcoder.coinpet.page.quest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.quadcoder.coinpet.MainActivity;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.audio.AudioEffect;
 import com.quadcoder.coinpet.database.DBManager;

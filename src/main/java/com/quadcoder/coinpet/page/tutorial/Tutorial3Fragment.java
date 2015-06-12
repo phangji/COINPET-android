@@ -21,20 +21,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.bluetooth.BTConstants;
 import com.quadcoder.coinpet.bluetooth.BluetoothManager;
 import com.quadcoder.coinpet.bluetooth.BluetoothUtil;
 import com.quadcoder.coinpet.page.common.Constants;
-import com.quadcoder.coinpet.page.common.GoalSettingActivity;
-import com.quadcoder.coinpet.page.quest.QuestActivity;
-import com.quadcoder.coinpet.page.signup.SignupActivity;
 import com.quadcoder.coinpet.page.story.StoryActivity;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 
 /**

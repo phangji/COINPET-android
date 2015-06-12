@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Goal;

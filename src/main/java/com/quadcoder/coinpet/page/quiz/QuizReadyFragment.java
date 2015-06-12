@@ -1,7 +1,6 @@
 package com.quadcoder.coinpet.page.quiz;
 
 import android.bluetooth.BluetoothAdapter;
-import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Handler;
 import android.os.Message;
@@ -13,10 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.quadcoder.coinpet.MainActivity;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.bluetooth.BTConstants;
 import com.quadcoder.coinpet.bluetooth.BluetoothManager;

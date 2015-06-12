@@ -2,8 +2,8 @@ package com.quadcoder.coinpet.audio;
 
 import android.media.MediaPlayer;
 
-import com.quadcoder.coinpet.MyApplication;
-import com.quadcoder.coinpet.PropertyManager;
+import com.quadcoder.coinpet.page.common.MyApplication;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
 
 /**

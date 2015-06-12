@@ -25,6 +25,8 @@ public class FriendsActivity extends ActionBarActivity {
     ArrayList<Friend> friendList;
     ImageView[] imageList;
 
+    int[] friendsResId = { R.drawable.f_mm, R.drawable.f_kuku, R.drawable.f_tt, R.drawable.f_dd, R.drawable.f_kk };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,13 +53,8 @@ public class FriendsActivity extends ActionBarActivity {
         setLayouts();
     }
 
-    final AudioEffect kukuAudio = new AudioEffect(AudioEffect.FREIND_KUKU);
-    final AudioEffect chchAudio = new AudioEffect(AudioEffect.FREIND_CHCH);
-    final AudioEffect ddAudio = new AudioEffect(AudioEffect.FREIND_DD);
-    final AudioEffect kokoAudio = new AudioEffect(AudioEffect.FREIND_KOKO);
-    final AudioEffect mamaAudio = new AudioEffect(AudioEffect.FREIND_MAMA);
-
-    final AudioEffect[] effectList = {mamaAudio, kukuAudio, chchAudio, ddAudio, kokoAudio};
+    final AudioEffect[] effectList = {new AudioEffect(AudioEffect.FREIND_MAMA), new AudioEffect(AudioEffect.FREIND_KUKU),
+            new AudioEffect(AudioEffect.FREIND_CHCH), new AudioEffect(AudioEffect.FREIND_DD), new AudioEffect(AudioEffect.FREIND_KOKO)};
 
     private void setLayouts() {
         friendList = DBManager.getInstance().getFriendList();
@@ -91,6 +88,7 @@ public class FriendsActivity extends ActionBarActivity {
                         ImageView imgvCancle = (ImageView) upBox.findViewById(R.id.imgvCancle);
 
                         Friend friend = friendList.get(idx);
+                        friend.resId = friendsResId[idx];   // for safety
                         tvTitle.setText(friend.name);
                         tvDesp.setText(friend.description);
                             tvCond.setText(friend.condition);

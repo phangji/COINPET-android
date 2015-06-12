@@ -64,19 +64,31 @@ public class DBManager {
      * SAVE
      */
 
-    public SystemQuest createNewActiveSystemQuest() {
+    public SystemQuest createNewActiveSystemQuest() {   // 1번 넣어지는 것 보장.
 
         // 현재 액티브 퀘스트에 없는 것을 시스템 퀘스트로부터 가져온다.
         SystemQuest activeQuest = null;
 
         do {
             activeQuest = getSystemQuestRandom();
-            if( insertActiveSystemQuest(activeQuest) ) {
+            if( !insertActiveSystemQuest(activeQuest) ) {
                 activeQuest = null;
             }
         } while (activeQuest == null);
 
         return activeQuest;
+    }
+
+    public int getActiveSystemCount() {
+        int count = -1;
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        String[] columns = { "count(*)"};
+        Cursor c = db.query(ActiveSystemQuestTable.TABLE_NAME, columns, null, null, null, null, null);
+//        count = c.getCount();
+        if(c.moveToNext()) {
+            count = c.getInt(c.getColumnIndex("count(*)"));
+        }
+        return count;
     }
 
     public ArrayList<SystemQuest> getActiveSystemQuestList() {
@@ -88,7 +100,6 @@ public class DBManager {
         String[] selectionArgs = { "" + Quest.DELETED };
         Cursor c = db.query(ActiveSystemQuestTable.TABLE_NAME, columns, selection, selectionArgs, null, null, orderBy);
 
-        if(c.getCount() < 3)
         while (c.moveToNext()) {
             SystemQuest record = new SystemQuest();
             record.pk_std_que = c.getInt(c.getColumnIndex(SystemQuestTable.PK));

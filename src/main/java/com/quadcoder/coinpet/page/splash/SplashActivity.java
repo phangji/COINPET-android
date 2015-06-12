@@ -117,26 +117,28 @@ public class SplashActivity extends Activity {
 
                 getGoalData();
 
-                if(res.needUpdate) {
-                    if(res.systemQuiz.size() != 0) {
-                        for(Quiz record : res.systemQuiz) {
+                if (res.needUpdate) {
+                    if (res.systemQuiz.size() != 0) {
+                        for (Quiz record : res.systemQuiz) {
                             DBManager.getInstance().insertQuiz(record); // STATE_YET
                         }
                         Quiz last = res.systemQuiz.get(res.systemQuiz.size() - 1);
                         PropertyManager.getInstance().setPkQuiz(last.pk_std_quiz);
                     }
-                    if(res.systemQuest.size() != 0) {
-                        for(SystemQuest record : res.systemQuest) {
+                    if (res.systemQuest.size() != 0) {
+                        for (SystemQuest record : res.systemQuest) {
                             SystemQuest newOne = record;
                             newOne.state = Quest.DOING;
                             DBManager.getInstance().insertSystemQuest(newOne);
                         }
                         SystemQuest last = res.systemQuest.get(res.systemQuest.size() - 1);
                         PropertyManager.getInstance().setPkQuest(last.pk_std_que);
+
+                        checkAndMakeActiveQuest();
                     }
-                    if(res.parentsQuest.size() != 0) {
-                        for(ParentQuest record : res.parentsQuest) {
-                            if( record.state == Quest.DOING)
+                    if (res.parentsQuest.size() != 0) {
+                        for (ParentQuest record : res.parentsQuest) {
+                            if (record.state == Quest.DOING)
                                 DBManager.getInstance().insertParentQuest(record);
                             else
                                 DBManager.getInstance().updateParentQuest(record);
@@ -145,7 +147,6 @@ public class SplashActivity extends Activity {
                         PropertyManager.getInstance().setPkPQuest(last.pk_parents_quest);
                     }
                 }
-
 
             }
 
@@ -160,5 +161,13 @@ public class SplashActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         NetworkManager.getInstance().cancelRequests(this);
+    }
+
+    void checkAndMakeActiveQuest() {
+        int count = DBManager.getInstance().getActiveSystemCount();
+         while( (3 - count) > 0) {
+             DBManager.getInstance().createNewActiveSystemQuest();
+             count++;
+         }
     }
 }

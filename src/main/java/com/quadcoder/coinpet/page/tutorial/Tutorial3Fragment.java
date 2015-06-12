@@ -102,55 +102,35 @@ public class Tutorial3Fragment extends Fragment {
                     break;
                 case BTConstants.MESSAGE_READ:
                     btn.setVisibility(View.VISIBLE);
-                    byte[] readBuf = (byte[]) msg.obj;
-                    int size = msg.arg1;
+                    ArrayList<Byte> readBuffer = (ArrayList<Byte>) msg.obj;
+                    Toast.makeText(getActivity(), "Tutorial / Device : " + readBuffer.toString(), Toast.LENGTH_SHORT).show();
+                    int length = msg.arg1;
+                    android.util.Log.d(TAG, "MESSAGE_READ " + length + " bytes read");
+                    byte opcode = readBuffer.get(1);
 
-                    Log.d(TAG, "MESSAGE_READ " + size + " bytes read");
-                    int idx = 0;
-                    while(idx < size) {
-                        Log.d(TAG, "phangji READ: " + readBuf[idx]);
-                        mOutBuffer.add(readBuf[idx]); // 일단 E도 넣음
-                        if ( readBuf[idx] == BluetoothUtil.E) {
-                            Toast.makeText(getActivity(), "Tutorial / Device : " + mOutBuffer.toString(), Toast.LENGTH_SHORT).show();
-                            // E가 나오면 S부터 E까지 사이에 값들을 찾는다.
-                            //S는 0번째, E는 readBuf.lenghth-1번째
-                            if(mOutBuffer.size() > 1) {
-                                byte opcode = mOutBuffer.get(1);
-
-                                if(opcode == BluetoothUtil.Opcode.PN_RESPONSE) {
-                                    Toast.makeText(getActivity(), "PN RESPONSE " + mOutBuffer.get(3), Toast.LENGTH_SHORT).show();
-                                    if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS) {
-                                        mChatService.write(BluetoothUtil.getInstance().sendUTC());
-                                        utcIsSent = true;
-                                    } else {
-                                        mChatService.write(BluetoothUtil.getInstance().registerPn());
-                                    }
-//                                    mOutBuffer.clear();
-                                }
-
-                                if(opcode == BluetoothUtil.Opcode.ACK) {
-                                    Toast.makeText(getActivity(), "ACK " + readBuf[3], Toast.LENGTH_SHORT).show();
-                                    if(mOutBuffer.get(3) == BluetoothUtil.SUCCESS && utcIsSent) {
-                                        moveToNextPage();
-                                    } else {
-                                        Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
-                                    }
-//                                    mOutBuffer.clear();
-                                }
-                                mOutBuffer.clear();
-                            }
+                    if(opcode == BluetoothUtil.Opcode.PN_RESPONSE) {
+                        Toast.makeText(getActivity(), "PN RESPONSE " + readBuffer.get(3), Toast.LENGTH_SHORT).show();
+                        if(readBuffer.get(3) == BluetoothUtil.SUCCESS) {
+                            mChatService.write(BluetoothUtil.getInstance().sendUTC());
+                            utcIsSent = true;
+                        } else {
+                            mChatService.write(BluetoothUtil.getInstance().registerPn());
                         }
-                        idx++;
                     }
 
-//                    Toast.makeText(getActivity(), "size : " + size, Toast.LENGTH_SHORT).show();
-                    // 이게 버퍼에 데이터 넣는 것 앞에 있으면 안됌!
+                    if(opcode == BluetoothUtil.Opcode.ACK) {
+                        Toast.makeText(getActivity(), "ACK " + readBuffer.get(3), Toast.LENGTH_SHORT).show();
+                        if(readBuffer.get(3) == BluetoothUtil.SUCCESS && utcIsSent) {
+                            moveToNextPage();
+                        } else {
+                            Toast.makeText(getActivity(), "last ACK fail", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                     break;
             }
         }
     };
 
-    ArrayList<Byte> mOutBuffer;
     private void setupChatService() {
         Log.d(TAG, "setupChatService()");
 
@@ -159,7 +139,6 @@ public class Tutorial3Fragment extends Fragment {
         mChatService.setBtHandler(mHandler);
 
         // Initialize the buffer for outgoing messages
-        mOutBuffer = new ArrayList<>();
     }
 
     @Override

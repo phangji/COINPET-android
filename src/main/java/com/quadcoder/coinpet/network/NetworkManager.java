@@ -158,7 +158,10 @@ public class NetworkManager {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                listener.onFail(null);
+                String response = responseBody == null ? null : new String(responseBody);
+                Gson gson = new Gson();
+                Res result = response == null ? null : gson.fromJson(response, Res.class);
+                listener.onFail(result);
             }
         });
     }
@@ -235,7 +238,10 @@ public class NetworkManager {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                listener.onFail(null);
+                String response = responseBody == null ? null : new String(responseBody);
+                Gson gson = new Gson();
+                Res result = response == null ? null : gson.fromJson(response, Res.class);
+                listener.onFail(result);
             }
         });
     }

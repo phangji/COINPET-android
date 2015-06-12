@@ -68,6 +68,7 @@ public class StoryActivity extends Activity {
 
     private void goToNextStory(int index) {
         if(index == 5) {
+            nowPlaying.stop();
             startActivity(new Intent(StoryActivity.this, SignupActivity.class));
             finish();
         } else {

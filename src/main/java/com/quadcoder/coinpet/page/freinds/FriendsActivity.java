@@ -22,15 +22,8 @@ import java.util.ArrayList;
 public class FriendsActivity extends ActionBarActivity {
 
     FrameLayout mainFrame;
-    ImageView imgvMM;
-    ImageView imgvTT;
-    ImageView imgvKuKu;
-    ImageView imgvDD;
-    ImageView imgvKoKo;
     ArrayList<Friend> friendList;
-    ArrayList<ImageView> imageList;
-
-
+    ImageView[] imageList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +31,13 @@ public class FriendsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_friends);
 
         mainFrame = (FrameLayout) findViewById(R.id.mainFrame);
-        imgvMM = (ImageView) findViewById(R.id.imgvMM);
-        imgvTT = (ImageView) findViewById(R.id.imgvTT);
-        imgvKuKu = (ImageView) findViewById(R.id.imgvKuKu);
-        imgvDD = (ImageView) findViewById(R.id.imgvDD);
-        imgvKoKo = (ImageView) findViewById(R.id.imgvKK);
 
-        imageList = new ArrayList<>(5);
-        imageList.add(imgvMM);  imageList.add(imgvKuKu);  imageList.add(imgvTT);  imageList.add(imgvDD);  imageList.add(imgvKoKo);
+        imageList = new ImageView[5];
+        imageList[0] = (ImageView) findViewById(R.id.imgvMM);
+        imageList[1] = (ImageView) findViewById(R.id.imgvTT);
+        imageList[2] = (ImageView) findViewById(R.id.imgvKuKu);
+        imageList[3] = (ImageView) findViewById(R.id.imgvDD);
+        imageList[4] = (ImageView) findViewById(R.id.imgvKK);
 
         FrameLayout[] frameTouchList = { (FrameLayout)findViewById(R.id.frameMM), (FrameLayout)findViewById(R.id.frameKuKu),
                 (FrameLayout)findViewById(R.id.frameTT), (FrameLayout)findViewById(R.id.frameDD), (FrameLayout)findViewById(R.id.frameKK)};
@@ -56,7 +48,6 @@ public class FriendsActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         setLayouts();
     }
 
@@ -73,7 +64,7 @@ public class FriendsActivity extends ActionBarActivity {
         for(int i=0; i<5; i++) {
             Friend friend = friendList.get(i);
             if(friend.isSaved) {
-                imageList.get(i).setImageResource(friend.resId);
+                imageList[i].setImageResource(friend.resId);
             }
         }
     }
@@ -83,7 +74,7 @@ public class FriendsActivity extends ActionBarActivity {
     private void setClickListeners(FrameLayout[] frameTouchList) {
 
         for(int i=0; i<5; i++) {
-            ImageView fView = imageList.get(i);
+            ImageView fView = imageList[i];
             final int idx = i;
             frameTouchList[i].setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -130,27 +121,5 @@ public class FriendsActivity extends ActionBarActivity {
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_friends, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

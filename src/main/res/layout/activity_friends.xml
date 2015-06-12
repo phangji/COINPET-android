@@ -4,47 +4,113 @@
     tools:context="com.quadcoder.coinpet.page.freinds.FriendsActivity"
     android:background="@drawable/bg">
 
-    <ImageView
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgvMM"
-        android:layout_gravity="left|center_vertical"
-        android:src="@drawable/f_mm_hidden"
         android:layout_marginBottom="30dp"
-        android:layout_marginLeft="20dp" />
+        android:layout_marginLeft="20dp"
+        android:layout_gravity="left|center_vertical" >
 
-    <ImageView
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvMM"
+            android:src="@drawable/f_mm_hidden"/>
+
+        <FrameLayout
+            android:layout_width="100dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center|left"
+            android:id="@+id/frameMM"></FrameLayout>
+
+    </FrameLayout>
+
+
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgvTT"
-        android:layout_gravity="right|center_vertical"
-        android:src="@drawable/f_tt_hidden"
         android:layout_marginBottom="30dp"
-        android:layout_marginRight="20dp" />
+        android:layout_marginRight="20dp"
+        android:layout_gravity="right|center_vertical">
 
-    <ImageView
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvTT"
+            android:src="@drawable/f_tt_hidden"/>
+
+        <FrameLayout
+            android:layout_width="100dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center|right"
+            android:id="@+id/frameTT"></FrameLayout>
+    </FrameLayout>
+
+
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgvKuKu"
-        android:layout_gravity="center"
-        android:src="@drawable/f_kuku_hidden"
-        android:layout_marginBottom="45dp" />
+        android:layout_marginBottom="45dp"
+        android:layout_gravity="center">
 
-    <ImageView
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvKuKu"
+            android:src="@drawable/f_kuku_hidden"/>
+
+        <FrameLayout
+            android:layout_width="70dp"
+            android:layout_height="160dp"
+            android:layout_gravity="center"
+            android:id="@+id/frameKuKu"></FrameLayout>
+
+    </FrameLayout>
+
+
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgvDD"
         android:layout_gravity="left|bottom"
-        android:src="@drawable/f_dd_hidden"
         android:layout_marginBottom="140dp"
-        android:layout_marginLeft="70dp" />
+        android:layout_marginLeft="70dp">
 
-    <ImageView
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvDD"
+            android:src="@drawable/f_dd_hidden" />
+
+        <FrameLayout
+            android:layout_width="70dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center|bottom"
+            android:id="@+id/frameDD"></FrameLayout>
+
+    </FrameLayout>
+
+
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgvKK"
         android:layout_gravity="right|bottom"
-        android:src="@drawable/f_kk_hidden"
         android:layout_marginRight="70dp"
-        android:layout_marginBottom="140dp" />
+        android:layout_marginBottom="140dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imgvKK"
+            android:src="@drawable/f_kk_hidden" />
+
+        <FrameLayout
+            android:layout_width="70dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center|bottom"
+            android:id="@+id/frameKK"></FrameLayout>
+
+    </FrameLayout>
+
+
+
 </FrameLayout>

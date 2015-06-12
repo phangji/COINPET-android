@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.audio.AudioEffect;
@@ -29,6 +30,8 @@ public class FriendsActivity extends ActionBarActivity {
     ArrayList<Friend> friendList;
     ArrayList<ImageView> imageList;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +47,10 @@ public class FriendsActivity extends ActionBarActivity {
         imageList = new ArrayList<>(5);
         imageList.add(imgvMM);  imageList.add(imgvKuKu);  imageList.add(imgvTT);  imageList.add(imgvDD);  imageList.add(imgvKoKo);
 
-        setClickListeners();
+        FrameLayout[] frameTouchList = { (FrameLayout)findViewById(R.id.frameMM), (FrameLayout)findViewById(R.id.frameKuKu),
+                (FrameLayout)findViewById(R.id.frameTT), (FrameLayout)findViewById(R.id.frameDD), (FrameLayout)findViewById(R.id.frameKK)};
+
+        setClickListeners(frameTouchList);
     }
 
     @Override
@@ -74,12 +80,12 @@ public class FriendsActivity extends ActionBarActivity {
 
     boolean isBoxup;
     View upBox;
-    private void setClickListeners() {
+    private void setClickListeners(FrameLayout[] frameTouchList) {
 
         for(int i=0; i<5; i++) {
             ImageView fView = imageList.get(i);
             final int idx = i;
-            fView.setOnClickListener(new View.OnClickListener() {
+            frameTouchList[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if( !isBoxup ) {

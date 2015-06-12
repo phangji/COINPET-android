@@ -58,8 +58,6 @@ public class MainActivity extends Activity {
      */
     private BluetoothManager mChatService = null;
 
-    private StringBuffer mOutStringBuffer;
-
     TextView tvNowMoney;
 
     static final int REQUEST_CODE_GOAL_SETTING_ACTIVITY = 10;
@@ -457,7 +455,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    ArrayList<Byte> mOutBuffer;
     private void setupChatService() {
         Log.d(TAG, "setupChatService()");
 
@@ -466,7 +463,6 @@ public class MainActivity extends Activity {
         mChatService.setBtHandler(mHandler);    //TODO: 액티비티별로 이것만 바꿔서
 
         // Initialize the buffer for outgoing messages
-        mOutBuffer = new ArrayList<>();
     }
 
     /**

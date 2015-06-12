@@ -59,7 +59,7 @@
             android:parentActivityName=".page.main.MainActivity" >
         </activity>
         <activity
-            android:name=".page.freinds.FriendsActivity"
+            android:name=".page.friends.FriendsActivity"
             android:label="@string/title_activity_friends"
             android:parentActivityName=".page.main.MainActivity" >
         </activity>

@@ -33,7 +33,7 @@ import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.DialogActivity;
 import com.quadcoder.coinpet.page.common.GoalSettingActivity;
-import com.quadcoder.coinpet.page.freinds.FriendsActivity;
+import com.quadcoder.coinpet.page.friends.FriendsActivity;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.quest.QuestActivity;
 import com.quadcoder.coinpet.page.quiz.QuizActivity;

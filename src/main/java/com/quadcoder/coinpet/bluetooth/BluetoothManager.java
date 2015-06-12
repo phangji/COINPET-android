@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
@@ -203,7 +204,6 @@ public class BluetoothManager {
         public void run() {
             try {
                 mmSocket.connect();
-                ChatThread chat = new ChatThread(mmSocket);
                 android.util.Log.d(TAG, "Bluetooth Connect Success");
 
             } catch (IOException e) {
@@ -261,18 +261,27 @@ public class BluetoothManager {
             byte[] buffer = new byte[1024]; // buffer store for the stream. It is not cleared after getting data.
             int bytes;  // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
+            ArrayList<Byte> mOutBuffer = new ArrayList<>();
             while(true) {
                 try {
                     // Read from the InputStream
                     bytes = mmInStream.read(buffer);    //length
+//                    Log.d(TAG, "MESSAGE_READ " + bytes + " bytes read");
+                    int idx = 0;
+                    while( idx < bytes) {
+                        mOutBuffer.add(buffer[idx]);
+                        if( buffer[idx] == BluetoothUtil.E) {
+                            byte length = mOutBuffer.get(2);
+                            // Send the obtained bytes to the UI Activity
+                            mHandler.obtainMessage(BTConstants.MESSAGE_READ, length, -1, mOutBuffer.clone()).sendToTarget();
 
-                    Log.d(TAG, "MESSAGE_READ " + bytes + " bytes read");
-                    // Send the obtained bytes to the UI Activity
-                    mHandler.obtainMessage(BTConstants.MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
+//                            for(int i=0; i < mOutBuffer.size(); i++) {
+//                                Log.d(TAG, "phangji READ: " + mOutBuffer.get(i));
+//                            }
 
-                    for(int i=0; i < bytes; i++) {
-                        Log.d(TAG, "phangji READ: " + buffer[i]);
+                            mOutBuffer.clear();
+                        }
+                        idx++;
                     }
 
                 } catch (IOException e) {

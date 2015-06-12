@@ -497,63 +497,38 @@ public class MainActivity extends Activity {
                     Toast.makeText(MainActivity.this, TAG + " / Me : " + writeMessage, Toast.LENGTH_SHORT).show();
                     break;
                 case BTConstants.MESSAGE_READ:
-                    byte[] readBuf = (byte[]) msg.obj;
-                    int size = msg.arg1;
-
-                    android.util.Log.d(TAG, "MESSAGE_READ " + size + " bytes read");
-                    int idx = 0;
-                    while(idx < size) {
-                        android.util.Log.d(TAG, "phangji READ: " + readBuf[idx]);
-                        mOutBuffer.add(readBuf[idx]); // 일단 E도 넣음
-                        if ( readBuf[idx] == BluetoothUtil.E) {
-                            Toast.makeText(MainActivity.this, "Tutorial / Device : " + mOutBuffer.toString(), Toast.LENGTH_SHORT).show();
-                            // E가 나오면 S부터 E까지 사이에 값들을 찾는다.
-                            //S는 0번째, E는 readBuf.lenghth-1번째
-                            if(mOutBuffer.size() > 1) {
-                                byte opcode = mOutBuffer.get(1);
-
-                                if(opcode == BluetoothUtil.Opcode.READ_MONEY) {
-
-                                    int[] num = new int[3];
-                                    for(int i=3; i<=5; i++) {
-                                        num[i-3] = mOutBuffer.get(i);
-                                        if(num[i-3] < 0) {
-                                            num[i-3] += 256;
-                                        }
-                                    }
-                                    Log.d("TAG", num[0] + " " + num[1] + " " + num[2] + " ");
-                                    final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
-                                    int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
-
-                                    Toast.makeText(MainActivity.this, "READ_MONEY " + money, Toast.LENGTH_SHORT).show();
-
-                                    tvNowMoney.setText("" + sum);
-                                    PropertyManager.getInstance().mGoal.now_cost = sum;
-                                    PropertyManager.getInstance().moneyUp(sum);
-
-                                    NetworkManager.getInstance().sendCoin(MainActivity.this, money, new NetworkManager.OnNetworkResultListener<Res>() {
-                                        @Override
-                                        public void onResult(Res res) {
-                                        }
-
-                                        @Override
-                                        public void onFail(Res res) {
-                                        }
-                                    });
-
+                        ArrayList<Byte> readBuffer = (ArrayList<Byte>) msg.obj;
+                        Toast.makeText(MainActivity.this, "Tutorial / Device : " + readBuffer.toString(), Toast.LENGTH_SHORT).show();
+                        int length = msg.arg1;
+                        android.util.Log.d(TAG, "MESSAGE_READ " + length + " bytes read");
+                        byte opcode = readBuffer.get(1);
+                        if(opcode == BluetoothUtil.Opcode.READ_MONEY) {
+                            int[] num = new int[3];
+                            for(int i=3; i<=5; i++) {
+                                num[i-3] = readBuffer.get(i);
+                                if(num[i-3] < 0) {
+                                    num[i-3] += 256;
                                 }
-                                mOutBuffer.clear();
-
-//                                if(readMessage != null && readBuf[1] == BluetoothUtil.Opcode.READ_MONEY_SYNC) {
-//                          //오랜만에 sync됐을 때 처리들 - UTC랑 여러 번 옴.
-//                                  }
                             }
+                            final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
+                            int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
+
+//                                        Toast.makeText(MainActivity.this, "READ_MONEY " + money, Toast.LENGTH_SHORT).show();
+
+                            tvNowMoney.setText("" + sum);
+                            PropertyManager.getInstance().mGoal.now_cost = sum;
+                            PropertyManager.getInstance().moneyUp(sum);
+
+                            NetworkManager.getInstance().sendCoin(MainActivity.this, money, new NetworkManager.OnNetworkResultListener<Res>() {
+                                @Override
+                                public void onResult(Res res) {
+                                }
+
+                                @Override
+                                public void onFail(Res res) {
+                                }
+                            });
                         }
-                        idx++;
-                    }
-
-//
-
                     break;
                 case BTConstants.MESSAGE_DEVICE_NAME:
                     String deviceName = msg.getData().getString(BTConstants.DEVICE_NAME);

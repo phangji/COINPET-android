@@ -2,6 +2,7 @@ package com.quadcoder.coinpet.page.friends;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -61,6 +62,19 @@ public class FriendsActivity extends ActionBarActivity {
                 imageList[i].setImageResource(friend.resId);
             }
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if( id == android.R.id.home) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     boolean isBoxup;

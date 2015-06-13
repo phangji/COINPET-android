@@ -36,6 +36,8 @@ import com.quadcoder.coinpet.page.common.GoalSettingActivity;
 import com.quadcoder.coinpet.page.friends.FriendsActivity;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.quest.QuestActivity;
+import com.quadcoder.coinpet.page.quest.watcher.Parsing;
+import com.quadcoder.coinpet.page.quest.watcher.QuestWatcher;
 import com.quadcoder.coinpet.page.quiz.QuizActivity;
 import com.quadcoder.coinpet.page.quiz.QuizFragment;
 import com.quadcoder.coinpet.page.setting.SettingActivity;
@@ -246,7 +248,7 @@ public class MainActivity extends Activity {
     void moneyUp(int money) {
         int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
 
-//                                        Toast.makeText(MainActivity.this, "READ_MONEY " + money, Toast.LENGTH_SHORT).show();
+        QuestWatcher.getInstance().listenAction(Parsing.Type.SAVING, Parsing.Method.ANYTIME);
 
         tvNowMoney.setText("" + sum);
         PropertyManager.getInstance().mGoal.now_cost = sum;

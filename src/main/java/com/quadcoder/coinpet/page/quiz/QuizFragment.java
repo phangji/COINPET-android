@@ -170,7 +170,6 @@ public class QuizFragment extends Fragment {
 //        if( mChatService != null)
 //            mChatService.stop();
         NetworkManager.getInstance().cancelRequests(getActivity());
-        isResult = true;
         if(mTimer != null) {
             mTimer.cancel(); // cancel 했는데..
         }

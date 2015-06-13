@@ -105,6 +105,7 @@ public class QuizReadyFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mTimer.cancel();
 //        if (mChatService != null) {
 //            mChatService.stop();
 //        }

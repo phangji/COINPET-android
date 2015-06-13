@@ -29,7 +29,7 @@ public class QuestWatcher {
         mActiveList = DBManager.getInstance().getActiveSystemQuestList();
     }
 
-    void listenAction(String type, String method) { //saving이면 method가 null이어되 됌.
+    public void listenAction(String type, String method) { //saving이면 method가 null이어되 됌.
 
         if(type == Parsing.Type.SAVING) {   //method = anytime, morning, evening
 

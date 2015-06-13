@@ -211,6 +211,12 @@ public class PropertyManager {
         mEditor.commit();
     }
 
+    public void minusQCoin() {
+        int count = getqCoin();
+        if(count > 0)
+            setqCoin(getqCoin() - 1);
+    }
+
     /**
      * pkQuest
      */

@@ -33,6 +33,14 @@ public class Utils {
         return qCoinResource[count];
     }
 
+    public int getQCoinResource() {
+        int count = PropertyManager.getInstance().getqCoin();
+        if(count < 0 || count > 3)
+            throw new ArrayIndexOutOfBoundsException("qcoin count bound out");
+
+        return qCoinResource[count];
+    }
+
     public int getDiffResource(int diff) {
         if(diff < 1 || diff > 3)
             throw new ArrayIndexOutOfBoundsException("diff bound out");

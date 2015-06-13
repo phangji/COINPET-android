@@ -31,6 +31,7 @@ public class BluetoothManager {
     private ConnectThread mConnectThread;
     private ChatThread mConnectedThread;
     private int mState;
+    private BluetoothDevice mDevice;    // created on 13 June
 
 
 
@@ -83,8 +84,20 @@ public class BluetoothManager {
                 }
             }
         }
+        mDevice = searchedDevice;
         return searchedDevice;
     }
+
+    public synchronized void connectDevice() {  // created on 13 June
+        if(this.getState() == BTConstants.STATE_BT_ENABLED) {
+            mDevice = this.searchPaired();
+
+            if( mDevice != null) {
+                this.connect(mDevice);
+            }
+        }
+    }
+
     public synchronized void connect(BluetoothDevice device) {
         Log.d(TAG, "connect to: " + device);
 

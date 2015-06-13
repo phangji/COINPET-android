@@ -103,6 +103,7 @@ public class SplashActivity extends Activity {
         PropertyManager.getInstance().setPkQuiz(0);
         PropertyManager.getInstance().setPkQuest(0);
         PropertyManager.getInstance().setPkPQuest(0);
+        PropertyManager.getInstance().setqCoin(3);
     }
 
     private void checkUpdatedData() {

@@ -72,16 +72,17 @@ public class DialogActivity extends Activity {
 
             case COINOVER :
                 imgvIcon.setVisibility(View.GONE);
-                btn1.setVisibility(View.GONE);
+                btn0.setVisibility(View.GONE);
                 tvLarge.setText(R.string.dialog_qcoin_over);
                 tvDesp.setText(R.string.try_tmr);
 
-                btn0.setOnClickListener(new View.OnClickListener() {
+                btn1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent i = new Intent();
                         i.putExtra(RESULT_NEXT_QUIZ, false);
                         setResult(Activity.RESULT_OK, i);
+                        finish();
                     }
                 });
                 break;

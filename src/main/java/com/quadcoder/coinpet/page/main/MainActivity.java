@@ -37,6 +37,7 @@ import com.quadcoder.coinpet.page.friends.FriendsActivity;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.quest.QuestActivity;
 import com.quadcoder.coinpet.page.quiz.QuizActivity;
+import com.quadcoder.coinpet.page.quiz.QuizFragment;
 import com.quadcoder.coinpet.page.setting.SettingActivity;
 import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
@@ -47,6 +48,8 @@ public class MainActivity extends Activity {
 
     static final int REQUEST_ENABLE_BT = 1;
     public static final int REQUEST_CODE_EVENT = 100;
+    public static final int REQUEST_CODE_QUIZ = 200;
+
     BluetoothDevice mDevice;
     /**
      * Local Bluetooth adapter
@@ -220,11 +223,45 @@ public class MainActivity extends Activity {
                     }
                 }
                 break;
+            case REQUEST_CODE_QUIZ:
+                if(resultCode == Activity.RESULT_OK) {
+                    ArrayList<Integer> moneyList = (ArrayList<Integer>)(data.getSerializableExtra(QuizActivity.INTENT_MONEY));
+                    Log.d("main phangji", moneyList.get(0).intValue() + " 값 ");
+                    for(Integer val : moneyList) {
+                        final int money = val.intValue();
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                moneyUp(money);
+                            }
+                        });
+                    }
+                }
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
 
+    void moneyUp(int money) {
+        int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
+
+//                                        Toast.makeText(MainActivity.this, "READ_MONEY " + money, Toast.LENGTH_SHORT).show();
+
+        tvNowMoney.setText("" + sum);
+        PropertyManager.getInstance().mGoal.now_cost = sum;
+        PropertyManager.getInstance().moneyUp(sum);
+
+        NetworkManager.getInstance().sendCoin(MainActivity.this, money, new NetworkManager.OnNetworkResultListener<Res>() {
+            @Override
+            public void onResult(Res res) {
+            }
+
+            @Override
+            public void onFail(Res res) {
+            }
+        });
+    }
 
     String pnMsg = null;
     void makePnMsg() {
@@ -265,7 +302,7 @@ public class MainActivity extends Activity {
         pbarExp = (ProgressBar)findViewById(R.id.pbarExp);
         tvExpText = (TextView)findViewById(R.id.tvExpText);
         frameTalk = (FrameLayout)findViewById(R.id.frameTalk);
-        frameQuest = (FrameLayout)findViewById(R.id.frameQuest);
+        frameQuest = (FrameLayout) findViewById(R.id.frameQuest);
         tvTalk = (TextView)findViewById(R.id.tvTalk);
         imgvHeart = (ImageView)findViewById(R.id.imgvHeart);
         imgvLevelup = (ImageView)findViewById(R.id.imgvLevelup);
@@ -342,12 +379,12 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 int count = PropertyManager.getInstance().getqCoin();
-                if(count <= 0) {
+                if(count < 1) {
                     Intent i = new Intent(MainActivity.this, DialogActivity.class);
                     i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.COINOVER);
-                    startActivity(i);   //TODO: test
+                    startActivity(i);
                 } else {
-                    startActivity(new Intent(MainActivity.this, QuizActivity.class));
+                    startActivityForResult(new Intent(MainActivity.this, QuizActivity.class), REQUEST_CODE_QUIZ);
                 }
 
             }
@@ -506,23 +543,7 @@ public class MainActivity extends Activity {
                                 }
                             }
                             final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
-                            int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
-
-//                                        Toast.makeText(MainActivity.this, "READ_MONEY " + money, Toast.LENGTH_SHORT).show();
-
-                            tvNowMoney.setText("" + sum);
-                            PropertyManager.getInstance().mGoal.now_cost = sum;
-                            PropertyManager.getInstance().moneyUp(sum);
-
-                            NetworkManager.getInstance().sendCoin(MainActivity.this, money, new NetworkManager.OnNetworkResultListener<Res>() {
-                                @Override
-                                public void onResult(Res res) {
-                                }
-
-                                @Override
-                                public void onFail(Res res) {
-                                }
-                            });
+                            moneyUp(money);
                         }
                     break;
                 case BTConstants.MESSAGE_DEVICE_NAME:

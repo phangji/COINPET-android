@@ -59,6 +59,7 @@ public class QuizFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_quiz, container, false);
         setMainLayout(rootView);
+
         return rootView;
     }
 
@@ -75,8 +76,28 @@ public class QuizFragment extends Fragment {
     }
 
     Quiz mQuiz;
+    boolean isResult;
 
     private void settingQuiz() {
+        // 플래그 false로 초기화
+        isResult = false;
+
+        // connection check : 다이얼로그 액티비티 실행 중 disconnect 된 것 감지
+        mChatService.write(BluetoothUtil.getInstance().requestBoardConn());
+        int coinCount = PropertyManager.getInstance().getqCoin();
+        imgvQCoin.setImageResource(Utils.getInstance().getQCoinResource(coinCount));
+
+        if (coinCount < 1) {
+            isResult = true;
+            Intent i = new Intent(getActivity(), DialogActivity.class);
+            i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.COINOVER);
+            startActivityForResult(i, REQUEST_CODE_TIMEOVER);
+            return;
+        }
+
+
+
+        // 데이터베이스에서 퀴즈 데이터 불러와 뷰 세팅
         mQuiz = DBManager.getInstance().getQuizRandom();
         tvQuiz.setText(mQuiz.content);
         tvDiff.setText(Utils.getInstance().getDiffResource(mQuiz.level));
@@ -97,15 +118,20 @@ public class QuizFragment extends Fragment {
 
             @Override
             public void onFinish() {
+                if(!isResult) {
+                    mChatService.write(BluetoothUtil.getInstance().quizTimeOver());
+                    mQuiz.state = Quiz.STATE_WRONG;
+                    afterQuizUpdateData();
 
-                mChatService.write(BluetoothUtil.getInstance().quizTimeOver());
-                //TODO : ack와 연결 필요
-                mQuiz.state = Quiz.STATE_WRONG;
-                afterQuizUpdateData();
-                Intent i = new Intent(getActivity(), DialogActivity.class);
-                i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.TIMEOVER);
-                i.putExtra(DialogActivity.TEXT, mQuiz.solution);
-                startActivityForResult(i, REQUEST_CODE_TIMEOVER);
+                    // 문제 동전 삭감
+                    PropertyManager.getInstance().minusQCoin();
+
+                    Intent i = new Intent(getActivity(), DialogActivity.class);
+                    i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.TIMEOVER);
+                    i.putExtra(DialogActivity.TEXT, mQuiz.solution);
+                    startActivityForResult(i, REQUEST_CODE_TIMEOVER);
+                }
+                isResult = true;
             }
         };
     }
@@ -136,13 +162,18 @@ public class QuizFragment extends Fragment {
         super.onDestroy();
         mChatService.write(BluetoothUtil.getInstance().quizIsEnded());
         //TODO : ack 와 연결
+
         beforeFinishing();
     }
 
     void beforeFinishing() {
-        if( mChatService != null)
-            mChatService.stop();
+//        if( mChatService != null)
+//            mChatService.stop();
         NetworkManager.getInstance().cancelRequests(getActivity());
+        isResult = true;
+        if(mTimer != null) {
+            mTimer.cancel(); // cancel 했는데..
+        }
     }
 
     CountDownTimer mTimer;
@@ -151,11 +182,8 @@ public class QuizFragment extends Fragment {
     public void onResume() {
         super.onResume();
         //timer 시작
-
-        mTimer.start(); //TODO: 시작될까?
+        mTimer.start();
     }
-
-
 
     private final Handler mHandler = new Handler() {
         @Override
@@ -176,9 +204,9 @@ public class QuizFragment extends Fragment {
                     }
                     break;
                 case BTConstants.MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    String writeMessage = new String(writeBuf);
-                    Toast.makeText(MyApplication.getContext(), TAG + " / Me : " + writeMessage, Toast.LENGTH_SHORT).show();
+//                    byte[] writeBuf = (byte[]) msg.obj;
+//                    String writeMessage = new String(writeBuf);
+//                    Toast.makeText(MyApplication.getContext(), TAG + " / Me : " + writeMessage, Toast.LENGTH_SHORT).show();
                     break;
 
                 case BTConstants.MESSAGE_READ :
@@ -201,6 +229,32 @@ public class QuizFragment extends Fragment {
                         int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
                         checkUserInput(money);
                     }
+
+                    if(opcode == BluetoothUtil.Opcode.BOARD_CON_RES) {
+                        if( readBuffer.get(3) == BluetoothUtil.YES ) {
+                            Toast.makeText(getActivity(), "BOARD CONN YES", Toast.LENGTH_SHORT).show();
+
+                        } else if ( readBuffer.get(3) == BluetoothUtil.NO ){
+                            Toast.makeText(getActivity(), "BOARD CONN NO", Toast.LENGTH_SHORT).show();
+                            beforeFinishing();
+                            goReadyPage();
+                        }
+                    }
+
+                    if(opcode == BluetoothUtil.Opcode.READ_MONEY) {
+                        int[] num = new int[3];
+                        for(int i=3; i<=5; i++) {
+                            num[i-3] = readBuffer.get(i);
+                            if(num[i-3] < 0) {
+                                num[i-3] += 256;
+                            }
+                        }
+                        final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
+
+                        ((QuizActivity)getActivity()).moneyList.add( new Integer(money) );
+
+                    }
+
                     if(opcode == BluetoothUtil.Opcode.QUIZ_DISCONN) {
                         beforeFinishing();
                         goReadyPage();
@@ -215,6 +269,20 @@ public class QuizFragment extends Fragment {
         }
     };
 
+
+
+//    void sendEventToMain() {
+//        // 이벤트들을 intent에 담아서, 이 액티비티가 task에서 빠지고, main이 나올 때 main에게 전해준다.
+//        if(moneyList.size() > 0) {
+//            Intent result = new Intent();
+//            result.putExtra(INTENT_MONEY, moneyList);
+//            getActivity().setResult(Activity.RESULT_OK, result);
+//            getActivity().finish();
+//        } else {
+//            getActivity().finish();
+//        }
+//    }
+
     private static final int REQUEST_CODE_RIGHT = 0;
     private static final int REQUEST_CODE_WRONG = 1;
     private static final int REQUEST_CODE_TIMEOVER = 2;
@@ -223,30 +291,41 @@ public class QuizFragment extends Fragment {
 
     void checkUserInput(int userValue) {
         mTimer.cancel();
-        if( isRight(userValue) ) {
-            mQuiz.state = Quiz.STATE_CORRECT;
-            afterQuizUpdateData();
-            Intent i = new Intent(getActivity(), DialogActivity.class);
-            i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.RIGHT);
-            i.putExtra(DialogActivity.TEXT, mQuiz.solution);
-            startActivityForResult(i, REQUEST_CODE_RIGHT);
-        } else {
-            mQuiz.state = Quiz.STATE_WRONG;
-            afterQuizUpdateData();
-            Intent i = new Intent(getActivity(), DialogActivity.class);
-            i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.WRONG);
-            i.putExtra(DialogActivity.TEXT, mQuiz.solution);
-            startActivityForResult(i, REQUEST_CODE_WRONG);
+
+        if (!isResult) {
+            if( isRight(userValue) ) {
+                mQuiz.state = Quiz.STATE_CORRECT;
+                afterQuizUpdateData();
+                Intent i = new Intent(getActivity(), DialogActivity.class);
+                i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.RIGHT);
+                i.putExtra(DialogActivity.TEXT, mQuiz.solution);
+                startActivityForResult(i, REQUEST_CODE_RIGHT);
+            } else {
+                mQuiz.state = Quiz.STATE_WRONG;
+                afterQuizUpdateData();
+
+                // 문제 동전 삭감
+                PropertyManager.getInstance().minusQCoin();
+
+                Intent i = new Intent(getActivity(), DialogActivity.class);
+                i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.WRONG);
+                i.putExtra(DialogActivity.TEXT, mQuiz.solution);
+                startActivityForResult(i, REQUEST_CODE_WRONG);
+            }
         }
+        isResult = true;
     }
 
 
     private void goReadyPage() {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.fragment, new QuizReadyFragment());
-        ft.addToBackStack(null);
-        ft.commit();
+        if (!isResult) {
+            ((QuizActivity)getActivity()).setPageIndex(0);
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.fragment, new QuizReadyFragment());
+            ft.addToBackStack(null);
+            ft.commit();
+        }
     }
 
     boolean isRight(int userValue) {
@@ -255,11 +334,11 @@ public class QuizFragment extends Fragment {
 
 
     void afterQuizUpdateData() {
-//        DBManager.getInstance().updateQuiz(mQuiz);
+        // TODO: 주석 풀어야 맞는 건데, 일단 안해놓음.
 //        NetworkManager.getInstance().postQuiz(getActivity(), mQuiz.pk_std_quiz, mQuiz.state, new NetworkManager.OnNetworkResultListener<Res>() {
 //            @Override
 //            public void onResult(Res res) {
-//
+//                DBManager.getInstance().updateQuiz(mQuiz);
 //            }
 //
 //            @Override
@@ -281,7 +360,7 @@ public class QuizFragment extends Fragment {
                     if(wantsNextQuiz) {
                         settingQuiz();
                     } else {
-                        getActivity().finish();   //TODO: finish is enough?
+                        getActivity().finish();
                     }
                     break;
                 case REQUEST_CODE_COINOVER :

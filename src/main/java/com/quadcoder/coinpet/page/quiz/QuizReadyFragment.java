@@ -55,7 +55,7 @@ public class QuizReadyFragment extends Fragment {
             }
         });
 
-        mTimer = new CountDownTimer(120 * 1000, 15 * 1000) {
+        mTimer = new CountDownTimer(120 * 1000, 10 * 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 mChatService.write(BluetoothUtil.getInstance().requestBoardConn());
@@ -77,19 +77,13 @@ public class QuizReadyFragment extends Fragment {
         super.onStart();
 
         if (mChatService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (mChatService.getState() == BTConstants.STATE_NONE) {
-                // Start the Bluetooth chat services
-                mChatService.start();
-            }
+            mChatService.connectDevice();
         } else {
             mChatService = BluetoothManager.getInstance();
             mChatService.setBtHandler(mHandler);
         }
 
         ((AnimationDrawable)imgvPad.getDrawable()).start();
-
-
     }
 
     CountDownTimer mTimer;
@@ -97,10 +91,15 @@ public class QuizReadyFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        // check board
-//        mChatService.write(BluetoothUtil.getInstance().requestBoardConn());
-        mTimer.start();
+        if( ((QuizActivity)getActivity()).getPageIndex() == 0) {
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mTimer.start();
+                }
+            }, 2000);
 
+        }
     }
 
     @Override
@@ -112,6 +111,8 @@ public class QuizReadyFragment extends Fragment {
     }
 
     private void goNext() {
+        mTimer.cancel();
+        ((QuizActivity)getActivity()).setPageIndex(1);
         FragmentManager fm = getActivity().getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.fragment, new QuizFragment());
@@ -138,9 +139,9 @@ public class QuizReadyFragment extends Fragment {
                     }
                     break;
                 case BTConstants.MESSAGE_WRITE:
-                    byte[] writeBuf = (byte[]) msg.obj;
-                    String writeMessage = new String(writeBuf);
-                    Toast.makeText(getActivity(), TAG + " / Me : " + writeMessage, Toast.LENGTH_SHORT).show();
+//                    byte[] writeBuf = (byte[]) msg.obj;
+//                    String writeMessage = new String(writeBuf);
+//                    Toast.makeText(getActivity(), TAG + " / Me : " + writeMessage, Toast.LENGTH_SHORT).show();
                     break;
 
                 case BTConstants.MESSAGE_READ :
@@ -160,6 +161,20 @@ public class QuizReadyFragment extends Fragment {
                         }
                     }
 
+                    if(opcode == BluetoothUtil.Opcode.READ_MONEY) {
+                        int[] num = new int[3];
+                        for(int i=3; i<=5; i++) {
+                            num[i-3] = readBuffer.get(i);
+                            if(num[i-3] < 0) {
+                                num[i-3] += 256;
+                            }
+                        }
+                        final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
+
+                        ((QuizActivity)getActivity()).moneyList.add( new Integer(money) );
+
+                    }
+
                     break;
 
             }
@@ -168,18 +183,9 @@ public class QuizReadyFragment extends Fragment {
 
     private BluetoothManager mChatService = null;
 
-
-    private void setupChatService() {
-        Log.d(TAG, "setupChatService()");
-
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = BluetoothManager.getInstance();
-        mChatService.setBtHandler(mHandler);
-    }
-
     @Override
     public void onDetach() {
         super.onDetach();
-        mTimer.cancel();
+
     }
 }

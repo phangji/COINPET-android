@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.database.DBManager;
+import com.quadcoder.coinpet.model.ParentQuest;
+import com.quadcoder.coinpet.model.Quest;
+import com.quadcoder.coinpet.model.Quiz;
+import com.quadcoder.coinpet.model.SystemQuest;
+import com.quadcoder.coinpet.network.response.UpdatedData;
 import com.quadcoder.coinpet.page.main.MainActivity;
 import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
@@ -89,8 +96,7 @@ public class SignupFormFragment extends Fragment {
                         @Override
                         public void onResult(Res res) {
                             PropertyManager.getInstance().setToken(res.Authorization);
-                            startActivity(new Intent(getActivity(), MainActivity.class));
-                            getActivity().finish();
+                            checkUpdatedData();
                         }
 
                         @Override
@@ -131,6 +137,81 @@ public class SignupFormFragment extends Fragment {
     public void onResume() {
         super.onResume();
         startAnimation();
+    }
+
+    private void checkUpdatedData() {
+        int pkQuiz = PropertyManager.getInstance().getPkQuiz();
+        int pkQuest = PropertyManager.getInstance().getPkPQuest();
+        int pkParentQuest = PropertyManager.getInstance().getPkPQuest();
+
+        Log.d("getUpdatedData", "pkQuiz: " + pkQuiz + "\tpkQuest: " + pkQuest + "\tpkParentQuest: " + pkParentQuest);
+        NetworkManager.getInstance().getUpdatedData(getActivity(), pkQuiz, pkQuest, new NetworkManager.OnNetworkResultListener<UpdatedData>() {
+            @Override
+            public void onResult(UpdatedData res) {
+
+                if (res.needUpdate) {
+                    if (res.systemQuiz.size() != 0) {
+                        for (Quiz record : res.systemQuiz) {
+                            DBManager.getInstance().insertQuiz(record); // STATE_YET
+                        }
+                        Quiz last = res.systemQuiz.get(res.systemQuiz.size() - 1);
+                        PropertyManager.getInstance().setPkQuiz(last.pk_std_quiz);
+                    }
+                    if (res.systemQuest.size() != 0) {
+                        for (SystemQuest record : res.systemQuest) {
+                            SystemQuest newOne = record;
+                            newOne.state = Quest.DOING;
+                            DBManager.getInstance().insertSystemQuest(newOne);
+                        }
+                        SystemQuest last = res.systemQuest.get(res.systemQuest.size() - 1);
+                        PropertyManager.getInstance().setPkQuest(last.pk_std_que);
+
+                        checkAndMakeActiveQuest();
+                    }
+                    if (res.parentsQuest.size() != 0) {
+                        for (ParentQuest record : res.parentsQuest) {
+                            if (record.state == Quest.DOING)
+                                DBManager.getInstance().insertParentQuest(record);
+                            else
+                                DBManager.getInstance().updateParentQuest(record);
+                        }
+                        ParentQuest last = res.parentsQuest.get(res.parentsQuest.size() - 1);
+                        PropertyManager.getInstance().setPkPQuest(last.pk_parents_quest);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFail(UpdatedData res) {
+                goToNext();
+            }
+        });
+    }
+
+    void goToNext() {
+        startActivity(new Intent(getActivity(), MainActivity.class));
+        getActivity().finish();
+    }
+
+    void checkAndMakeActiveQuest() {
+        int count = DBManager.getInstance().getActiveSystemCount();
+        while( (3 - count) > 0) {
+            SystemQuest newOne = DBManager.getInstance().createNewActiveSystemQuest();
+            count++;
+
+            NetworkManager.getInstance().postQuest(getActivity(), newOne.pk_std_que, Quest.DOING, new NetworkManager.OnNetworkResultListener<Res>() {
+                @Override
+                public void onResult(Res res) {
+
+                }
+
+                @Override
+                public void onFail(Res res) {
+
+                }
+            });
+        }
     }
 
     ImageView imgvCloud1;

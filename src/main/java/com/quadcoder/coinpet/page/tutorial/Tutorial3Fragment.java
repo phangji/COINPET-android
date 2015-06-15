@@ -55,6 +55,7 @@ public class Tutorial3Fragment extends Fragment {
         txt.setTypeface(font);
         setBtEnvironment();
 
+        Toast.makeText(getActivity(), BluetoothManager.getInstance().SERVICE_NAME, Toast.LENGTH_SHORT).show();
 //        BluetoothService.getInstance(getActivity(), new Handler()).write(pnMsg.getBytes());
 
         if (mChatService != null) {

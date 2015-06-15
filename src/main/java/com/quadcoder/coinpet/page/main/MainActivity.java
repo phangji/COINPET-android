@@ -42,6 +42,7 @@ import com.quadcoder.coinpet.page.quest.watcher.Parsing;
 import com.quadcoder.coinpet.page.quest.watcher.QuestWatcher;
 import com.quadcoder.coinpet.page.quiz.QuizActivity;
 import com.quadcoder.coinpet.page.setting.SettingActivity;
+import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 import java.util.ArrayList;
 
@@ -271,7 +272,7 @@ public class MainActivity extends Activity {
     }
 
     void checkGoalDone() {
-        if(PropertyManager.getInstance().mGoal.goal_cost >= Integer.parseInt(tvNowMoney.getText().toString())) {
+        if(PropertyManager.getInstance().mGoal.goal_cost <= Integer.parseInt(tvNowMoney.getText().toString())) {
             showGoalFinishDialog();
         }
     }
@@ -290,7 +291,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        builder.setPositiveButton(R.string.next_time, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.next_time, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             }
@@ -332,8 +333,9 @@ public class MainActivity extends Activity {
 //            imgvMailBg.setVisibility(View.VISIBLE);
         } else {
             imgvMail.setVisibility(View.GONE);
-            imgvMailBg.setVisibility(View.GONE);
+
         }
+        imgvMailBg.setVisibility(View.GONE);
     }
 
     void setMainLayout() {
@@ -454,8 +456,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //임시로 Tutorial 실행
-//                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
-                mChatService.write(BluetoothUtil.getInstance().requestMoneySync());
+                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
+//                mChatService.write(BluetoothUtil.getInstance().requestMoneySync());
             }
         });
 
@@ -472,6 +474,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 QuestWatcher.getInstance().listenAction(Parsing.Type.PARENT_QUEST, Parsing.Method.SUCCESS);
+                QuestWatcher.getInstance().listenAction(Parsing.Type.STD_QUEST, Parsing.Method.SUCCESS);
             }
         });
     }
@@ -486,6 +489,10 @@ public class MainActivity extends Activity {
         Log.d("phangji bt", "onCreat isBtRequested" + PropertyManager.getInstance().isBtReqested());
         if(PropertyManager.getInstance().isBtReqested())
             setBtEnvironment();
+
+        if(PropertyManager.getInstance().mGoal == null) {
+            startActivityForResult(new Intent(MainActivity.this, GoalSettingActivity.class), REQUEST_CODE_GOAL_SETTING_ACTIVITY);
+        }
     }
 
 

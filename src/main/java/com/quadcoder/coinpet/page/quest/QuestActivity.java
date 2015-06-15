@@ -77,11 +77,8 @@ public class QuestActivity extends ActionBarActivity {
                                 public void onResult(Res res) {
                                     Toast.makeText(QuestActivity.this, "시스템 퀘스트 보상을 받았습니다.", Toast.LENGTH_SHORT).show();
 
-                                    //상태 업데이트, 디비, 리스트에서 사라짐
-                                    ((SystemQuest) o).state = Quest.DELETED;
-                                    DBManager.getInstance().updateActiveSystemQuestState((SystemQuest) o);
 
-                                    finishQuest(position, o);
+
                                 }
 
                                 @Override
@@ -89,6 +86,13 @@ public class QuestActivity extends ActionBarActivity {
                                     Toast.makeText(QuestActivity.this, "Server Internal Error", Toast.LENGTH_SHORT).show();
                                 }
                             });
+
+                            //상태 업데이트, 디비, 리스트에서 사라짐
+                            ((SystemQuest) o).state = Quest.DELETED;
+                            DBManager.getInstance().updateActiveSystemQuestState((SystemQuest) o);
+
+                            finishQuest(position, o);
+
                             break;
                     }
                 } else {
@@ -184,14 +188,17 @@ public class QuestActivity extends ActionBarActivity {
 
             DBManager.getInstance().deleteActiveSystemQuest(((SystemQuest) o));
 
+            pointUpList.add(((SystemQuest) o).point);
+
 
         } else {
             // 부모 퀘스트 완료
             QuestWatcher.getInstance().listenAction(Parsing.Type.PARENT_QUEST, Parsing.Method.SUCCESS);
+            pointUpList.add(((ParentQuest) o).point);
         }
 
-        // pointUpList에 종료시 전달할 이벤트를 담는다.
-        pointUpList.add( ((Quiz)o).point );
+
+
     }
 
     private void sendEventToMain() {

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.bluetooth.BluetoothManager;
 import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkManager;
@@ -50,6 +51,7 @@ public class Tutorial1Fragment extends Fragment {
 
                 String pn = etPn.getText().toString();
                 PropertyManager.getInstance().setPn(pn);
+//                BluetoothManager.getInstance().SERVICE_NAME = "COINPET-" + pn.substring(0, 4);
 
                 // 서버와 pn 통신
                 NetworkManager.getInstance().confirmPn(getActivity(), pn, new NetworkManager.OnNetworkResultListener<Res>() {

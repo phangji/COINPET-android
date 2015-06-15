@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.quadcoder.coinpet.page.common.PropertyManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,7 +24,7 @@ import java.util.UUID;
 public class BluetoothManager {
     private static final String TAG = "BluetoothManager";
 
-    public String SERVICE_NAME = "COINPET-1234";    //TODO: PN번호 앞자리 잘라서 하는 걸로 추후 수정
+    public String SERVICE_NAME = "COINPET-" + PropertyManager.getInstance().getPn().substring(0, 4);    //TODO: PN번호 앞자리 잘라서 하는 걸로 추후 수정
     static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 //    static final UUID MY_UUID = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB"); // 안되는 UUID
 

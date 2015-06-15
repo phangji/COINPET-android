@@ -39,17 +39,17 @@ public class PropertyManager {
      * */
 
     private static final String FIELD_PN = "pn";
-    private String pn = null;
+    private String pn;
 
     public String getPn() {
-//        pn = mPrefs.getString(FIELD_PN, "");
+        pn = mPrefs.getString(FIELD_PN, "");
         return pn;
     }
 
     public void setPn(String pn) {
         this.pn = pn;
-//        mEditor.putString(FIELD_PN, this.pn);
-//        mEditor.commit();
+        mEditor.putString(FIELD_PN, this.pn);
+        mEditor.commit();
     }
 
     /**
@@ -78,8 +78,9 @@ public class PropertyManager {
     private static final String FIELD_TOKEN = "token";
     private String token = null;
 
-    public String getToken() {  // TODO: 로그인 하는 프로세스로 진입시, 이 토큰 제거해줘야함.
-        token = mPrefs.getString(FIELD_TOKEN, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJma19raWRzIjoxNDUsIm5hbWUiOiLqt6Tqt6QyIiwiaWF0IjoxNDMxNDkyNjQ5fQ.ThWR16YikjVb77lkK1qTp5H3GPVk2i9gFl7C5QDKdlM");
+    public String getToken() {
+        token = mPrefs.getString(FIELD_TOKEN, "");
+        //"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJma19raWRzIjoxNDUsIm5hbWUiOiLqt6Tqt6QyIiwiaWF0IjoxNDMxNDkyNjQ5fQ.ThWR16YikjVb77lkK1qTp5H3GPVk2i9gFl7C5QDKdlM"
         return "Bearer " + token;
     }
 

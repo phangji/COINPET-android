@@ -38,7 +38,7 @@ public class SplashActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        devSetInitialData();
+//        devSetInitialData();
 
         ImageView imgvPet = (ImageView)findViewById(R.id.imgvPet);
         anim = (AnimationDrawable)imgvPet.getDrawable();
@@ -50,7 +50,12 @@ public class SplashActivity extends Activity {
         if ( mWifi.isConnected() || connManager.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
                 || connManager.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING ) {
 
-            keepRunning();
+            if(PropertyManager.getInstance().getToken().length() > 7)   // 토큰을 가지고 있으면(로그인 되어 있으면)
+                checkUpdatedData();
+            else {
+                startActivity(new Intent(SplashActivity.this, TutorialActivity.class));
+                finish();
+            }
 
             // 출석 체크
             PropertyManager.getInstance().plusAccessCount();
@@ -63,14 +68,7 @@ public class SplashActivity extends Activity {
 //        goToNext();
     }
 
-    private void keepRunning() {
-        if(PropertyManager.getInstance().getToken() != null)
-            checkUpdatedData();
-        else {
-            startActivity(new Intent(SplashActivity.this, TutorialActivity.class));
-            finish();
-        }
-    }
+    boolean isLogined;
 
     private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

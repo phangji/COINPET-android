@@ -50,6 +50,9 @@ public class SplashActivity extends Activity {
 
             checkUpdatedData();
 
+            // 출석 체크
+            PropertyManager.getInstance().plusAccessCount();
+
         }
         else {
             showDialog();

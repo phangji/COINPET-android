@@ -84,7 +84,7 @@ public class MyDBOpenHelper extends SQLiteOpenHelper {
 	private void insertIntoFreinds(SQLiteDatabase db) {
 		Friend[] friendList = new Friend[5];
 		friendList[0] = new Friend(1, "마마", "아이들을 사랑하는\n엄마 코인펫", "부모님 퀘스트 3회", false, R.drawable.f_mm);
-		friendList[1] = new Friend(2, "쿠쿠", "코코의 동생으로\n잠을 좋아하는 코인펫", "튜토리얼 클리어", false, R.drawable.f_kuku);
+		friendList[1] = new Friend(2, "쿠쿠", "코코의 동생으로\n잠을 좋아하는 코인펫", "튜토리얼 클리어", true, R.drawable.f_kuku);	//친구들 페이지에 왔다는 것을 튜토리얼을 완료했다는 것이므로
 		friendList[2] = new Friend(3, "첵첵", "CHECK~!\n흥이 많은 코인펫", "출석 체크 20회", false, R.drawable.f_tt);
 		friendList[3] = new Friend(4, "똑똑", "모아모아 마을에서\n가장 똑똑한 코인펫", "10문제 연속 정답", false, R.drawable.f_dd);
 		friendList[4] = new Friend(5, "꼬꼬", "아침 일찍 일어나는\n부지런한 코인펫", "아침 시간 저금 3회", false, R.drawable.f_kk);

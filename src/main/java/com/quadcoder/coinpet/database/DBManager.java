@@ -213,6 +213,27 @@ public class DBManager {
         return list;
     }
 
+    public Friend getFriend(int pk) {
+        Friend record = new Friend();
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        String[] columns = {FriendsTable.PK, FriendsTable.NAME, FriendsTable.DESCRIPTION, FriendsTable.CONDITION, FriendsTable.IS_SAVED, FriendsTable.RESOURCE_ID};
+        String selection = FriendsTable.PK + " = ? ";
+        String[] selectionArgs = { "" + pk};
+        Cursor c = db.query(FriendsTable.TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+
+        if (c.moveToNext()) {
+            record.pk = c.getInt(c.getColumnIndex(FriendsTable.PK));
+            record.name = c.getString(c.getColumnIndex(FriendsTable.NAME));
+            record.description = c.getString(c.getColumnIndex(FriendsTable.DESCRIPTION));
+            record.condition = c.getString(c.getColumnIndex(FriendsTable.CONDITION));
+            record.isSaved = c.getInt(c.getColumnIndex(FriendsTable.IS_SAVED)) == 1 ? true : false;
+            record.resId = c.getInt(c.getColumnIndex(FriendsTable.RESOURCE_ID));
+        }
+        c.close();
+
+        return record;
+    }
+
     /**
      * INSERT
      */
@@ -279,7 +300,7 @@ public class DBManager {
         db.close();
     }
 
-    public void insertFreind(Friend record) {
+    public void insertFriend(Friend record) {
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FriendsTable.PK, record.pk);
@@ -370,7 +391,7 @@ public class DBManager {
     public void updateFriend(Friend record){
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(FriendsTable.IS_SAVED, record.isSaved);
+        values.put(FriendsTable.IS_SAVED, record.isSaved == true ? 1 : 0 );
         String whereClause = FriendsTable.PK + " = ? ";
         String[] whereArgs = { "" + record.pk };
         db.update(FriendsTable.TABLE_NAME, values, whereClause, whereArgs);

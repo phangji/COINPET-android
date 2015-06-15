@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.quadcoder.coinpet.model.Friend;
 import com.quadcoder.coinpet.page.common.MyApplication;
 import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
@@ -54,11 +55,15 @@ public class QuizFragment extends Fragment {
     TextView tvQuiz;
     TextView tvHint;
 
+    int combo10counter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_quiz, container, false);
         setMainLayout(rootView);
+
+        combo10counter = 0;
 
         return rootView;
     }
@@ -130,6 +135,8 @@ public class QuizFragment extends Fragment {
                     i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.TIMEOVER);
                     i.putExtra(DialogActivity.TEXT, mQuiz.solution);
                     startActivityForResult(i, REQUEST_CODE_TIMEOVER);
+
+                    combo10counter = 0;
                 }
                 isResult = true;
             }
@@ -299,6 +306,20 @@ public class QuizFragment extends Fragment {
                 i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.RIGHT);
                 i.putExtra(DialogActivity.TEXT, mQuiz.solution);
                 startActivityForResult(i, REQUEST_CODE_RIGHT);
+
+                combo10counter ++;
+
+                // Save 똑똑
+                if(combo10counter == 10) {
+                    Friend friend = DBManager.getInstance().getFriend(Friend.SMART);
+                    if ( !friend.isSaved ) {
+                        Friend record = new Friend();
+                        record.pk = Friend.SMART;  record.isSaved = true;
+                        DBManager.getInstance().updateFriend(record);   // 구한다.
+                        Toast.makeText(getActivity(), "쿠쿠가 구출되었습니다. 친구들 페이지에서 확인해보세요.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
             } else {
                 mQuiz.state = Quiz.STATE_WRONG;
                 afterQuizUpdateData();
@@ -310,6 +331,8 @@ public class QuizFragment extends Fragment {
                 i.putExtra(DialogActivity.DIALOG_TYPE, DialogActivity.WRONG);
                 i.putExtra(DialogActivity.TEXT, mQuiz.solution);
                 startActivityForResult(i, REQUEST_CODE_WRONG);
+
+                combo10counter = 0;
             }
         }
         isResult = true;

@@ -4,6 +4,7 @@ import com.quadcoder.coinpet.database.DBManager;
 import com.quadcoder.coinpet.model.Quest;
 import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.response.Saving;
+import com.quadcoder.coinpet.page.common.PropertyManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ public class QuestWatcher {
                         //아침 시간대 판별
                         if( getTimeMarkerString().equals("오전") || getTimeMarkerString().equals("AM") ) {
                             updateCount(quest);
+                            PropertyManager.getInstance().plusMorningSaving();
                         }
                     } else if(quest.con_method.equals(Parsing.Method.EVENING)) {
                         //저녁 시간대 판별
@@ -54,15 +56,22 @@ public class QuestWatcher {
                     }
                 }
             }
-        } else if(type.equals(Parsing.Type.STD_QUEST) || type.equals(Parsing.Type.PARENT_QUEST)) {
+        } else if(type.equals(Parsing.Type.STD_QUEST)) {
 
             for(SystemQuest quest : mActiveList) {
                 if(quest.con_type.equals(type) && quest.con_method.equals(method)) {
                     updateCount(quest);
                 }
-
             }
 
+        } else if(type.equals(Parsing.Type.PARENT_QUEST)) {
+
+            for(SystemQuest quest : mActiveList) {
+                if(quest.con_type.equals(type) && quest.con_method.equals(method)) {
+                    updateCount(quest);
+                    PropertyManager.getInstance().plusParentQuest();
+                }
+            }
         }
     }
 

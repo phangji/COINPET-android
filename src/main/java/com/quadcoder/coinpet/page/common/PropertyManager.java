@@ -2,8 +2,16 @@ package com.quadcoder.coinpet.page.common;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
+import com.quadcoder.coinpet.database.DBManager;
+import com.quadcoder.coinpet.model.Friend;
 import com.quadcoder.coinpet.network.response.Goal;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Phangji on 4/1/15.
@@ -269,6 +277,128 @@ public class PropertyManager {
         this.pkQuiz = pkQuiz;
         mEditor.putInt(FIELD_PK_QUIZ, pkQuiz);
         mEditor.commit();
+    }
+
+    /**
+     * lastVisitDate
+     */
+
+    private static final String FIELD_LAST_VISIT_DATE = "lastVisitDate";
+    private String lastVisitDate;
+
+    public boolean compWithNow() {
+        boolean isChanged = false;
+
+        DateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        String nowDate = myFormat.format(new Date(c.getTimeInMillis()));
+        Log.d("PropertyManager", "nowDate : " + nowDate);
+
+        lastVisitDate = mPrefs.getString(FIELD_LAST_VISIT_DATE, nowDate);
+        Log.d("PropertyManager", "lastVisitDate : " + lastVisitDate);
+
+        isChanged = lastVisitDate.equals(nowDate);
+        Log.d("PropertyManager", "isChanged : " + isChanged);
+
+        if(isChanged) {
+            lastVisitDate = nowDate;
+            commitLastVisitDate();
+        }
+
+        return isChanged;
+    }
+
+    public void commitLastVisitDate() {
+        mEditor.putString(FIELD_LAST_VISIT_DATE, lastVisitDate);
+        mEditor.commit();
+    }
+
+
+    /**
+     * 친구들
+     */
+
+    private static final String FIELD_ACCESS_COUNT = "accessCount";
+    private int accessCount;
+
+    public int getAccessCount() {
+        accessCount = mPrefs.getInt(FIELD_ACCESS_COUNT, 0);
+        return accessCount;
+    }
+
+    public void commitAccessCount() {
+        mEditor.putInt(FIELD_ACCESS_COUNT, accessCount);
+        mEditor.commit();
+    }
+
+    public void plusAccessCount() {     // 출석체크
+        if( compWithNow() ) {
+            setqCoin(3);
+            if(getAccessCount() < 20) {
+                accessCount++;
+                commitAccessCount();
+            }
+        }
+
+        if(parentQuest == 20) {  //구하라
+            Friend friend = new Friend();
+            friend.pk = Friend.CHECKCHECK;    friend.isSaved = true;
+            DBManager.getInstance().updateFriend(friend);
+        }
+    }
+
+    private static final String FIELD_MORNING_SAVING = "morningSaving";
+    private int morningSaving;
+
+    public int getMorningSaving() {
+        morningSaving = mPrefs.getInt(FIELD_MORNING_SAVING, 0);
+        return morningSaving;
+    }
+
+    public void commitMorningSaving() {
+        mEditor.putInt(FIELD_MORNING_SAVING, morningSaving);
+        mEditor.commit();
+    }
+
+    public void plusMorningSaving() {
+        if(getMorningSaving() < 3) {
+            morningSaving++;
+            commitMorningSaving();
+        }
+
+        if(morningSaving == 3) {  //구하라
+            Friend friend = new Friend();
+            friend.pk = Friend.MORNING;    friend.isSaved = true;
+            DBManager.getInstance().updateFriend(friend);
+        }
+    }
+
+    private static final String FIELD_PARENT_QUEST = "parentQuest";
+    private int parentQuest;
+
+    public int getParentQuest() {
+        parentQuest = mPrefs.getInt(FIELD_PARENT_QUEST, 0);
+        return parentQuest;
+    }
+
+    public void commitParentQuest() {
+        mEditor.putInt(FIELD_PARENT_QUEST, parentQuest);
+        mEditor.commit();
+    }
+
+    public void plusParentQuest() {
+        if(getParentQuest() < 3) {
+            parentQuest++;
+            commitParentQuest();
+        }
+
+        if(parentQuest == 3) {  //구하라
+            Friend friend = new Friend();
+            friend.pk = Friend.MAMA;    friend.isSaved = true;
+            DBManager.getInstance().updateFriend(friend);
+        }
+
+        // 3 이상은 저장도 안하고, pass
     }
 
     /**

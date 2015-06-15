@@ -98,6 +98,24 @@ public class PropertyManager {
 
 
     /**
+     * showGoalUi
+     * */
+
+    public static final String FIELD_SHOW_GOAL_UI = "showGoalUi";
+    private boolean showGoalUi;
+
+    public boolean isShowGoalUi() {
+        showGoalUi = mPrefs.getBoolean(FIELD_SHOW_GOAL_UI, false);
+        return showGoalUi;
+    }
+
+    public void setShowGoalUi(boolean showGoalUi) {
+        this.showGoalUi = showGoalUi;
+        mEditor.putBoolean(FIELD_SHOW_GOAL_UI, showGoalUi);
+        mEditor.commit();
+    }
+
+    /**
      * sound
      * */
 

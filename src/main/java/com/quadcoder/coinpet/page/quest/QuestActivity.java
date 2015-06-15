@@ -77,7 +77,11 @@ public class QuestActivity extends ActionBarActivity {
                                 public void onResult(Res res) {
                                     Toast.makeText(QuestActivity.this, "시스템 퀘스트 보상을 받았습니다.", Toast.LENGTH_SHORT).show();
 
+                                    //상태 업데이트, 디비, 리스트에서 사라짐
+                                    ((SystemQuest) o).state = Quest.DELETED;
+                                    DBManager.getInstance().updateActiveSystemQuestState((SystemQuest) o);
 
+                                    finishQuest(position, o);
 
                                 }
 
@@ -87,11 +91,7 @@ public class QuestActivity extends ActionBarActivity {
                                 }
                             });
 
-                            //상태 업데이트, 디비, 리스트에서 사라짐
-                            ((SystemQuest) o).state = Quest.DELETED;
-                            DBManager.getInstance().updateActiveSystemQuestState((SystemQuest) o);
 
-                            finishQuest(position, o);
 
                             break;
                     }
@@ -163,6 +163,9 @@ public class QuestActivity extends ActionBarActivity {
         }, TIME_REMOVE_ITEM);
 
         if( o instanceof  SystemQuest ) {
+
+            QuestWatcher.getInstance().removeActiveQuest(((SystemQuest) o));
+
             // 시스템 퀘스트 완료
             QuestWatcher.getInstance().listenAction(Parsing.Type.STD_QUEST, Parsing.Method.SUCCESS);
 
@@ -183,10 +186,9 @@ public class QuestActivity extends ActionBarActivity {
                     });
                     mAdapter.addActiveQuest(newActiveQuest);
                     Toast.makeText(QuestActivity.this, "새로운 퀘스트가 주어졌습니다.", Toast.LENGTH_SHORT);
-                }
-            }, TIME_REMOVE_ITEM);
 
-            DBManager.getInstance().deleteActiveSystemQuest(((SystemQuest) o));
+                }
+            }, TIME_REMOVE_ITEM * 2);
 
             pointUpList.add(((SystemQuest) o).point);
 

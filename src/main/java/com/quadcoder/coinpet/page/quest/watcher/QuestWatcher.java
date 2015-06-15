@@ -83,6 +83,12 @@ public class QuestWatcher {
         needUpdate = false;
     }
 
+    public void removeActiveQuest(SystemQuest quest) {
+        DBManager.getInstance().deleteActiveSystemQuest(quest);
+        mActiveList.clear();
+        mActiveList = DBManager.getInstance().getActiveSystemQuestList();
+    }
+
     public void refreshActiveList() {
         saveChanges();
         mActiveList = DBManager.getInstance().getActiveSystemQuestList();

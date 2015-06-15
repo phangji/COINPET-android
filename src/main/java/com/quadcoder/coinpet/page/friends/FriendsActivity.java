@@ -59,7 +59,7 @@ public class FriendsActivity extends ActionBarActivity {
         for(int i=0; i<5; i++) {
             Friend friend = friendList.get(i);
             if(friend.isSaved) {
-                imageList[i].setImageResource(friend.resId);
+                imageList[i].setImageResource(friendsResId[i]);
             }
         }
     }

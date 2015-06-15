@@ -188,7 +188,7 @@
             <FrameLayout
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:visibility="invisible"
+                android:visibility="visible"
                 android:id="@+id/frameTalk">
 
                 <ImageView
@@ -224,6 +224,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/imgvMailBg"
+                    android:visibility="gone"
                     android:src="@drawable/bg_mail" />
 
                 <ImageView
@@ -231,6 +232,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/imgvMail"
                     android:src="@drawable/mail"
+                    android:visibility="gone"
                     android:layout_gravity="center" />
 
             </FrameLayout>

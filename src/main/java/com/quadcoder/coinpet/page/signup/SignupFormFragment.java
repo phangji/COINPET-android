@@ -180,6 +180,8 @@ public class SignupFormFragment extends Fragment {
                     }
                 }
 
+                goToNext();
+
             }
 
             @Override

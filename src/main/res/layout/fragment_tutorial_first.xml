@@ -34,7 +34,7 @@
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/input_bg"
                 android:layout_marginTop="40dp"
-                android:text="41IT123T11111HD5" />
+                android:text="41IT123T11111RD6" />
 
             <Button
                 android:layout_width="92dp"

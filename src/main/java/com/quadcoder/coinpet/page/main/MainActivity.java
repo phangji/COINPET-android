@@ -124,11 +124,6 @@ public class MainActivity extends Activity {
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
 
-        if( imgvMail.getVisibility() == View.VISIBLE) {
-            frameTalk.setVisibility(View.GONE);
-        } else {
-            frameTalk.setVisibility(View.VISIBLE);
-        }
 
         int nowLevel = PropertyManager.getInstance().getNowLevel();
         int nowPoint = PropertyManager.getInstance().getNowPoint();
@@ -137,6 +132,12 @@ public class MainActivity extends Activity {
         pbarExp.setProgress(nowPoint);
         tvLevel.setText("Lv " + nowLevel);
         tvExpText.setText(nowPoint + "/" + nowLevel * GAP_LEVELUP);
+
+        if(PropertyManager.getInstance().mGoal == null) {
+            startActivityForResult(new Intent(MainActivity.this, GoalSettingActivity.class), REQUEST_CODE_GOAL_SETTING_ACTIVITY);
+        }
+
+        goalUiShow(PropertyManager.getInstance().isShowGoalUi());   //
 
 //        devPointUpTest();
     }
@@ -210,6 +211,7 @@ public class MainActivity extends Activity {
 //                    boolean isDoneFirstQuest = data.getBooleanExtra(GoalSettingActivity.RESULT_GOAL_SET, false);
                     mChatService.write(BluetoothUtil.getInstance().setGoalAndLock(PropertyManager.getInstance().mGoal.goal_cost));
                     goalUiShow(false);
+                    PropertyManager.getInstance().setShowGoalUi(false);
                 }
                 break;
             case REQUEST_CODE_EVENT:
@@ -251,12 +253,12 @@ public class MainActivity extends Activity {
     void moneyUp(int money) {
         int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
 
-
         QuestWatcher.getInstance().listenAction(Parsing.Type.SAVING, Parsing.Method.ANYTIME);
 
         tvNowMoney.setText("" + sum);
+
         PropertyManager.getInstance().mGoal.now_cost = sum;
-        PropertyManager.getInstance().moneyUp(sum);
+        PropertyManager.getInstance().moneyUp(money);
 
         NetworkManager.getInstance().sendCoin(MainActivity.this, money, new NetworkManager.OnNetworkResultListener<Res>() {
             @Override
@@ -272,7 +274,7 @@ public class MainActivity extends Activity {
     }
 
     void checkGoalDone() {
-        if(PropertyManager.getInstance().mGoal.goal_cost <= Integer.parseInt(tvNowMoney.getText().toString())) {
+        if(PropertyManager.getInstance().mGoal.goal_cost <= PropertyManager.getInstance().getNowMoney()) {
             showGoalFinishDialog();
         }
     }
@@ -288,6 +290,9 @@ public class MainActivity extends Activity {
 
                 // 목표 설정 퀘스트 다시 보이기
                 goalUiShow(true);
+                PropertyManager.getInstance().setShowGoalUi(true);
+                PropertyManager.getInstance().setNowMoney(0);
+                tvNowMoney.setText("0");
             }
         });
 
@@ -297,21 +302,6 @@ public class MainActivity extends Activity {
             }
         });
         builder.create().show();
-    }
-
-    String pnMsg = null;
-    void makePnMsg() {
-        final char[] registerPn = new char[20];
-        registerPn[0] = 'S';
-        registerPn[1] = 0x01;
-        registerPn[2] = 16;
-        registerPn[19] = 'E';
-        char[] pn = "1234123412341234".toCharArray();
-        for(int i=3; i<19; i++) {
-            registerPn[i] = pn[i-3];
-        }
-        pnMsg = new String(registerPn);
-        Log.d("registerPn", pnMsg);
     }
 
     void connectBt() {
@@ -327,12 +317,19 @@ public class MainActivity extends Activity {
         }
     }
 
+    void setupChatService() {
+            mChatService = BluetoothManager.getInstance();
+            mChatService.setBtHandler(mHandler);
+    }
+
     void goalUiShow(boolean show) {
         if( show ) {
             imgvMail.setVisibility(View.VISIBLE);
+            frameTalk.setVisibility(View.GONE);
 //            imgvMailBg.setVisibility(View.VISIBLE);
         } else {
             imgvMail.setVisibility(View.GONE);
+            frameTalk.setVisibility(View.VISIBLE);
 
         }
         imgvMailBg.setVisibility(View.GONE);
@@ -356,10 +353,6 @@ public class MainActivity extends Activity {
         tvLevel = (TextView)findViewById(R.id.tvLevel);
         Typeface font = Typeface.createFromAsset(getAssets(), com.quadcoder.coinpet.page.common.Constants.FONT_NORMAL);
         tvTalk.setTypeface(font);
-
-        if(PropertyManager.getInstance().mGoal != null) //목표 설정 완료하면 안보이기
-            goalUiShow(false);
-
 
         final AudioEffect boingAudio = new AudioEffect(AudioEffect.CARTOON_BOING);
         final AudioEffect hahahaAudio = new AudioEffect(AudioEffect.HAHAHA);
@@ -489,10 +482,6 @@ public class MainActivity extends Activity {
         Log.d("phangji bt", "onCreat isBtRequested" + PropertyManager.getInstance().isBtReqested());
         if(PropertyManager.getInstance().isBtReqested())
             setBtEnvironment();
-
-        if(PropertyManager.getInstance().mGoal == null) {
-            startActivityForResult(new Intent(MainActivity.this, GoalSettingActivity.class), REQUEST_CODE_GOAL_SETTING_ACTIVITY);
-        }
     }
 
 
@@ -536,23 +525,20 @@ public class MainActivity extends Activity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         } else if(mChatService == null) {
             setupChatService();
-            mChatService.setState(BTConstants.STATE_BT_ENABLED);
-            connectBt();
+            if (mChatService.getState() == BTConstants.STATE_CONNECTED) {
+                if (mChatService != null) {
+                    mChatService.connectDevice();
+                }
+            } else {
+                mChatService.setState(BTConstants.STATE_BT_ENABLED);
+                connectBt();
+            }
+        } else {
+//            mChatService.setState(BTConstants.STATE_BT_ENABLED);
+            if (mChatService != null) {
+                mChatService.connectDevice();
+            }
         }
-        else {
-            mChatService.setState(BTConstants.STATE_BT_ENABLED);
-            connectBt();
-        }
-    }
-
-    private void setupChatService() {
-        Log.d(TAG, "setupChatService()");
-
-        // Initialize the BluetoothChatService to perform bluetooth connections
-        mChatService = BluetoothManager.getInstance();
-        mChatService.setBtHandler(mHandler);    //TODO: 액티비티별로 이것만 바꿔서
-
-        // Initialize the buffer for outgoing messages
     }
 
     /**

@@ -61,6 +61,7 @@
     <string name="title_activity_dialog">DialogActivity</string>
     <string name="way_to_save">구출 방법</string>
     <string name="title_activity_story">StoryActivity</string>
+    <string name="next_time">다음에요!</string>
 
     <!-- story -->
     <string name="story_text1">여기는 모아모아 마을!\n코인펫 친구들은\n이곳에서 사이좋게 살고 있었답니다.</string>

@@ -35,16 +35,13 @@ import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.DialogActivity;
 import com.quadcoder.coinpet.page.common.GoalSettingActivity;
-import com.quadcoder.coinpet.page.common.Utils;
 import com.quadcoder.coinpet.page.friends.FriendsActivity;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.quest.QuestActivity;
 import com.quadcoder.coinpet.page.quest.watcher.Parsing;
 import com.quadcoder.coinpet.page.quest.watcher.QuestWatcher;
 import com.quadcoder.coinpet.page.quiz.QuizActivity;
-import com.quadcoder.coinpet.page.quiz.QuizFragment;
 import com.quadcoder.coinpet.page.setting.SettingActivity;
-import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 import java.util.ArrayList;
 
@@ -211,7 +208,7 @@ public class MainActivity extends Activity {
                 if(resultCode == Activity.RESULT_OK) {
 //                    boolean isDoneFirstQuest = data.getBooleanExtra(GoalSettingActivity.RESULT_GOAL_SET, false);
                     mChatService.write(BluetoothUtil.getInstance().setGoalAndLock(PropertyManager.getInstance().mGoal.goal_cost));
-                    goalUiUpdate(false);
+                    goalUiShow(false);
                 }
                 break;
             case REQUEST_CODE_EVENT:
@@ -253,6 +250,7 @@ public class MainActivity extends Activity {
     void moneyUp(int money) {
         int sum = Integer.parseInt(tvNowMoney.getText().toString()) + money;
 
+
         QuestWatcher.getInstance().listenAction(Parsing.Type.SAVING, Parsing.Method.ANYTIME);
 
         tvNowMoney.setText("" + sum);
@@ -268,6 +266,8 @@ public class MainActivity extends Activity {
             public void onFail(Res res) {
             }
         });
+
+        checkGoalDone();
     }
 
     void checkGoalDone() {
@@ -286,7 +286,13 @@ public class MainActivity extends Activity {
                 mChatService.write(BluetoothUtil.getInstance().unlock());
 
                 // 목표 설정 퀘스트 다시 보이기
-                goalUiUpdate(true);
+                goalUiShow(true);
+            }
+        });
+
+        builder.setPositiveButton(R.string.next_time, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
             }
         });
         builder.create().show();
@@ -320,7 +326,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    void goalUiUpdate(boolean show) {
+    void goalUiShow(boolean show) {
         if( show ) {
             imgvMail.setVisibility(View.VISIBLE);
             imgvMailBg.setVisibility(View.VISIBLE);
@@ -350,7 +356,7 @@ public class MainActivity extends Activity {
         tvTalk.setTypeface(font);
 
         if(PropertyManager.getInstance().mGoal != null) //목표 설정 완료하면 안보이기
-            goalUiUpdate(true);
+            goalUiShow(true);
 
 
         final AudioEffect boingAudio = new AudioEffect(AudioEffect.CARTOON_BOING);
@@ -448,8 +454,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //임시로 Tutorial 실행
-                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
-//                startActivity(new Intent(MainActivity.this, StoryActivity.class));
+//                startActivity(new Intent(MainActivity.this, TutorialActivity.class));
+                mChatService.write(BluetoothUtil.getInstance().requestMoneySync());
             }
         });
 
@@ -575,6 +581,7 @@ public class MainActivity extends Activity {
                         int length = msg.arg1;
                         android.util.Log.d(TAG, "MESSAGE_READ " + length + " bytes read");
                         byte opcode = readBuffer.get(1);
+
                         if(opcode == BluetoothUtil.Opcode.READ_MONEY) {
                             int[] num = new int[3];
                             for(int i=3; i<=5; i++) {
@@ -586,6 +593,19 @@ public class MainActivity extends Activity {
                             final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
                             moneyUp(money);
                         }
+
+                        if(opcode == BluetoothUtil.Opcode.READ_MONEY_SYNC) {
+                            int[] num = new int[3];
+                            for(int i=3; i<=5; i++) {
+                                num[i-3] = readBuffer.get(i);
+                                if(num[i-3] < 0) {
+                                    num[i-3] += 256;
+                                }
+                            }
+                            final int money = num[0] * 256 * 256 + num[1] * 256 + num[2];
+                            moneyUp(money);
+                        }
+
                     break;
                 case BTConstants.MESSAGE_DEVICE_NAME:
                     String deviceName = msg.getData().getString(BTConstants.DEVICE_NAME);

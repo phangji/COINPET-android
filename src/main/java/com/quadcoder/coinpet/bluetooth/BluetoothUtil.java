@@ -75,6 +75,17 @@ public class BluetoothUtil {
         return buffer;
     }
 
+    public byte[] requestMoneySync() {
+        byte[] buffer = new byte[5];
+        buffer[0] = S;
+        buffer[1] = Opcode.WRITE_SYNC;
+        buffer[2] = 1;
+        buffer[buffer.length-1] = E;
+        buffer[3] = DUMM;
+
+        return buffer;
+    }
+
     public byte[] sendUTC() {
         byte[] buffer = new byte[9];
         buffer[0] = S;

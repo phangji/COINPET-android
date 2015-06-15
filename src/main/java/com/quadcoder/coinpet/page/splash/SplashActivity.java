@@ -43,14 +43,15 @@ public class SplashActivity extends Activity {
         anim.start();
 
         ConnectivityManager connManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        if ( connManager.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if ( mWifi.isConnected() || connManager.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
                 || connManager.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING ) {
 
             checkUpdatedData();
 
         }
-        else if ( connManager.getNetworkInfo(0).getState() == NetworkInfo.State.DISCONNECTED
-                || connManager.getNetworkInfo(1).getState() == NetworkInfo.State.DISCONNECTED) {
+        else {
             showDialog();
         }
 

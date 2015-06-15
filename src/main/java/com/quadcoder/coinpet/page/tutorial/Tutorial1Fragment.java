@@ -2,6 +2,7 @@ package com.quadcoder.coinpet.page.tutorial;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.quadcoder.coinpet.R;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.Constants;
+import com.quadcoder.coinpet.page.main.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,6 +58,8 @@ public class Tutorial1Fragment extends Fragment {
                         if (res.error == null) {
                             String token = res.Authorization;
                             Toast.makeText(getActivity(), "already registered. token : " + token, Toast.LENGTH_SHORT).show();
+                            // TODO: 백업한 데이터 받고 Main으로
+//                            startActivity(new Intent(getActivity(), MainActivity.class));
                         }
                     }
 

@@ -86,7 +86,7 @@ public class QuestActivity extends ActionBarActivity {
 
                                 @Override
                                 public void onFail(Res res) {
-                                    Toast.makeText(QuestActivity.this, "Server Internal Error", Toast.LENGTH_SHORT);
+                                    Toast.makeText(QuestActivity.this, "Server Internal Error", Toast.LENGTH_SHORT).show();
                                 }
                             });
                             break;

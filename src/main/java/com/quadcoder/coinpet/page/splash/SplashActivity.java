@@ -24,6 +24,7 @@ import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Goal;
 import com.quadcoder.coinpet.network.response.UpdatedData;
+import com.quadcoder.coinpet.page.tutorial.TutorialActivity;
 
 public class SplashActivity extends Activity {
 
@@ -48,7 +49,7 @@ public class SplashActivity extends Activity {
         if ( mWifi.isConnected() || connManager.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
                 || connManager.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTING ) {
 
-            checkUpdatedData();
+            keepRunning();
 
             // 출석 체크
             PropertyManager.getInstance().plusAccessCount();
@@ -59,6 +60,15 @@ public class SplashActivity extends Activity {
         }
 
 //        goToNext();
+    }
+
+    private void keepRunning() {
+        if(PropertyManager.getInstance().getToken() != null)
+            checkUpdatedData();
+        else {
+            startActivity(new Intent(SplashActivity.this, TutorialActivity.class));
+            finish();
+        }
     }
 
     private void showDialog() {

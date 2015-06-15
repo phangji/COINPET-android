@@ -329,7 +329,7 @@ public class MainActivity extends Activity {
     void goalUiShow(boolean show) {
         if( show ) {
             imgvMail.setVisibility(View.VISIBLE);
-            imgvMailBg.setVisibility(View.VISIBLE);
+//            imgvMailBg.setVisibility(View.VISIBLE);
         } else {
             imgvMail.setVisibility(View.GONE);
             imgvMailBg.setVisibility(View.GONE);
@@ -356,7 +356,7 @@ public class MainActivity extends Activity {
         tvTalk.setTypeface(font);
 
         if(PropertyManager.getInstance().mGoal != null) //목표 설정 완료하면 안보이기
-            goalUiShow(true);
+            goalUiShow(false);
 
 
         final AudioEffect boingAudio = new AudioEffect(AudioEffect.CARTOON_BOING);

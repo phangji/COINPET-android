@@ -316,7 +316,7 @@ public class PropertyManager {
         lastVisitDate = mPrefs.getString(FIELD_LAST_VISIT_DATE, nowDate);
         Log.d("PropertyManager", "lastVisitDate : " + lastVisitDate);
 
-        isChanged = lastVisitDate.equals(nowDate);
+        isChanged = !lastVisitDate.equals(nowDate);
         Log.d("PropertyManager", "isChanged : " + isChanged);
 
         if(isChanged) {

@@ -121,7 +121,7 @@ public class SplashActivity extends Activity {
 
     private void checkUpdatedData() {
         int pkQuiz = PropertyManager.getInstance().getPkQuiz();
-        int pkQuest = PropertyManager.getInstance().getPkPQuest();
+        int pkQuest = PropertyManager.getInstance().getPkQuest();
         int pkParentQuest = PropertyManager.getInstance().getPkPQuest();
 
         Log.d("getUpdatedData", "pkQuiz: " + pkQuiz + "\tpkQuest: " + pkQuest + "\tpkParentQuest: " + pkParentQuest);

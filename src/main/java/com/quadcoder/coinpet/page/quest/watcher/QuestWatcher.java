@@ -1,6 +1,7 @@
 package com.quadcoder.coinpet.page.quest.watcher;
 
 import com.quadcoder.coinpet.database.DBManager;
+import com.quadcoder.coinpet.model.Quest;
 import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.response.Saving;
 
@@ -39,30 +40,33 @@ public class QuestWatcher {
             for(SystemQuest quest : mActiveList) {
                 if(quest.con_type.equals(type)) {   //type이 saving인데,
                     if(quest.con_method.equals(Parsing.Method.ANYTIME)) {
-                        quest.con_count --;
+                        updateCount(quest);
                     } else if(quest.con_method.equals(Parsing.Method.MORNING)) {
                         //아침 시간대 판별
                         if( getTimeMarkerString().equals("오전") || getTimeMarkerString().equals("AM") ) {
-                            quest.con_count --;
+                            updateCount(quest);
                         }
                     } else if(quest.con_method.equals(Parsing.Method.EVENING)) {
                         //저녁 시간대 판별
                         if( getTimeMarkerString().equals("오후") || getTimeMarkerString().equals("PM") ) {
-                            quest.con_count --;
+                            updateCount(quest);
                         }
                     }
                 }
             }
-        }
+        } else if(type.equals(Parsing.Type.STD_QUEST) || type.equals(Parsing.Type.PARENT_QUEST)) {
 
-//        for(SystemQuest quest : mActiveList) {  //Active 퀘스트를 하나씩 체크
-//            if(quest.con_type.equals(type) && quest.con_method.equals(method)) {
-//                quest.con_count --;
-//            }
-//        }
+            for(SystemQuest quest : mActiveList) {
+                if(quest.con_type.equals(type) && quest.con_method.equals(method)) {
+                    updateCount(quest);
+                }
+
+            }
+
+        }
     }
 
-    public void saveChanges() {
+    public void saveChanges() {     // 호출할 필요가 없을 듯.
         if(needUpdate)
             for(SystemQuest record : mActiveList) {
                 DBManager.getInstance().updateActiveSystemQuestCountAndState(record);
@@ -71,6 +75,7 @@ public class QuestWatcher {
     }
 
     public void refreshActiveList() {
+        saveChanges();
         mActiveList = DBManager.getInstance().getActiveSystemQuestList();
         needUpdate = true;
     }
@@ -79,5 +84,16 @@ public class QuestWatcher {
         SimpleDateFormat now = new SimpleDateFormat("a", Locale.KOREA);
         String text= now.format(new Date()).toString();
         return text;
+    }
+
+    private void updateCount(SystemQuest quest) {
+        if(quest.con_count > 0)
+            quest.con_count --;
+
+        if(quest.con_count <= 0 && quest.state == Quest.DOING) {
+            // count가 0이 되었을 때는 state를 업데이트 --> 각각의 퀘스트가 0이 되는 순간에만 update
+            quest.state = Quest.FINISHED;
+            DBManager.getInstance().updateActiveSystemQuestState(quest);
+        }
     }
 }

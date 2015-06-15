@@ -401,7 +401,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        // Freinds
+        // Friends
         mainBtn = (ImageView)findViewById(R.id.imgvReward);
         mainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -427,6 +427,13 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, SettingActivity.class));
+            }
+        });
+
+        findViewById(R.id.btnQuestWatcher).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                QuestWatcher.getInstance().listenAction(Parsing.Type.PARENT_QUEST, Parsing.Method.SUCCESS);
             }
         });
     }

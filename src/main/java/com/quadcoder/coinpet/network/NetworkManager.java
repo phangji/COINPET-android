@@ -165,7 +165,7 @@ public class NetworkManager {
             }
         });
     }
-    
+
     public void updateGoal(Context context, int state, int now_cost, final OnNetworkResultListener<Res> listener) {
         String url = SERVER_URL + "/goal";
         RequestParams params = new RequestParams();

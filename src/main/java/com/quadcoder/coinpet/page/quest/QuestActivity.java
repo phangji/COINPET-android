@@ -22,6 +22,7 @@ import com.quadcoder.coinpet.model.Quiz;
 import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
+import com.quadcoder.coinpet.page.quest.watcher.Parsing;
 import com.quadcoder.coinpet.page.quest.watcher.QuestWatcher;
 
 import java.util.ArrayList;
@@ -47,9 +48,9 @@ public class QuestActivity extends ActionBarActivity {
 
         mListView = (ListView) findViewById(R.id.listView);
 
-        QuestWatcher.getInstance().saveChanges();   // 퀘스트 변경사항 저장
+//        QuestWatcher.getInstance().saveChanges();   // 퀘스트 변경사항 저장
 
-        levelupAudio = new AudioEffect(AudioEffect.GOOD_JOB);
+        goodJobAudio = new AudioEffect(AudioEffect.GOOD_JOB);
 
         mHandler = new Handler();
 
@@ -71,11 +72,11 @@ public class QuestActivity extends ActionBarActivity {
                 if (o instanceof SystemQuest) {
                     switch (((SystemQuest) o).state) {
                         case Quest.FINISHED:
-                            Toast.makeText(QuestActivity.this, "시스템 퀘스트 보상을 받았습니다.", Toast.LENGTH_SHORT).show();
-
                             NetworkManager.getInstance().updateSystemQuest(QuestActivity.this, ((SystemQuest) o).pk_std_que, Quest.FINISHED, new NetworkManager.OnNetworkResultListener<Res>() {
                                 @Override
                                 public void onResult(Res res) {
+                                    Toast.makeText(QuestActivity.this, "시스템 퀘스트 보상을 받았습니다.", Toast.LENGTH_SHORT).show();
+
                                     //상태 업데이트, 디비, 리스트에서 사라짐
                                     ((SystemQuest) o).state = Quest.DELETED;
                                     DBManager.getInstance().updateActiveSystemQuestState((SystemQuest) o);
@@ -85,7 +86,7 @@ public class QuestActivity extends ActionBarActivity {
 
                                 @Override
                                 public void onFail(Res res) {
-
+                                    Toast.makeText(QuestActivity.this, "Server Internal Error", Toast.LENGTH_SHORT);
                                 }
                             });
                             break;
@@ -146,9 +147,10 @@ public class QuestActivity extends ActionBarActivity {
         mListView.setAdapter(mAdapter);
     }
 
-    AudioEffect levelupAudio;
+    AudioEffect goodJobAudio;
     void finishQuest(final int position, Object o) {
-        levelupAudio.play();
+        goodJobAudio.play();
+
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -157,9 +159,16 @@ public class QuestActivity extends ActionBarActivity {
         }, TIME_REMOVE_ITEM);
 
         if( o instanceof  SystemQuest ) {
+            // 시스템 퀘스트 완료
+            QuestWatcher.getInstance().listenAction(Parsing.Type.STD_QUEST, Parsing.Method.SUCCESS);
+
             SystemQuest newActiveQuest = DBManager.getInstance().createNewActiveSystemQuest();
             mAdapter.addActiveQuest(newActiveQuest);
             Toast.makeText(QuestActivity.this, "새로운 퀘스트가 주어졌습니다.", Toast.LENGTH_SHORT);
+
+        } else {
+            // 부모 퀘스트 완료
+            QuestWatcher.getInstance().listenAction(Parsing.Type.PARENT_QUEST, Parsing.Method.SUCCESS);
         }
 
         // pointUpList에 종료시 전달할 이벤트를 담는다.

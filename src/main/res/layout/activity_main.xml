@@ -269,4 +269,11 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="80dp"
         android:visibility="invisible" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="QuestWatcherTest"
+        android:id="@+id/btnQuestWatcher"
+        android:layout_gravity="right|center_vertical" />
 </FrameLayout>

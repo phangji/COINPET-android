@@ -1,10 +1,12 @@
 package com.quadcoder.coinpet.page.main;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
@@ -33,6 +35,7 @@ import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.common.DialogActivity;
 import com.quadcoder.coinpet.page.common.GoalSettingActivity;
+import com.quadcoder.coinpet.page.common.Utils;
 import com.quadcoder.coinpet.page.friends.FriendsActivity;
 import com.quadcoder.coinpet.page.mypet.MyPetActivity;
 import com.quadcoder.coinpet.page.quest.QuestActivity;
@@ -206,7 +209,9 @@ public class MainActivity extends Activity {
                 break;
             case REQUEST_CODE_GOAL_SETTING_ACTIVITY:
                 if(resultCode == Activity.RESULT_OK) {
-                    boolean isDoneFirstQuest = data.getBooleanExtra(GoalSettingActivity.RESULT_GOAL_SET, false);
+//                    boolean isDoneFirstQuest = data.getBooleanExtra(GoalSettingActivity.RESULT_GOAL_SET, false);
+                    mChatService.write(BluetoothUtil.getInstance().setGoalAndLock(PropertyManager.getInstance().mGoal.goal_cost));
+                    goalUiUpdate(false);
                 }
                 break;
             case REQUEST_CODE_EVENT:
@@ -265,6 +270,28 @@ public class MainActivity extends Activity {
         });
     }
 
+    void checkGoalDone() {
+        if(PropertyManager.getInstance().mGoal.goal_cost >= Integer.parseInt(tvNowMoney.getText().toString())) {
+            showGoalFinishDialog();
+        }
+    }
+
+    private void showGoalFinishDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("목표 달성!!");
+        builder.setMessage("목표를 달성했습니다. 잠금을 해제하시겠습니까?");
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mChatService.write(BluetoothUtil.getInstance().unlock());
+
+                // 목표 설정 퀘스트 다시 보이기
+                goalUiUpdate(true);
+            }
+        });
+        builder.create().show();
+    }
+
     String pnMsg = null;
     void makePnMsg() {
         final char[] registerPn = new char[20];
@@ -293,6 +320,16 @@ public class MainActivity extends Activity {
         }
     }
 
+    void goalUiUpdate(boolean show) {
+        if( show ) {
+            imgvMail.setVisibility(View.VISIBLE);
+            imgvMailBg.setVisibility(View.VISIBLE);
+        } else {
+            imgvMail.setVisibility(View.GONE);
+            imgvMailBg.setVisibility(View.GONE);
+        }
+    }
+
     void setMainLayout() {
 
         tvNowMoney = (TextView)findViewById(R.id.tvNowMoney);
@@ -312,13 +349,8 @@ public class MainActivity extends Activity {
         Typeface font = Typeface.createFromAsset(getAssets(), com.quadcoder.coinpet.page.common.Constants.FONT_NORMAL);
         tvTalk.setTypeface(font);
 
-        if( PropertyManager.getInstance().mGoal != null ) { //목표 설정 완료하면 안보이기
-            imgvMail.setVisibility(View.GONE);
-            imgvMailBg.setVisibility(View.GONE);
-        }
-
-
-
+        if(PropertyManager.getInstance().mGoal != null) //목표 설정 완료하면 안보이기
+            goalUiUpdate(true);
 
 
         final AudioEffect boingAudio = new AudioEffect(AudioEffect.CARTOON_BOING);

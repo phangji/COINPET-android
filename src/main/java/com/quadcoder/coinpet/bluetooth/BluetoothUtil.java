@@ -21,6 +21,7 @@ public class BluetoothUtil {
     public static final char E = 'E';
     public static final char DUMM = 'r';
     public static final char UNLOCK = 'u';
+    public static final char LOCK = 'l';
     public static final char SUCCESS = 's';
     public static final char FAIL = 'f';
     public static final char YES = 'y';
@@ -116,6 +117,34 @@ public class BluetoothUtil {
         buffer[buffer.length-1] = E;
 
         buffer[3] = UNLOCK;
+
+        return buffer;
+    }
+
+    public byte[] setGoalAndLock(int goalMoney) {
+        final byte[] buffer = new byte[8];
+        buffer[0] = S;
+        buffer[1] = Opcode.GOAL_SET;
+        buffer[2] = 4;
+        buffer[buffer.length-1] = E;
+        buffer[buffer.length-2] = LOCK;
+
+
+        int money = goalMoney;
+        int[] data = new int[3];
+        int number = 256 * 256;
+        for(int i=0; i<3; i++) {
+            data[i] = goalMoney / number;
+            number /= 256;
+            money = money - data[i] * number;
+//            if(data[i-3] < 0) {
+//                data[i-3] += 256;
+//            }
+        }
+
+        for(int i=3; i<buffer.length-2; i++) {
+            buffer[i] = (byte)data[i-3];
+        }
 
         return buffer;
     }

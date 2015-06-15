@@ -34,8 +34,8 @@ public class FriendsActivity extends ActionBarActivity {
 
         imageList = new ImageView[5];
         imageList[0] = (ImageView) findViewById(R.id.imgvMM);
-        imageList[1] = (ImageView) findViewById(R.id.imgvTT);
-        imageList[2] = (ImageView) findViewById(R.id.imgvKuKu);
+        imageList[1] = (ImageView) findViewById(R.id.imgvKuKu);
+        imageList[2] = (ImageView) findViewById(R.id.imgvTT);
         imageList[3] = (ImageView) findViewById(R.id.imgvDD);
         imageList[4] = (ImageView) findViewById(R.id.imgvKK);
 

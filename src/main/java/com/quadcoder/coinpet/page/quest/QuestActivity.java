@@ -22,6 +22,7 @@ import com.quadcoder.coinpet.model.Quiz;
 import com.quadcoder.coinpet.model.SystemQuest;
 import com.quadcoder.coinpet.network.NetworkManager;
 import com.quadcoder.coinpet.network.response.Res;
+import com.quadcoder.coinpet.page.quest.watcher.QuestWatcher;
 
 import java.util.ArrayList;
 
@@ -45,6 +46,8 @@ public class QuestActivity extends ActionBarActivity {
 //        pointUpList.add(new Integer(40));
 
         mListView = (ListView) findViewById(R.id.listView);
+
+        QuestWatcher.getInstance().saveChanges();   // 퀘스트 변경사항 저장
 
         levelupAudio = new AudioEffect(AudioEffect.GOOD_JOB);
 
@@ -156,6 +159,7 @@ public class QuestActivity extends ActionBarActivity {
         if( o instanceof  SystemQuest ) {
             SystemQuest newActiveQuest = DBManager.getInstance().createNewActiveSystemQuest();
             mAdapter.addActiveQuest(newActiveQuest);
+            Toast.makeText(QuestActivity.this, "새로운 퀘스트가 주어졌습니다.", Toast.LENGTH_SHORT);
         }
 
         // pointUpList에 종료시 전달할 이벤트를 담는다.

@@ -41,8 +41,9 @@ public class DBManager {
     public SystemQuest getSystemQuestRandom() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
         String[] columns = {SystemQuestTable.PK, SystemQuestTable.CONTENT, SystemQuestTable.POINT, SystemQuestTable.STATE, SystemQuestTable.CON_TYPE, SystemQuestTable.CON_METHOD, SystemQuestTable.CON_COUNT};
+        String selection = SystemQuestTable.PK + " > 2 ";
         String orderBy = "random()";
-        Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, null, null, null, null, orderBy);
+        Cursor c = db.query(SystemQuestTable.TABLE_NAME, columns, selection, null, null, null, orderBy);
 
         SystemQuest record = new SystemQuest();
         while (c.moveToNext()) {
@@ -316,10 +317,16 @@ public class DBManager {
         db.close();
     }
 
-    public void updateActiveSystemQuestCount(SystemQuest record){
+    public void updateActiveSystemQuestCountAndState(SystemQuest record){
+
+        if(record.con_count <= 0) {
+            record.state = Quest.FINISHED;
+        }
+
         SQLiteDatabase db = mHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SystemQuestTable.CON_COUNT, record.con_count);
+        values.put(SystemQuestTable.STATE, record.state);
         String whereClause = SystemQuestTable.PK + " = ? ";
         String[] whereArgs = { "" + record.pk_std_que};
         db.update(ActiveSystemQuestTable.TABLE_NAME, values, whereClause, whereArgs);

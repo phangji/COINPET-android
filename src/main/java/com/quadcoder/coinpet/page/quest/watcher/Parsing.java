@@ -6,7 +6,7 @@ package com.quadcoder.coinpet.page.quest.watcher;
 public class Parsing {
     public class Type {
         public static final String GOAL = "goal";
-        public static final String PARENT_QUEST = "parent_quest";
+        public static final String PARENT_QUEST = "parents_quest";
         public static final String STD_QUEST = "std_que";
         public static final String SAVING = "saving";
     }

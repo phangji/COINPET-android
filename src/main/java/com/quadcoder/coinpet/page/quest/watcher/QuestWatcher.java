@@ -16,6 +16,7 @@ import java.util.Locale;
 public class QuestWatcher {
 
     ArrayList<SystemQuest> mActiveList;
+    boolean needUpdate = false;
 
     private static class QuestWatcherHolder {
         private static final QuestWatcher instance = new QuestWatcher();
@@ -31,7 +32,9 @@ public class QuestWatcher {
 
     public void listenAction(String type, String method) { //saving이면 method가 null이어되 됌.
 
-        if(type == Parsing.Type.SAVING) {   //method = anytime, morning, evening
+        needUpdate = true;
+
+        if(type.equals(Parsing.Type.SAVING)) {   //method = anytime, morning, evening
 
             for(SystemQuest quest : mActiveList) {
                 if(quest.con_type.equals(type)) {   //type이 saving인데,
@@ -39,31 +42,37 @@ public class QuestWatcher {
                         quest.con_count --;
                     } else if(quest.con_method.equals(Parsing.Method.MORNING)) {
                         //아침 시간대 판별
-                        if( getTimeMarkerString().equals("AM") ) {
+                        if( getTimeMarkerString().equals("오전") || getTimeMarkerString().equals("AM") ) {
                             quest.con_count --;
                         }
                     } else if(quest.con_method.equals(Parsing.Method.EVENING)) {
                         //저녁 시간대 판별
-                        if( getTimeMarkerString().equals("PM") ) {
+                        if( getTimeMarkerString().equals("오후") || getTimeMarkerString().equals("PM") ) {
                             quest.con_count --;
                         }
                     }
                 }
             }
-            return;
         }
 
-        for(SystemQuest quest : mActiveList) {  //Active 퀘스트를 하나씩 체크
-            if(quest.con_type.equals(type) && quest.con_method.equals(method)) {
-                quest.con_count --;
-            }
-        }
+//        for(SystemQuest quest : mActiveList) {  //Active 퀘스트를 하나씩 체크
+//            if(quest.con_type.equals(type) && quest.con_method.equals(method)) {
+//                quest.con_count --;
+//            }
+//        }
     }
 
     public void saveChanges() {
-        for(SystemQuest record : mActiveList) {
-            DBManager.getInstance().updateActiveSystemQuestCount(record);
-        }
+        if(needUpdate)
+            for(SystemQuest record : mActiveList) {
+                DBManager.getInstance().updateActiveSystemQuestCountAndState(record);
+            }
+        needUpdate = false;
+    }
+
+    public void refreshActiveList() {
+        mActiveList = DBManager.getInstance().getActiveSystemQuestList();
+        needUpdate = true;
     }
 
     private String getTimeMarkerString() {

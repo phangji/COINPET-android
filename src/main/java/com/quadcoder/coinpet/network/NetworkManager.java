@@ -165,8 +165,7 @@ public class NetworkManager {
             }
         });
     }
-
-    // TODO: Test
+    
     public void updateGoal(Context context, int state, int now_cost, final OnNetworkResultListener<Res> listener) {
         String url = SERVER_URL + "/goal";
         RequestParams params = new RequestParams();
@@ -298,9 +297,8 @@ public class NetworkManager {
         });
     }
 
-    // TODO: Test
     public void updateParentQuest(Context context, int fk_parents_quest, int state, final OnNetworkResultListener<Res> listener) {
-        String url = SERVER_URL + "/quest/parentsUpdate";
+        String url = SERVER_URL + "/quest/stateUpdate";
         RequestParams params = new RequestParams();
         params.put("fk_parents_quest", fk_parents_quest);
         params.put("state", state);
@@ -330,7 +328,6 @@ public class NetworkManager {
      * Quiz
      * */
 
-    // TODO: Test
     public void postQuiz(Context context, int fk_std_quiz, int state, final OnNetworkResultListener<Res> listener) {
         String url = SERVER_URL + "/quest";
         RequestParams params = new RequestParams();

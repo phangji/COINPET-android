@@ -328,7 +328,7 @@ public class NetworkManager {
      * Quiz
      * */
 
-    public void postQuiz(Context context, int fk_std_quiz, int state, final OnNetworkResultListener<Res> listener) {
+    public void postQuest(Context context, int fk_std_quiz, int state, final OnNetworkResultListener<Res> listener) {
         String url = SERVER_URL + "/quest";
         RequestParams params = new RequestParams();
         params.put("fk_std_quiz", fk_std_quiz);

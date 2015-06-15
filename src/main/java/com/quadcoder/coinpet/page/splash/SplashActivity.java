@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.quadcoder.coinpet.network.response.Res;
 import com.quadcoder.coinpet.page.main.MainActivity;
 import com.quadcoder.coinpet.page.common.PropertyManager;
 import com.quadcoder.coinpet.R;
@@ -181,8 +182,20 @@ public class SplashActivity extends Activity {
     void checkAndMakeActiveQuest() {
         int count = DBManager.getInstance().getActiveSystemCount();
          while( (3 - count) > 0) {
-             DBManager.getInstance().createNewActiveSystemQuest();
+             SystemQuest newOne = DBManager.getInstance().createNewActiveSystemQuest();
              count++;
+
+             NetworkManager.getInstance().postQuest(SplashActivity.this, newOne.pk_std_que, Quest.DOING, new NetworkManager.OnNetworkResultListener<Res>() {
+                 @Override
+                 public void onResult(Res res) {
+
+                 }
+
+                 @Override
+                 public void onFail(Res res) {
+
+                 }
+             });
          }
     }
 }

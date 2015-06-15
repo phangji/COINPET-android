@@ -148,7 +148,7 @@ public class QuestActivity extends ActionBarActivity {
     }
 
     AudioEffect goodJobAudio;
-    void finishQuest(final int position, Object o) {
+    void finishQuest(final int position, final Object o) {
         goodJobAudio.play();
 
         mHandler.postDelayed(new Runnable() {
@@ -162,9 +162,28 @@ public class QuestActivity extends ActionBarActivity {
             // 시스템 퀘스트 완료
             QuestWatcher.getInstance().listenAction(Parsing.Type.STD_QUEST, Parsing.Method.SUCCESS);
 
-            SystemQuest newActiveQuest = DBManager.getInstance().createNewActiveSystemQuest();
-            mAdapter.addActiveQuest(newActiveQuest);
-            Toast.makeText(QuestActivity.this, "새로운 퀘스트가 주어졌습니다.", Toast.LENGTH_SHORT);
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SystemQuest newActiveQuest = DBManager.getInstance().createNewActiveSystemQuest();
+                    NetworkManager.getInstance().postQuest(QuestActivity.this, ((SystemQuest) o).pk_std_que, Quest.DOING, new NetworkManager.OnNetworkResultListener<Res>() {
+                        @Override
+                        public void onResult(Res res) {
+
+                        }
+
+                        @Override
+                        public void onFail(Res res) {
+
+                        }
+                    });
+                    mAdapter.addActiveQuest(newActiveQuest);
+                    Toast.makeText(QuestActivity.this, "새로운 퀘스트가 주어졌습니다.", Toast.LENGTH_SHORT);
+                }
+            }, TIME_REMOVE_ITEM);
+
+            DBManager.getInstance().deleteActiveSystemQuest(((SystemQuest) o));
+
 
         } else {
             // 부모 퀘스트 완료
